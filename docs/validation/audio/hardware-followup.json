@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-08",
+  "reported_by": "user",
+  "feedback": "都不行，不然还是回滚到从官方固件fork，先添加talk permit tone",
+  "audio_candidates": "FAIL_USER_REPORTED_UNSPECIFIED_VARIANTS",
+  "detailed_counters": "NOT_PROVIDED",
+  "decision": "Archive this experiment and restart from official R20260131 with Talk Permit only"
+}

@@ -148,3 +148,8 @@ official archive; it is not included in the firmware ZIP or this repository.
 The CPS merges the donor codec during upload. The build never flashes a radio.
 Codeplug, settings ABI, calibration format and CPS protocol are preserved;
 calibration readback and the new builds' hardware regression remain pending.
+
+The user subsequently reported that the supplied audio candidates still did not
+work. This experiment is retained as history; development restarts from the
+official R20260131 source/project on `feature/gd77-talk-permit-official-r20260131`,
+with Talk Permit as the only feature. No candidate here is marked audio-validated.
