@@ -1,0 +1,52 @@
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~

@@ -410,11 +410,16 @@ status_t radioWriteReg2byte(uint8_t reg, uint8_t val1, uint8_t val2)
 
     isI2cInUse = 0;
 
-    if ((reg != 0x7F) && (status == kStatus_Success))
+    if (reg != 0x7F)
     {
-	    registerCache[reg].cached[currentRegisterBank] = true;
-	    registerCache[reg].highByte[currentRegisterBank] = val1;
-	    registerCache[reg].lowByte[currentRegisterBank] = val2;
+        // A failed/partial bus write invalidates BOTH the requested and old
+        // cached value: restoring the old value must issue a real transaction.
+        registerCache[reg].cached[currentRegisterBank] = (status == kStatus_Success);
+        if (status == kStatus_Success)
+        {
+            registerCache[reg].highByte[currentRegisterBank] = val1;
+            registerCache[reg].lowByte[currentRegisterBank] = val2;
+        }
     }
 
 	return status;

@@ -85,7 +85,11 @@ static bool settingsVFODirty = false;
 settingsStruct_t nonVolatileSettings;
 #if defined(PLATFORM_GD77)
 #include <stddef.h>
-_Static_assert(sizeof(settingsStruct_t) == 116, "GD77 settings ABI changed");
+// AAPCS gcc uses a one-byte roaming enum; host/default-int enums use four.
+// Preserve the baseline layout for either ABI, never force an enum compiler flag.
+_Static_assert((sizeof(roaming_t) == 1 && sizeof(settingsStruct_t) == 112) ||
+               (sizeof(roaming_t) == 4 && sizeof(settingsStruct_t) == 116),
+               "GD77 settings ABI changed");
 _Static_assert(offsetof(settingsStruct_t, UNUSED_1) == 60, "GD77 feature ID slot moved");
 _Static_assert(offsetof(settingsStruct_t, UNUSED_2) == 62, "GD77 feature record slot moved");
 fmFeatures_t settingsGetFMFeatures(void)

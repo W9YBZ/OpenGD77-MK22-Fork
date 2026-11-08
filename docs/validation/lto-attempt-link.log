@@ -1,0 +1,58 @@
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/include/functions/settings.h:319:25: warning: type of 'nonVolatileSettings' does not match original declaration [-Wlto-type-mismatch]
+  319 | extern settingsStruct_t nonVolatileSettings;
+      |                         ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/settings.c:85:18: note: 'nonVolatileSettings' was previously declared here
+   85 | settingsStruct_t nonVolatileSettings;
+      |                  ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/settings.c:85:18: note: code may be misoptimized unless '-fno-strict-aliasing' is used
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuAPRSOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuAPRSOptions.c:420:7: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  420 |       strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |       ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuAPRSOptions.c:443:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  443 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuCalibration.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuCalibration.c:318:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  318 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuCalibration.c:340:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  340 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuChannelDetails.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuChannelDetails.c:795:8: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  795 |        strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |        ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuChannelDetails.c:818:7: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  818 |       strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |       ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuDisplayOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuDisplayOptions.c:375:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  375 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuDisplayOptions.c:397:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  397 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuGeneralOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuGeneralOptions.c:382:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  382 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuGeneralOptions.c:404:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  404 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuRadioOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuRadioOptions.c:264:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  264 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuRadioOptions.c:286:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  286 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuSoundOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuSoundOptions.c:342:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  342 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuSoundOptions.c:364:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  364 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/tmp/gd77-toolchain/root/usr/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld:/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/linkerscripts/firmware_newlib.ld:43 cannot move location counter backwards (from 0000000000004550 to 0000000000004400)
+collect2: error: ld returned 1 exit status

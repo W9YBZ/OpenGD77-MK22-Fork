@@ -1,0 +1,474 @@
+{
+  "enum_flags": [],
+  "settings_size": 112,
+  "alignment": 4,
+  "fields": {
+    "magicNumber": {
+      "offset": 0,
+      "size": 4
+    },
+    "location": {
+      "offset": 4,
+      "size": 8
+    },
+    "timezone": {
+      "offset": 12,
+      "size": 1
+    },
+    "beepOptions": {
+      "offset": 13,
+      "size": 1
+    },
+    "vfoSweepSettings": {
+      "offset": 14,
+      "size": 2
+    },
+    "overrideTG": {
+      "offset": 16,
+      "size": 4
+    },
+    "vfoScanLow": {
+      "offset": 20,
+      "size": 8
+    },
+    "vfoScanHigh": {
+      "offset": 28,
+      "size": 8
+    },
+    "bitfieldOptions": {
+      "offset": 36,
+      "size": 4
+    },
+    "aprsBeaconingSettingsPart1": {
+      "offset": 40,
+      "size": 8
+    },
+    "currentIndexInTRxGroupList": {
+      "offset": 48,
+      "size": 6
+    },
+    "currentZone": {
+      "offset": 54,
+      "size": 2
+    },
+    "userPower": {
+      "offset": 56,
+      "size": 2
+    },
+    "tsManualOverride": {
+      "offset": 58,
+      "size": 2
+    },
+    "UNUSED_1": {
+      "offset": 60,
+      "size": 2
+    },
+    "UNUSED_2": {
+      "offset": 62,
+      "size": 2
+    },
+    "aprsBeaconingSettingsPart2": {
+      "offset": 64,
+      "size": 2
+    },
+    "txPowerLevel": {
+      "offset": 66,
+      "size": 1
+    },
+    "txTimeoutBeepX5Secs": {
+      "offset": 67,
+      "size": 1
+    },
+    "beepVolumeDivider": {
+      "offset": 68,
+      "size": 1
+    },
+    "micGainDMR": {
+      "offset": 69,
+      "size": 1
+    },
+    "micGainFM": {
+      "offset": 70,
+      "size": 1
+    },
+    "backlightMode": {
+      "offset": 71,
+      "size": 1
+    },
+    "backLightTimeout": {
+      "offset": 72,
+      "size": 1
+    },
+    "displayContrast": {
+      "offset": 73,
+      "size": 1
+    },
+    "displayBacklightPercentage": {
+      "offset": 74,
+      "size": 2
+    },
+    "displayBacklightPercentageOff": {
+      "offset": 76,
+      "size": 1
+    },
+    "initialMenuNumber": {
+      "offset": 77,
+      "size": 1
+    },
+    "extendedInfosOnScreen": {
+      "offset": 78,
+      "size": 1
+    },
+    "txFreqLimited": {
+      "offset": 79,
+      "size": 1
+    },
+    "scanModePause": {
+      "offset": 80,
+      "size": 1
+    },
+    "scanDelay": {
+      "offset": 81,
+      "size": 1
+    },
+    "dmrRxAGC": {
+      "offset": 82,
+      "size": 1
+    },
+    "hotspotType": {
+      "offset": 83,
+      "size": 1
+    },
+    "scanStepTime": {
+      "offset": 84,
+      "size": 1
+    },
+    "currentVFONumber": {
+      "offset": 85,
+      "size": 1
+    },
+    "dmrDestinationFilter": {
+      "offset": 86,
+      "size": 1
+    },
+    "dmrCaptureTimeout": {
+      "offset": 87,
+      "size": 1
+    },
+    "dmrCcTsFilter": {
+      "offset": 88,
+      "size": 1
+    },
+    "analogFilterLevel": {
+      "offset": 89,
+      "size": 1
+    },
+    "privateCalls": {
+      "offset": 90,
+      "size": 1
+    },
+    "contactDisplayPriority": {
+      "offset": 91,
+      "size": 1
+    },
+    "splitContact": {
+      "offset": 92,
+      "size": 1
+    },
+    "voxThreshold": {
+      "offset": 93,
+      "size": 1
+    },
+    "voxTailUnits": {
+      "offset": 94,
+      "size": 1
+    },
+    "audioPromptMode": {
+      "offset": 95,
+      "size": 1
+    },
+    "temperatureCalibration": {
+      "offset": 96,
+      "size": 1
+    },
+    "batteryCalibration": {
+      "offset": 97,
+      "size": 1
+    },
+    "squelchDefaults": {
+      "offset": 98,
+      "size": 3
+    },
+    "ecoLevel": {
+      "offset": 101,
+      "size": 1
+    },
+    "apo": {
+      "offset": 102,
+      "size": 1
+    },
+    "keypadTimerLong": {
+      "offset": 103,
+      "size": 1
+    },
+    "keypadTimerRepeat": {
+      "offset": 104,
+      "size": 1
+    },
+    "autolockTimer": {
+      "offset": 105,
+      "size": 1
+    },
+    "roaming": {
+      "offset": 106,
+      "size": 1
+    },
+    "gpsModeAndBaudsIndex": {
+      "offset": 107,
+      "size": 1
+    },
+    "lastTalkerOnScreenTimer": {
+      "offset": 108,
+      "size": 1
+    }
+  }
+}
+PASS: baseline/feature byte-identical layout for all 57 fields
+{
+  "enum_flags": [
+    "-fno-short-enums"
+  ],
+  "settings_size": 116,
+  "alignment": 4,
+  "fields": {
+    "magicNumber": {
+      "offset": 0,
+      "size": 4
+    },
+    "location": {
+      "offset": 4,
+      "size": 8
+    },
+    "timezone": {
+      "offset": 12,
+      "size": 1
+    },
+    "beepOptions": {
+      "offset": 13,
+      "size": 1
+    },
+    "vfoSweepSettings": {
+      "offset": 14,
+      "size": 2
+    },
+    "overrideTG": {
+      "offset": 16,
+      "size": 4
+    },
+    "vfoScanLow": {
+      "offset": 20,
+      "size": 8
+    },
+    "vfoScanHigh": {
+      "offset": 28,
+      "size": 8
+    },
+    "bitfieldOptions": {
+      "offset": 36,
+      "size": 4
+    },
+    "aprsBeaconingSettingsPart1": {
+      "offset": 40,
+      "size": 8
+    },
+    "currentIndexInTRxGroupList": {
+      "offset": 48,
+      "size": 6
+    },
+    "currentZone": {
+      "offset": 54,
+      "size": 2
+    },
+    "userPower": {
+      "offset": 56,
+      "size": 2
+    },
+    "tsManualOverride": {
+      "offset": 58,
+      "size": 2
+    },
+    "UNUSED_1": {
+      "offset": 60,
+      "size": 2
+    },
+    "UNUSED_2": {
+      "offset": 62,
+      "size": 2
+    },
+    "aprsBeaconingSettingsPart2": {
+      "offset": 64,
+      "size": 2
+    },
+    "txPowerLevel": {
+      "offset": 66,
+      "size": 1
+    },
+    "txTimeoutBeepX5Secs": {
+      "offset": 67,
+      "size": 1
+    },
+    "beepVolumeDivider": {
+      "offset": 68,
+      "size": 1
+    },
+    "micGainDMR": {
+      "offset": 69,
+      "size": 1
+    },
+    "micGainFM": {
+      "offset": 70,
+      "size": 1
+    },
+    "backlightMode": {
+      "offset": 71,
+      "size": 1
+    },
+    "backLightTimeout": {
+      "offset": 72,
+      "size": 1
+    },
+    "displayContrast": {
+      "offset": 73,
+      "size": 1
+    },
+    "displayBacklightPercentage": {
+      "offset": 74,
+      "size": 2
+    },
+    "displayBacklightPercentageOff": {
+      "offset": 76,
+      "size": 1
+    },
+    "initialMenuNumber": {
+      "offset": 77,
+      "size": 1
+    },
+    "extendedInfosOnScreen": {
+      "offset": 78,
+      "size": 1
+    },
+    "txFreqLimited": {
+      "offset": 79,
+      "size": 1
+    },
+    "scanModePause": {
+      "offset": 80,
+      "size": 1
+    },
+    "scanDelay": {
+      "offset": 81,
+      "size": 1
+    },
+    "dmrRxAGC": {
+      "offset": 82,
+      "size": 1
+    },
+    "hotspotType": {
+      "offset": 83,
+      "size": 1
+    },
+    "scanStepTime": {
+      "offset": 84,
+      "size": 1
+    },
+    "currentVFONumber": {
+      "offset": 85,
+      "size": 1
+    },
+    "dmrDestinationFilter": {
+      "offset": 86,
+      "size": 1
+    },
+    "dmrCaptureTimeout": {
+      "offset": 87,
+      "size": 1
+    },
+    "dmrCcTsFilter": {
+      "offset": 88,
+      "size": 1
+    },
+    "analogFilterLevel": {
+      "offset": 89,
+      "size": 1
+    },
+    "privateCalls": {
+      "offset": 90,
+      "size": 1
+    },
+    "contactDisplayPriority": {
+      "offset": 91,
+      "size": 1
+    },
+    "splitContact": {
+      "offset": 92,
+      "size": 1
+    },
+    "voxThreshold": {
+      "offset": 93,
+      "size": 1
+    },
+    "voxTailUnits": {
+      "offset": 94,
+      "size": 1
+    },
+    "audioPromptMode": {
+      "offset": 95,
+      "size": 1
+    },
+    "temperatureCalibration": {
+      "offset": 96,
+      "size": 1
+    },
+    "batteryCalibration": {
+      "offset": 97,
+      "size": 1
+    },
+    "squelchDefaults": {
+      "offset": 98,
+      "size": 3
+    },
+    "ecoLevel": {
+      "offset": 101,
+      "size": 1
+    },
+    "apo": {
+      "offset": 102,
+      "size": 1
+    },
+    "keypadTimerLong": {
+      "offset": 103,
+      "size": 1
+    },
+    "keypadTimerRepeat": {
+      "offset": 104,
+      "size": 1
+    },
+    "autolockTimer": {
+      "offset": 105,
+      "size": 1
+    },
+    "roaming": {
+      "offset": 108,
+      "size": 4
+    },
+    "gpsModeAndBaudsIndex": {
+      "offset": 112,
+      "size": 1
+    },
+    "lastTalkerOnScreenTimer": {
+      "offset": 113,
+      "size": 1
+    }
+  }
+}
+PASS: baseline/feature byte-identical layout for all 57 fields

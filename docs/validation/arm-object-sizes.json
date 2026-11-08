@@ -1,0 +1,92 @@
+[
+  {
+    "object": "source_functions_settings.c.o",
+    "baseline": [
+      1172,
+      40,
+      412
+    ],
+    "feature": [
+      1452,
+      40,
+      412
+    ],
+    "delta": [
+      280,
+      0,
+      0
+    ]
+  },
+  {
+    "object": "source_functions_sound.c.o",
+    "baseline": [
+      6939,
+      7113,
+      51
+    ],
+    "feature": [
+      6963,
+      7113,
+      51
+    ],
+    "delta": [
+      24,
+      0,
+      0
+    ]
+  },
+  {
+    "object": "source_hardware_AT1846S.c.o",
+    "baseline": [
+      1275,
+      0,
+      763
+    ],
+    "feature": [
+      1283,
+      0,
+      763
+    ],
+    "delta": [
+      8,
+      0,
+      0
+    ]
+  },
+  {
+    "object": "source_user_interface_menuSoundOptions.c.o",
+    "baseline": [
+      2387,
+      0,
+      1
+    ],
+    "feature": [
+      2768,
+      0,
+      1
+    ],
+    "delta": [
+      381,
+      0,
+      0
+    ]
+  },
+  {
+    "object": "source_user_interface_uiTxScreen.c.o",
+    "baseline": [
+      2384,
+      0,
+      37
+    ],
+    "feature": [
+      3836,
+      0,
+      67
+    ],
+    "delta": [
+      1452,
+      0,
+      30
+    ]
+  }
+]

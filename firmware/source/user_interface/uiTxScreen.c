@@ -63,7 +63,8 @@ static bool isSatelliteScreen;
 static bool manualFMSession;
 static bool fmPermitActive;
 static uint16_t fmPermitVoice;
-static uint32_t fmPermitStarted;
+static uint32_t fmPermitStarted, fmPermitDrainedAt;
+static bool fmPermitDraining;
 static fmTail_t fmTail;
 static bool fmTailHardwareActive;
 static const uint8_t fmTailRegisters[] = { 0x35, 0x41, 0x79, 0x3a };
@@ -128,9 +129,24 @@ static void fmPermitStart(uint32_t now)
   return;
  }
  fmPermitStarted = now;
+ fmPermitDraining = false;
  // HR-C6000 speaker audio only. AT1846 MIC is disconnected until completion.
  soundSetMelody(MELODY_FM_TALK_PERMIT);
  if (melody_play != MELODY_FM_TALK_PERMIT && !fmPermitStop()) transmitError = true;
+}
+static bool fmPermitTick(uint32_t now, bool release)
+{
+ if (!fmPermitActive) return true;
+ if (release || transmitError || (uint32_t)(now - fmPermitStarted) >= 250U)
+  return fmPermitStop();
+ if (melody_play == MELODY_FM_TALK_PERMIT) return true;
+ // Allow the final C6000 speaker buffer to drain before reopening MIC.
+ if (!fmPermitDraining) {
+  fmPermitDraining = true;
+  fmPermitDrainedAt = now;
+ }
+ if ((uint32_t)(now - fmPermitDrainedAt) >= 10U) return fmPermitStop();
+ return true;
 }
 /* Tail modifies only this bounded register set. No power/CSS/filters, speaker
  * mux or channel data are changed. Restore exact snapshots on every exit. */
@@ -326,14 +342,10 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 	else
 	{
 #if defined(PLATFORM_GD77)
-  if (fmPermitActive && (melody_play != MELODY_FM_TALK_PERMIT ||
-      (uint32_t)(ev->time - fmPermitStarted) >= 250U ||
-      !(ev->buttons & BUTTON_PTT) || transmitError)) {
-   if (!fmPermitStop()) {
-    transmitError = true;
-    ev->buttons &= ~BUTTON_PTT;
-    pttWasReleased = true;
-   }
+  if (!fmPermitTick(ev->time, !(ev->buttons & BUTTON_PTT))) {
+   transmitError = true;
+   ev->buttons &= ~BUTTON_PTT;
+   pttWasReleased = true;
   }
 #endif
 		// Keep displaying the "RX Only" or "Out Of Band" error message
@@ -556,6 +568,13 @@ static void handleEvent(uiEvent_t *ev)
 		if (trxTransmissionEnabled)
 		{
 #if defined(PLATFORM_GD77)
+   // Finish any existing 1750/DTMF route before acquiring the tail snapshot.
+   if (isTransmittingTone || isTransmittingDTMF) {
+    trxSelectVoiceChannel(AT1846_VOICE_CHANNEL_MIC);
+    audioAmpDisable(AUDIO_AMP_CHANNEL_RF);
+    isTransmittingTone = false;
+    isTransmittingDTMF = false;
+   }
    bool abortTail = transmitError || (currentChannelData->tot != 0 && timeInSeconds == 0);
    bool eligibleTail = manualFMSession && !voxIsEnabled() && !isSatelliteScreen &&
     aprsBeaconingGetMode() != APRS_BEACONING_MODE_PTT &&

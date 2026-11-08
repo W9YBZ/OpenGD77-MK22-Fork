@@ -10,6 +10,6 @@ for platform in ("PLATFORM_GD77", "PLATFORM_GD77S", "PLATFORM_DM1801", "PLATFORM
     for name in files:
         subprocess.run(["gcc", "-std=gnu11", "-fsyntax-only", "-Werror=implicit-function-declaration",
                         "-Wno-int-to-pointer-cast", "-Wno-pointer-to-int-cast",
-                        "-DSDK_OS_FREE_RTOS", "-DSOUND_STANDARD", "-DCPU_MK22FN512VLL12",
+                        "-DSDK_OS_FREE_RTOS", "-DCPU_MK22FN512VLL12",
                         "-D" + platform, *inc, str(root / "firmware/source" / name)], check=True)
     print("PASS syntax:", platform)

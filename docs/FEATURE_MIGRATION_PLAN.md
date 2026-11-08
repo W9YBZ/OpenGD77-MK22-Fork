@@ -31,7 +31,15 @@ SDK_OS_FREE_RTOS, HAS_GPS from main.h: sizeof(settingsStruct_t)=116,
 UNUSED_1 offset=60, UNUSED_2=62, roaming=108, lastTalkerOnScreenTimer=113.
 No pointer/long members; fixed-width fields and 32-bit enum alignment. Target
 compile-time assertions must enforce these values (including enum ABI).
-Settings occupy [0x604B,0x60BF); slot bytes [0x6087,0x608B) already belong to
+Later ARM verification: default AAPCS roaming enum is 1 byte, structure 112,
+lastTalker offset 108; host/`-fno-short-enums` enum is 4 bytes, structure 116,
+lastTalker offset 113. All 57 member offsets/sizes match baseline under both
+ABIs (see validation/settings-abi.log). Both slot offsets remain 60/62.
+The GNU build recipe defines HAS_GPS globally to match main.h and avoid
+translation-unit-dependent structure definitions; it does not change enum ABI.
+The earlier host result alone was not sufficient evidence of target size.
+
+Settings occupy [0x604B,0x60BB) for AAPCS, [0x604B,0x60BF) for full enums; slot bytes [0x6087,0x608B) already belong to
 that exact settings write. This allocates no EEPROM/Flash address. Repository
 search of UNUSED_1/2 found only declarations and default-zero assignments in
 settings.c; similarly named Codeplug fields are separate structures.
@@ -48,9 +56,11 @@ updates; existing settings block has its original write semantics.
 ## Build and hardware boundary
 
 No .project/.cproject, top-level Makefile or source manifest is tracked.
-arm-none-eabi-gcc is absent; only host gcc found. `prepare` depends on missing
-codec_cleaner.Linux; linker placeholder sections are absent. Full target link,
-space numbers and radio behavior are Blocked/Not Run until tools are supplied.
+arm-none-eabi-gcc is absent; only host gcc found initially. Further inspection found codec_cleaner.Linux
+present without executable permission; placeholder sections were initially absent.
+A copied cleaner ran with -C only in /tmp; no donor was acquired. The toolchain was subsequently extracted into /tmp. All 128 ARM units compile;
+full newlib link still fails for both baseline and feature at the fixed codec
+boundary. Final linked space numbers and radio behavior remain Blocked/Not Run.
 Add reproducible syntax checks using actual GD-77 headers and host tests;
 these do not constitute an ARM firmware build. Do not flash, reset storage,
 push or change main. Restricted AMBE donor is never fetched or committed.

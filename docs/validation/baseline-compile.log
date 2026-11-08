@@ -1,0 +1,323 @@
+arm-none-eabi-gcc (15:10.3-2021.07-4) 10.3.1 20210621 (release)
+Copyright (C) 2020 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+amazon-freertos/FreeRTOS/croutine.c
+
+amazon-freertos/FreeRTOS/event_groups.c
+
+amazon-freertos/FreeRTOS/list.c
+
+amazon-freertos/FreeRTOS/portable/heap_4.c
+
+amazon-freertos/FreeRTOS/portable/port.c
+
+amazon-freertos/FreeRTOS/queue.c
+
+amazon-freertos/FreeRTOS/stream_buffer.c
+
+amazon-freertos/FreeRTOS/tasks.c
+
+amazon-freertos/FreeRTOS/timers.c
+
+board/clock_config.c
+
+device/system_MK22F51212.c
+
+drivers/fsl_adc16.c
+
+drivers/fsl_clock.c
+
+drivers/fsl_common.c
+
+drivers/fsl_common_arm.c
+
+drivers/fsl_dac.c
+
+drivers/fsl_dmamux.c
+
+drivers/fsl_dspi.c
+
+drivers/fsl_edma.c
+
+drivers/fsl_ftm.c
+
+drivers/fsl_gpio.c
+
+drivers/fsl_i2c.c
+
+drivers/fsl_notifier.c
+
+drivers/fsl_pit.c
+
+drivers/fsl_pmc.c
+
+drivers/fsl_rcm.c
+
+drivers/fsl_rtc.c
+
+drivers/fsl_sai.c
+
+drivers/fsl_sai_edma.c
+
+drivers/fsl_smc.c
+
+drivers/fsl_uart.c
+
+drivers/fsl_wdog.c
+
+lists/fsl_component_generic_list.c
+
+osa/fsl_os_abstraction_free_rtos.c
+
+source/dmr_codec/codec.c
+
+source/dmr_codec/codec_interface.c
+
+source/firmware.c
+
+source/functions/aprs.c
+
+source/functions/calibration.c
+
+source/functions/codeplug.c
+
+source/functions/hotspot.c
+
+source/functions/rxPowerSaving.c
+
+source/functions/satellite.c
+
+source/functions/settings.c
+
+source/functions/sound.c
+/tmp/gd77-baseline/firmware/source/functions/sound.c: In function 'soundBeepTaskFunction':
+/tmp/gd77-baseline/firmware/source/functions/sound.c:550:2: warning: #warning ERRR NO [-Wcpp]
+  550 | #warning ERRR NO
+      |  ^~~~~~~
+/tmp/gd77-baseline/firmware/source/functions/sound.c:562:2: warning: #warning ERRR NO [-Wcpp]
+  562 | #warning ERRR NO
+      |  ^~~~~~~
+/tmp/gd77-baseline/firmware/source/functions/sound.c:589:2: warning: #warning ERRR NO [-Wcpp]
+  589 | #warning ERRR NO
+      |  ^~~~~~~
+/tmp/gd77-baseline/firmware/source/functions/sound.c:606:2: warning: #warning ERRR NO [-Wcpp]
+  606 | #warning ERRR NO
+      |  ^~~~~~~
+
+source/functions/ticks.c
+
+source/functions/trx.c
+
+source/functions/voicePrompts.c
+
+source/functions/vox.c
+
+source/hardware/AT1846S.c
+
+source/hardware/EEPROM.c
+
+source/hardware/HR-C6000.c
+
+source/hardware/SPI_Flash.c
+
+source/hardware/UC1701.c
+
+source/hardware/UC1701_transfer.c
+
+source/interfaces/adc.c
+
+source/interfaces/clockManager.c
+
+source/interfaces/dac.c
+
+source/interfaces/gpio.c
+
+source/interfaces/gps.c
+
+source/interfaces/i2c.c
+
+source/interfaces/i2s.c
+
+source/interfaces/interrupts.c
+
+source/interfaces/pit.c
+
+source/interfaces/settingsStorage.c
+
+source/interfaces/spi.c
+
+source/interfaces/wdog.c
+
+source/io/LEDs.c
+
+source/io/buttons.c
+
+source/io/display.c
+
+source/io/keyboard.c
+
+source/io/rotary_switch.c
+
+source/main.c
+
+source/semihost_hardfault.c
+
+source/usb/usb_com.c
+
+source/usb/usb_device_descriptor.c
+
+source/usb/virtual_com.c
+
+source/user_interface/menuAPRSOptions.c
+/tmp/gd77-baseline/firmware/source/user_interface/menuAPRSOptions.c: In function 'updateScreen':
+/tmp/gd77-baseline/firmware/source/user_interface/menuAPRSOptions.c:420:7: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  420 |       strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/gd77-baseline/firmware/source/user_interface/menuAPRSOptions.c:443:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  443 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+source/user_interface/menuCalibration.c
+/tmp/gd77-baseline/firmware/source/user_interface/menuCalibration.c: In function 'updateScreen':
+/tmp/gd77-baseline/firmware/source/user_interface/menuCalibration.c:318:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  318 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/gd77-baseline/firmware/source/user_interface/menuCalibration.c:340:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  340 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+source/user_interface/menuChannelDetails.c
+/tmp/gd77-baseline/firmware/source/user_interface/menuChannelDetails.c: In function 'updateScreen':
+/tmp/gd77-baseline/firmware/source/user_interface/menuChannelDetails.c:795:8: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  795 |        strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/gd77-baseline/firmware/source/user_interface/menuChannelDetails.c:818:7: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  818 |       strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+source/user_interface/menuContactDetails.c
+
+source/user_interface/menuContactList.c
+
+source/user_interface/menuDisplayMenuList.c
+
+source/user_interface/menuDisplayOptions.c
+/tmp/gd77-baseline/firmware/source/user_interface/menuDisplayOptions.c: In function 'updateScreen':
+/tmp/gd77-baseline/firmware/source/user_interface/menuDisplayOptions.c:375:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  375 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/gd77-baseline/firmware/source/user_interface/menuDisplayOptions.c:397:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  397 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+source/user_interface/menuFirmwareInfoScreen.c
+
+source/user_interface/menuGPS.c
+
+source/user_interface/menuGeneralOptions.c
+/tmp/gd77-baseline/firmware/source/user_interface/menuGeneralOptions.c: In function 'updateScreen':
+/tmp/gd77-baseline/firmware/source/user_interface/menuGeneralOptions.c:382:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  382 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/gd77-baseline/firmware/source/user_interface/menuGeneralOptions.c:404:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  404 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+source/user_interface/menuLanguage.c
+
+source/user_interface/menuLastHeard.c
+
+source/user_interface/menuRSSIScreen.c
+
+source/user_interface/menuRadioInfos.c
+
+source/user_interface/menuRadioOptions.c
+/tmp/gd77-baseline/firmware/source/user_interface/menuRadioOptions.c: In function 'updateScreen':
+/tmp/gd77-baseline/firmware/source/user_interface/menuRadioOptions.c:264:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  264 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/gd77-baseline/firmware/source/user_interface/menuRadioOptions.c:286:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  286 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+source/user_interface/menuSatelliteScreen.c
+
+source/user_interface/menuSoundOptions.c
+/tmp/gd77-baseline/firmware/source/user_interface/menuSoundOptions.c: In function 'updateScreen':
+/tmp/gd77-baseline/firmware/source/user_interface/menuSoundOptions.c:316:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  316 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/gd77-baseline/firmware/source/user_interface/menuSoundOptions.c:338:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  338 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+source/user_interface/menuSystem.c
+
+source/user_interface/menuZoneList.c
+
+source/user_interface/uiCPS.c
+
+source/user_interface/uiChannelMode.c
+
+source/user_interface/uiGlobals.c
+
+source/user_interface/uiHotspot.c
+
+source/user_interface/uiLocalisation.c
+
+source/user_interface/uiLockScreen.c
+
+source/user_interface/uiMessageBox.c
+
+source/user_interface/uiNotification.c
+
+source/user_interface/uiPowerOff.c
+
+source/user_interface/uiPrivateCall.c
+
+source/user_interface/uiSplashScreen.c
+
+source/user_interface/uiTxScreen.c
+
+source/user_interface/uiTxTgPcContactOwnId.c
+
+source/user_interface/uiUtilities.c
+
+source/user_interface/uiVFOMode.c
+
+startup/startup_mk22f51212.c
+
+usb/device/class/usb_device_audio.c
+
+usb/device/class/usb_device_ccid.c
+
+usb/device/class/usb_device_cdc_acm.c
+
+usb/device/class/usb_device_cdc_rndis.c
+
+usb/device/class/usb_device_class.c
+
+usb/device/class/usb_device_dfu.c
+
+usb/device/class/usb_device_hid.c
+
+usb/device/class/usb_device_msc.c
+
+usb/device/class/usb_device_msc_ufi.c
+
+usb/device/class/usb_device_phdc.c
+
+usb/device/class/usb_device_printer.c
+
+usb/device/class/usb_device_video.c
+
+usb/device/source/khci/usb_device_khci.c
+
+usb/device/source/lpcip3511/usb_device_lpcip3511.c
+
+usb/device/source/usb_device_ch9.c
+
+usb/device/source/usb_device_dci.c
