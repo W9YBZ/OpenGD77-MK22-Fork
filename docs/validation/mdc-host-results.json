@@ -1,0 +1,41 @@
+[
+  {
+    "unit_id": "0001",
+    "samples": 8320,
+    "duration_ms": 173.33333333333334,
+    "peak": 12000,
+    "decoder": "Pass",
+    "decoded_op": 1,
+    "decoded_arg": 0,
+    "decoded_id": "0001",
+    "corrupted_crc_rejected": true,
+    "single_bit_fec_recovered": true,
+    "wav_sha256": "542efa0db39b67abd8d457b7bfe6bb55260ab932f115c9e4c392b90a56202d60"
+  },
+  {
+    "unit_id": "1234",
+    "samples": 8320,
+    "duration_ms": 173.33333333333334,
+    "peak": 12000,
+    "decoder": "Pass",
+    "decoded_op": 1,
+    "decoded_arg": 0,
+    "decoded_id": "1234",
+    "corrupted_crc_rejected": true,
+    "single_bit_fec_recovered": true,
+    "wav_sha256": "4935590a17209cd37796cac637f954128ad08e0781668e5439f51c76219ab4ff"
+  },
+  {
+    "unit_id": "FFFF",
+    "samples": 8320,
+    "duration_ms": 173.33333333333334,
+    "peak": 12000,
+    "decoder": "Pass",
+    "decoded_op": 1,
+    "decoded_arg": 0,
+    "decoded_id": "FFFF",
+    "corrupted_crc_rejected": true,
+    "single_bit_fec_recovered": true,
+    "wav_sha256": "58b6596eef16187bacc5ac04df42b4cac9436406c683f8f5974a47e5295c7137"
+  }
+]

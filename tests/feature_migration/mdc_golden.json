@@ -1,0 +1,52 @@
+{
+  "source": "https://github.com/atmatthewat/mdc-encode-decode",
+  "commit": "45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12",
+  "profile": "candidate ANI/EOT op=01 arg=00; RF unverified",
+  "vectors": [
+    {
+      "unit_id": "0001",
+      "crc_states_before_xor": [
+        "1189",
+        "19D8",
+        "5ADC",
+        "0D32"
+      ],
+      "crc": "F2CD",
+      "fec_block": "01000001CDF2006500006519D321",
+      "frame": "5555555555555507092A446F8484000C028A16100E0B02960C86",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF665846C6000A03CF1D18090E83DD0AC5",
+      "length_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "unit_id": "1234",
+      "crc_states_before_xor": [
+        "1189",
+        "19D8",
+        "694F",
+        "CD3D"
+      ],
+      "crc": "32C2",
+      "fec_block": "01001234C2320065009A6201110A",
+      "frame": "5555555555555507092A446F88810808029B2620041818A424A0",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF66584CC18C0C03D6B530061414F636F0",
+      "length_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "unit_id": "FFFF",
+      "crc_states_before_xor": [
+        "1189",
+        "19D8",
+        "55A4",
+        "EC03"
+      ],
+      "crc": "13FC",
+      "fec_block": "0100FFFFFC130065002300AFDC06",
+      "frame": "5555555555555507092A446F9C971C033EA63C20340E348A3C88",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF665852DC9202A1F522302E092ECF22CC",
+      "length_bytes": 26,
+      "symbols": 208
+    }
+  ]
+}
