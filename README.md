@@ -115,9 +115,19 @@ experimental build option and menu selection. PTT Tone defaults to Off.
 After the SPI Flash timing correction, the user confirmed that the GD-77 boots
 normally with the firmware built from `1236a41`. The earlier `8f64d48` image
 failed with FLASH MEM ERROR and is retained only as diagnostic history.
-Successful boot does not complete CPS roundtrip, calibration readback, FM audio
-or MDC RF acceptance. See the [migration report](docs/FEATURE_MIGRATION_REPORT.md)
-and [RF acceptance procedure](docs/RF_ACCEPTANCE.md).
+The user also confirmed CPS E2026.05.26.01 read/write, settings save, and FM
+receive/transmit speech. However, key beeps, local Talk Permit and the PTT RF
+beep were absent. DMR voice has not been tested.
+
+The new audio diagnostic build checks task creation, OpenMusic, FIFO and PCM
+transfer results and adds read-only Audio pages after the credits in Firmware
+Info. Four checked CPS packages isolate the base code, PTT/Talk Permit, the full
+experiment and audio units without LTO. Their hardware audio/RF results remain
+**Not Run**; the exact radio failure is not yet established. Start with
+`artifacts/gd77-audio/ptt-permit/OpenGD77-PTT-TalkPermit.zip` for local beep tests.
+See [audio diagnosis, package hashes and acceptance steps](docs/AUDIO_DIAGNOSTICS.md),
+the [migration report](docs/FEATURE_MIGRATION_REPORT.md), and the
+[RF acceptance procedure](docs/RF_ACCEPTANCE.md).
 
 The GNU build's `--link` automatically compiles, validates the image and creates
 a CPS firmware ZIP containing `OpenGD77.bin` and matching language files:
@@ -137,4 +147,4 @@ firmware ZIP. `--donor-zip` extracts and validates the V4.3.6 donor from the sup
 official archive; it is not included in the firmware ZIP or this repository.
 The CPS merges the donor codec during upload. The build never flashes a radio.
 Codeplug, settings ABI, calibration format and CPS protocol are preserved;
-hardware readback verification remains pending.
+calibration readback and the new builds' hardware regression remain pending.

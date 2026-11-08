@@ -1,0 +1,124 @@
+{
+  "variant": "full-lto",
+  "source_revision": "40f5034a8e9208585c68a525ae9c7da71eb982ac",
+  "baseline": null,
+  "common_audio_fixes": true,
+  "overlay": null,
+  "command": [
+    "/usr/bin/python3",
+    "/home/yuhui/software_ws/OpenGD77-MK22-Fork/tools/build_gd77.py",
+    "--cc",
+    "/tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc",
+    "--newlib",
+    "/tmp/gd77-toolchain/root/usr",
+    "--lto",
+    "--link",
+    "--donor-zip",
+    "/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip",
+    "--source",
+    "/home/yuhui/software_ws/OpenGD77-MK22-Fork",
+    "--out",
+    "/home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/full-lto",
+    "--experimental-mdc-rf"
+  ],
+  "hardware_audio": "NOT_RUN",
+  "manifest": {
+    "source_revision": "40f5034a8e9208585c68a525ae9c7da71eb982ac",
+    "tracked_dirty": false,
+    "source_date_epoch": 1794178845,
+    "firmware": "OpenGD77-MDC1200-EXP.bin",
+    "experimental_mdc_rf": true,
+    "audio_no_lto": false,
+    "fully_linked": true,
+    "donor_required": true,
+    "donor_version": "GD-77 V4.3.6",
+    "bytes": 502812,
+    "sha256": "5f2dc6be4c46c2cdca3ec3b8ca2eebcbf9ccfe30a38bcfa3493c95a77f9773a7",
+    "flash_base": 16384,
+    "flash_end": 519196,
+    "upload_headroom": 996,
+    "initial_sp": 536870912,
+    "reset_vector": 16841,
+    "codec_regions": {
+      ".codec_bin_section_1": {
+        "address": 17408,
+        "size": 3840
+      },
+      ".codec_bin_section_2": {
+        "address": 344064,
+        "size": 163984
+      }
+    },
+    "heap_start": 536843880,
+    "heap_limit": 536847976,
+    "stack_base": 536866816,
+    "ram_sections": [
+      {
+        "start": 536805376,
+        "end": 536843880,
+        "name": ".data"
+      },
+      {
+        "start": 536843880,
+        "end": 536847976,
+        "name": ".heap"
+      },
+      {
+        "start": 536847976,
+        "end": 536852072,
+        "name": ".heap2stackfill"
+      },
+      {
+        "start": 536866816,
+        "end": 536870912,
+        "name": ".stack"
+      },
+      {
+        "start": 536870912,
+        "end": 536919232,
+        "name": ".bss"
+      }
+    ],
+    "codec_merge": "required in CPS using GD-77_V4.3.6.sgl",
+    "rf_validation": "NOT_RUN",
+    "donor": {
+      "file": "GD-77_V4.3.6.sgl",
+      "sha256": "d8bdfcc4c5fbb5e1f58e2d6f243381c673d6d09d4718b1ce9178e50fab01706f",
+      "bytes": 494698,
+      "zip_crc_checked": true
+    }
+  },
+  "package": {
+    "file": "OpenGD77-MDC1200-EXP.zip",
+    "sha256": "71f2cdc376d2648461fe7a412a834bf475ff43565a621b59d79ac9e13bf5fdbb",
+    "bytes": 239840,
+    "firmware_sha256": "5f2dc6be4c46c2cdca3ec3b8ca2eebcbf9ccfe30a38bcfa3493c95a77f9773a7",
+    "firmware_source": "40f5034a8e9208585c68a525ae9c7da71eb982ac",
+    "language_count": 18,
+    "entries": [
+      "OpenGD77.bin",
+      "Catalan.gla",
+      "Croatian.gla",
+      "Czech.gla",
+      "Danish.gla",
+      "Dutch.gla",
+      "Finnish.gla",
+      "French.gla",
+      "German.gla",
+      "Hungarian.gla",
+      "Italian.gla",
+      "Polish.gla",
+      "PortuguesBrazil.gla",
+      "Portuguese.gla",
+      "Romanian.gla",
+      "Slovenian.gla",
+      "Spanish.gla",
+      "Swedish.gla",
+      "Turkish.gla"
+    ],
+    "crc_check": "PASS",
+    "bin_unchanged": true,
+    "donor_in_zip": false,
+    "cps_hardware_test": "NOT_RUN"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "firmware/source/interfaces/spi.c": {
+    "unchanged_since_repository_base": true,
+    "sha256": "629ecdff7b4f595d33bb33c988db4c75c21594ef1dbec7d1ac328868f743c02a"
+  },
+  "firmware/drivers/fsl_dspi.c": {
+    "unchanged_since_repository_base": true,
+    "sha256": "3a67b79c65f8c75a39dd1635e11ca35113263aab9527223ad943d84ab872b2fa"
+  },
+  "firmware/source/interfaces/gpio.c": {
+    "unchanged_since_repository_base": true,
+    "sha256": "d758f215087f2b8bcf0ad54b3c4c5601d7dd8dd288e79c32cf6da58c320eaeff"
+  },
+  "firmware/source/interfaces/i2s.c": {
+    "unchanged_since_repository_base": true,
+    "sha256": "ea2d02994b438da3cb6035ca68a9fbd39a06b98e2598d7537dca93e0efee371b"
+  },
+  "firmware/source/interfaces/pit.c": {
+    "unchanged_since_repository_base": true,
+    "sha256": "5944d866cc34c6048c8113ed6fb63e16621ce2fb33a0ccebfe31feb78e817ef6"
+  },
+  "firmware/source/hardware/HR-C6000.c": {
+    "unchanged_since_repository_base": true,
+    "sha256": "8e3755c1089935cc5108ddd7d43cad9c9fef82c88fbc94745c1593b55d385922"
+  }
+}

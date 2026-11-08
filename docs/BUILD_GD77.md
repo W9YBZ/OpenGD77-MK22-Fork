@@ -1,11 +1,19 @@
 # GD-77 GNU release build and CPS firmware file
 
+
+Latest audio work: the user confirmed boot, CPS read/write, saved settings and FM
+speech on the previous image, but key/Talk Permit/PTT beep audio failed. New
+checked diagnostic packages and four-way isolation builds are documented in
+[AUDIO_DIAGNOSTICS.md](AUDIO_DIAGNOSTICS.md), with hashes and manual acceptance.
+Their hardware tests are Not Run. The earlier Flash build below is historical.
+
 The GNU release links, checks the BIN and automatically produces the CPS `.zip`
 in one invocation of `--link`. The previous 8f64d48 image failed hardware boot
 with **FLASH MEM ERROR**, reported by the user; retain it for diagnosis, not installation.
 The user subsequently confirmed normal boot with the SPI timing/ID-diagnostic
 firmware from `1236a41` (2026-11-08). Boot is **Pass, user reported**; RF decoding,
-CPS roundtrip and flash-write/performance tests remain **Not Run**. MDC defaults to Off.
+CPS read/write subsequently passed by user feedback; flash-write/performance
+and calibration comparison remain **Not Run**. MDC defaults to Off.
 
 ## Reproduce in this workspace
 

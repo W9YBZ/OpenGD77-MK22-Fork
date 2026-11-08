@@ -1,0 +1,41 @@
+ARM objects: 130 passed, 0 failed; log /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/ptt-permit/compile.log
+{
+  "file": "OpenGD77-PTT-TalkPermit.zip",
+  "sha256": "0e7a077d6f705df15d5f0ae93758f399edac0c268973814974fbf73dbf5e13d2",
+  "bytes": 238092,
+  "firmware_sha256": "a16cbd1e246f38bb85c472904d269ec5a5866bc6bb8aba48924363a07d765962",
+  "firmware_source": "40f5034a8e9208585c68a525ae9c7da71eb982ac",
+  "language_count": 18,
+  "entries": [
+    "OpenGD77.bin",
+    "Catalan.gla",
+    "Croatian.gla",
+    "Czech.gla",
+    "Danish.gla",
+    "Dutch.gla",
+    "Finnish.gla",
+    "French.gla",
+    "German.gla",
+    "Hungarian.gla",
+    "Italian.gla",
+    "Polish.gla",
+    "PortuguesBrazil.gla",
+    "Portuguese.gla",
+    "Romanian.gla",
+    "Slovenian.gla",
+    "Spanish.gla",
+    "Swedish.gla",
+    "Turkish.gla"
+  ],
+  "crc_check": "PASS",
+  "bin_unchanged": true,
+  "donor_in_zip": false,
+  "cps_hardware_test": "NOT_RUN"
+}
+   text	   data	    bss	    dec	    hex	filename
+ 460236	  38512	  60536	 559284	  888b4	/home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/ptt-permit/OpenGD77-PTT-TalkPermit.elf
+
+PASS image layout and vectors: /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/ptt-permit/OpenGD77-PTT-TalkPermit.bin
+BIN SHA256: a16cbd1e246f38bb85c472904d269ec5a5866bc6bb8aba48924363a07d765962
+Required in CPS: GD-77 V4.3.6 donor selected separately. No device action performed.
+CPS ZIP: /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/ptt-permit/OpenGD77-PTT-TalkPermit.zip

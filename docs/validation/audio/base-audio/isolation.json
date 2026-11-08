@@ -1,0 +1,136 @@
+{
+  "variant": "base-audio",
+  "source_revision": "40f5034a8e9208585c68a525ae9c7da71eb982ac",
+  "baseline": "72825f29d19729b0de3ec2711351a2845dbcff91",
+  "common_audio_fixes": true,
+  "overlay": {
+    "firmware/linkerscripts/firmware_newlib.ld": "e36804bc9e90ebb10b81418b477e98dfc3f0341208b1963f03e3a40957cc2e11",
+    "firmware/source/dmr_codec/codec_bin.S": "db8ee6254a33ba1a7cb3237da5c12f615a6126b80f73e7d7ea26fafd0c420e01",
+    "firmware/source/runtime/newlib_heap.c": "3f4d0cec69eeab2f4b249e190b78d796934615b72bc1d039099dd1f3a9933429",
+    "firmware/source/hardware/SPI_Flash.c": "f2c9094b93e02c365cb2f07532721ffe693879ccf5f1c1746251f34e5207a66c",
+    "firmware/source/hardware/EEPROM.c": "33bc98e4fa27506241189826d36cdb94c105ac1e5cb1fa39fb546bb1a2b03c2d",
+    "firmware/source/hardware/AT1846S.c": "b4f84d155c395617b4d438eebb71ddb50e89352efcc632a615773e1d7550abee",
+    "firmware/include/hardware/AT1846S.h": "6fe73afcf9a83957c0c56d57eea4b4290802f53d273c60fd815e0160a2fdffe7",
+    "firmware/include/FreeRTOSConfig.h": "c97e6f097ff615969a336f8961aa0fcbf40c7ade23e68f3ed4117dd7108ba171",
+    "firmware/include/functions/sound.h": "2fc96f4f2aab7a4633ce7247008f7e42f70a8fe5d10684d838c078698a697d87",
+    "firmware/source/functions/sound.c": "953e99aeead18eafbf61b612a07eb45afccfc0728daa0df1c8ea362c7922b3cc",
+    "firmware/source/main.c": "26ae3ed8fa982a6fb47d1d0efc7a7a2efc506a562bcc4c5bc3ede43470d1f14e",
+    "firmware/source/user_interface/menuFirmwareInfoScreen.c": "c5ab57397e4a98356101b399f1a0489e9741d5f54a2c52a7be5fd700111fbcdb"
+  },
+  "command": [
+    "/usr/bin/python3",
+    "/home/yuhui/software_ws/OpenGD77-MK22-Fork/tools/build_gd77.py",
+    "--cc",
+    "/tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc",
+    "--newlib",
+    "/tmp/gd77-toolchain/root/usr",
+    "--lto",
+    "--link",
+    "--donor-zip",
+    "/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip",
+    "--source",
+    "/tmp/gd77-audio-base-zvcosqc0/source",
+    "--out",
+    "/home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/base-audio"
+  ],
+  "hardware_audio": "NOT_RUN",
+  "manifest": {
+    "source_revision": "72825f29d19729b0de3ec2711351a2845dbcff91",
+    "tracked_dirty": true,
+    "source_date_epoch": 1783210328,
+    "firmware": "OpenGD77-PTT-TalkPermit.bin",
+    "experimental_mdc_rf": false,
+    "audio_no_lto": false,
+    "fully_linked": true,
+    "donor_required": true,
+    "donor_version": "GD-77 V4.3.6",
+    "bytes": 502812,
+    "sha256": "70899d18335a133bc08a2eb6445c40b9e08d26ca4279d50163b1d199c2da2252",
+    "flash_base": 16384,
+    "flash_end": 519196,
+    "upload_headroom": 996,
+    "initial_sp": 536870912,
+    "reset_vector": 16841,
+    "codec_regions": {
+      ".codec_bin_section_1": {
+        "address": 17408,
+        "size": 3840
+      },
+      ".codec_bin_section_2": {
+        "address": 344064,
+        "size": 163984
+      }
+    },
+    "heap_start": 536843888,
+    "heap_limit": 536847984,
+    "stack_base": 536866816,
+    "ram_sections": [
+      {
+        "start": 536805376,
+        "end": 536843884,
+        "name": ".data"
+      },
+      {
+        "start": 536843888,
+        "end": 536847984,
+        "name": ".heap"
+      },
+      {
+        "start": 536847984,
+        "end": 536852080,
+        "name": ".heap2stackfill"
+      },
+      {
+        "start": 536866816,
+        "end": 536870912,
+        "name": ".stack"
+      },
+      {
+        "start": 536870912,
+        "end": 536919104,
+        "name": ".bss"
+      }
+    ],
+    "codec_merge": "required in CPS using GD-77_V4.3.6.sgl",
+    "rf_validation": "NOT_RUN",
+    "donor": {
+      "file": "GD-77_V4.3.6.sgl",
+      "sha256": "d8bdfcc4c5fbb5e1f58e2d6f243381c673d6d09d4718b1ce9178e50fab01706f",
+      "bytes": 494698,
+      "zip_crc_checked": true
+    }
+  },
+  "package": {
+    "file": "OpenGD77-PTT-TalkPermit.zip",
+    "sha256": "9adf9bcd9b0bc1276d5cc8356ae7a602b0c2dfd8be2bcd786ecb7105b905d269",
+    "bytes": 236271,
+    "firmware_sha256": "70899d18335a133bc08a2eb6445c40b9e08d26ca4279d50163b1d199c2da2252",
+    "firmware_source": "72825f29d19729b0de3ec2711351a2845dbcff91",
+    "language_count": 18,
+    "entries": [
+      "OpenGD77.bin",
+      "Catalan.gla",
+      "Croatian.gla",
+      "Czech.gla",
+      "Danish.gla",
+      "Dutch.gla",
+      "Finnish.gla",
+      "French.gla",
+      "German.gla",
+      "Hungarian.gla",
+      "Italian.gla",
+      "Polish.gla",
+      "PortuguesBrazil.gla",
+      "Portuguese.gla",
+      "Romanian.gla",
+      "Slovenian.gla",
+      "Spanish.gla",
+      "Swedish.gla",
+      "Turkish.gla"
+    ],
+    "crc_check": "PASS",
+    "bin_unchanged": true,
+    "donor_in_zip": false,
+    "cps_hardware_test": "NOT_RUN"
+  }
+}

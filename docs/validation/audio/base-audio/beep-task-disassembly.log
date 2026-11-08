@@ -1,0 +1,161 @@
+
+artifacts/gd77-audio/base-audio/OpenGD77-PTT-TalkPermit.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text_start:
+
+Disassembly of section .text_main:
+
+000093c4 <soundBeepTaskFunction.lto_priv.0>:
+    93c4:	b580      	push	{r7, lr}
+    93c6:	b08c      	sub	sp, #48	; 0x30
+    93c8:	2600      	movs	r6, #0
+    93ca:	4c6e      	ldr	r4, [pc, #440]	; (9584 <soundBeepTaskFunction.lto_priv.0+0x1c0>)
+    93cc:	9602      	str	r6, [sp, #8]
+    93ce:	f8ad 600c 	strh.w	r6, [sp, #12]
+    93d2:	f8d4 7674 	ldr.w	r7, [r4, #1652]	; 0x674
+    93d6:	bb37      	cbnz	r7, 9426 <soundBeepTaskFunction.lto_priv.0+0x62>
+    93d8:	f8d4 3144 	ldr.w	r3, [r4, #324]	; 0x144
+    93dc:	3301      	adds	r3, #1
+    93de:	f8c4 3144 	str.w	r3, [r4, #324]	; 0x144
+    93e2:	2305      	movs	r3, #5
+    93e4:	f884 30dd 	strb.w	r3, [r4, #221]	; 0xdd
+    93e8:	f89d 3009 	ldrb.w	r3, [sp, #9]
+    93ec:	b933      	cbnz	r3, 93fc <soundBeepTaskFunction.lto_priv.0+0x38>
+    93ee:	f8b4 366a 	ldrh.w	r3, [r4, #1642]	; 0x66a
+    93f2:	b21b      	sxth	r3, r3
+    93f4:	bb23      	cbnz	r3, 9440 <soundBeepTaskFunction.lto_priv.0+0x7c>
+    93f6:	f89d 3008 	ldrb.w	r3, [sp, #8]
+    93fa:	b30b      	cbz	r3, 9440 <soundBeepTaskFunction.lto_priv.0+0x7c>
+    93fc:	2100      	movs	r1, #0
+    93fe:	2003      	movs	r0, #3
+    9400:	f7fd fb32 	bl	6a68 <beepSPI>
+    9404:	b198      	cbz	r0, 942e <soundBeepTaskFunction.lto_priv.0+0x6a>
+    9406:	f8d4 3168 	ldr.w	r3, [r4, #360]	; 0x168
+    940a:	3301      	adds	r3, #1
+    940c:	f8c4 3168 	str.w	r3, [r4, #360]	; 0x168
+    9410:	2301      	movs	r3, #1
+    9412:	f88d 3009 	strb.w	r3, [sp, #9]
+    9416:	2301      	movs	r3, #1
+    9418:	f8c4 3674 	str.w	r3, [r4, #1652]	; 0x674
+    941c:	f8d4 3148 	ldr.w	r3, [r4, #328]	; 0x148
+    9420:	3301      	adds	r3, #1
+    9422:	f8c4 3148 	str.w	r3, [r4, #328]	; 0x148
+    9426:	2000      	movs	r0, #0
+    9428:	f7fc fe0e 	bl	6048 <vTaskDelay>
+    942c:	e7d1      	b.n	93d2 <soundBeepTaskFunction.lto_priv.0+0xe>
+    942e:	f8d4 3164 	ldr.w	r3, [r4, #356]	; 0x164
+    9432:	f8ad 0008 	strh.w	r0, [sp, #8]
+    9436:	3301      	adds	r3, #1
+    9438:	f8c4 3164 	str.w	r3, [r4, #356]	; 0x164
+    943c:	f88d 000a 	strb.w	r0, [sp, #10]
+    9440:	f8b4 366a 	ldrh.w	r3, [r4, #1642]	; 0x66a
+    9444:	b21b      	sxth	r3, r3
+    9446:	2b00      	cmp	r3, #0
+    9448:	dde5      	ble.n	9416 <soundBeepTaskFunction.lto_priv.0+0x52>
+    944a:	f894 3566 	ldrb.w	r3, [r4, #1382]	; 0x566
+    944e:	2b02      	cmp	r3, #2
+    9450:	d102      	bne.n	9458 <soundBeepTaskFunction.lto_priv.0+0x94>
+    9452:	2000      	movs	r0, #0
+    9454:	f7fe fd9a 	bl	7f8c <rxPowerSavingSetState>
+    9458:	f89d 1008 	ldrb.w	r1, [sp, #8]
+    945c:	bb11      	cbnz	r1, 94a4 <soundBeepTaskFunction.lto_priv.0+0xe0>
+    945e:	4608      	mov	r0, r1
+    9460:	f88d 1010 	strb.w	r1, [sp, #16]
+    9464:	f7fd fb00 	bl	6a68 <beepSPI>
+    9468:	b140      	cbz	r0, 947c <soundBeepTaskFunction.lto_priv.0+0xb8>
+    946a:	f8d4 3150 	ldr.w	r3, [r4, #336]	; 0x150
+    946e:	3301      	adds	r3, #1
+    9470:	f8c4 3150 	str.w	r3, [r4, #336]	; 0x150
+    9474:	a802      	add	r0, sp, #8
+    9476:	f7ff ff8d 	bl	9394 <beepFault>
+    947a:	e7cc      	b.n	9416 <soundBeepTaskFunction.lto_priv.0+0x52>
+    947c:	a904      	add	r1, sp, #16
+    947e:	2004      	movs	r0, #4
+    9480:	f7fd faf2 	bl	6a68 <beepSPI>
+    9484:	2800      	cmp	r0, #0
+    9486:	d1f0      	bne.n	946a <soundBeepTaskFunction.lto_priv.0+0xa6>
+    9488:	f89d 3010 	ldrb.w	r3, [sp, #16]
+    948c:	f884 3185 	strb.w	r3, [r4, #389]	; 0x185
+    9490:	079b      	lsls	r3, r3, #30
+    9492:	d5ea      	bpl.n	946a <soundBeepTaskFunction.lto_priv.0+0xa6>
+    9494:	f8d4 314c 	ldr.w	r3, [r4, #332]	; 0x14c
+    9498:	3301      	adds	r3, #1
+    949a:	f8c4 314c 	str.w	r3, [r4, #332]	; 0x14c
+    949e:	2301      	movs	r3, #1
+    94a0:	f88d 3008 	strb.w	r3, [sp, #8]
+    94a4:	f10d 0107 	add.w	r1, sp, #7
+    94a8:	2001      	movs	r0, #1
+    94aa:	f88d 6007 	strb.w	r6, [sp, #7]
+    94ae:	f7fd fadb 	bl	6a68 <beepSPI>
+    94b2:	b128      	cbz	r0, 94c0 <soundBeepTaskFunction.lto_priv.0+0xfc>
+    94b4:	f8d4 3154 	ldr.w	r3, [r4, #340]	; 0x154
+    94b8:	3301      	adds	r3, #1
+    94ba:	f8c4 3154 	str.w	r3, [r4, #340]	; 0x154
+    94be:	e7d9      	b.n	9474 <soundBeepTaskFunction.lto_priv.0+0xb0>
+    94c0:	f89d 3007 	ldrb.w	r3, [sp, #7]
+    94c4:	f884 3184 	strb.w	r3, [r4, #388]	; 0x184
+    94c8:	f013 0301 	ands.w	r3, r3, #1
+    94cc:	d017      	beq.n	94fe <soundBeepTaskFunction.lto_priv.0+0x13a>
+    94ce:	f8d4 3158 	ldr.w	r3, [r4, #344]	; 0x158
+    94d2:	3301      	adds	r3, #1
+    94d4:	f8c4 3158 	str.w	r3, [r4, #344]	; 0x158
+    94d8:	f88d 600a 	strb.w	r6, [sp, #10]
+    94dc:	f7fc fb43 	bl	5b66 <vPortEnterCritical>
+    94e0:	f8b4 366a 	ldrh.w	r3, [r4, #1642]	; 0x66a
+    94e4:	b21b      	sxth	r3, r3
+    94e6:	2b00      	cmp	r3, #0
+    94e8:	bfc1      	itttt	gt
+    94ea:	f8b4 366a 	ldrhgt.w	r3, [r4, #1642]	; 0x66a
+    94ee:	f103 33ff 	addgt.w	r3, r3, #4294967295	; 0xffffffff
+    94f2:	b21b      	sxthgt	r3, r3
+    94f4:	f8a4 366a 	strhgt.w	r3, [r4, #1642]	; 0x66a
+    94f8:	f7fc fb50 	bl	5b9c <vPortExitCritical>
+    94fc:	e78b      	b.n	9416 <soundBeepTaskFunction.lto_priv.0+0x52>
+    94fe:	f8b4 c668 	ldrh.w	ip, [r4, #1640]	; 0x668
+    9502:	f8bd 500c 	ldrh.w	r5, [sp, #12]
+    9506:	fa0f fc8c 	sxth.w	ip, ip
+    950a:	f1bc 0f00 	cmp.w	ip, #0
+    950e:	dd0b      	ble.n	9528 <soundBeepTaskFunction.lto_priv.0+0x164>
+    9510:	ee07 ca90 	vmov	s15, ip
+    9514:	ed9f 7a1c 	vldr	s14, [pc, #112]	; 9588 <soundBeepTaskFunction.lto_priv.0+0x1c4>
+    9518:	eef8 6ae7 	vcvt.f32.s32	s13, s15
+    951c:	eec6 7a87 	vdiv.f32	s15, s13, s14
+    9520:	eefc 7ae7 	vcvt.u32.f32	s15, s15
+    9524:	ee17 3a90 	vmov	r3, s15
+    9528:	aa04      	add	r2, sp, #16
+    952a:	f8d4 863c 	ldr.w	r8, [r4, #1596]	; 0x63c
+    952e:	f8df 905c 	ldr.w	r9, [pc, #92]	; 958c <soundBeepTaskFunction.lto_priv.0+0x1c8>
+    9532:	4611      	mov	r1, r2
+    9534:	f1bc 0f00 	cmp.w	ip, #0
+    9538:	bfca      	itet	gt
+    953a:	f939 0015 	ldrshgt.w	r0, [r9, r5, lsl #1]
+    953e:	2000      	movle	r0, #0
+    9540:	fa40 f008 	asrgt.w	r0, r0, r8
+    9544:	3701      	adds	r7, #1
+    9546:	f3c0 2e07 	ubfx	lr, r0, #8, #8
+    954a:	441d      	add	r5, r3
+    954c:	2f10      	cmp	r7, #16
+    954e:	f882 e000 	strb.w	lr, [r2]
+    9552:	7050      	strb	r0, [r2, #1]
+    9554:	f3c5 050a 	ubfx	r5, r5, #0, #11
+    9558:	f102 0202 	add.w	r2, r2, #2
+    955c:	d1ea      	bne.n	9534 <soundBeepTaskFunction.lto_priv.0+0x170>
+    955e:	2002      	movs	r0, #2
+    9560:	f7fd fa82 	bl	6a68 <beepSPI>
+    9564:	b128      	cbz	r0, 9572 <soundBeepTaskFunction.lto_priv.0+0x1ae>
+    9566:	f8d4 3160 	ldr.w	r3, [r4, #352]	; 0x160
+    956a:	3301      	adds	r3, #1
+    956c:	f8c4 3160 	str.w	r3, [r4, #352]	; 0x160
+    9570:	e780      	b.n	9474 <soundBeepTaskFunction.lto_priv.0+0xb0>
+    9572:	f8d4 315c 	ldr.w	r3, [r4, #348]	; 0x15c
+    9576:	f8ad 500c 	strh.w	r5, [sp, #12]
+    957a:	3301      	adds	r3, #1
+    957c:	f8c4 315c 	str.w	r3, [r4, #348]	; 0x15c
+    9580:	e7aa      	b.n	94d8 <soundBeepTaskFunction.lto_priv.0+0x114>
+    9582:	bf00      	nop
+    9584:	20000000 	.word	0x20000000
+    9588:	407a8f5c 	.word	0x407a8f5c
+    958c:	0003f9e0 	.word	0x0003f9e0
+
+Disassembly of section .upper_text:

@@ -1,0 +1,1 @@
+PASS: actual ELF/BIN; mutations rejected: vectors, codec/data corruption, truncation, length, missing ALLOC and codec overlap

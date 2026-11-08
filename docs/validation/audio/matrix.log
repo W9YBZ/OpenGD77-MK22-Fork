@@ -1,0 +1,11 @@
+Preparing worktree (detached HEAD 72825f2)
+HEAD is now at 72825f2 Add CODE_REVIEW.md - first-pass code review
+Building base-audio
+PASS linked image + CPS ZIP: base-audio
+Building ptt-permit
+PASS linked image + CPS ZIP: ptt-permit
+Building full-lto
+PASS linked image + CPS ZIP: full-lto
+Building full-audio-no-lto
+PASS linked image + CPS ZIP: full-audio-no-lto
+All 4 packages checked. Hardware audio/RF acceptance NOT RUN.

@@ -1,0 +1,66 @@
+{
+  "source_revision": "40f5034a8e9208585c68a525ae9c7da71eb982ac",
+  "tracked_dirty": false,
+  "source_date_epoch": 1794178845,
+  "firmware": "OpenGD77-MDC1200-EXP.bin",
+  "experimental_mdc_rf": true,
+  "audio_no_lto": true,
+  "fully_linked": true,
+  "donor_required": true,
+  "donor_version": "GD-77 V4.3.6",
+  "bytes": 502812,
+  "sha256": "54574105ec9a84951bfb3f2aaf4872034afe105bb0e830315a2f37b5f6e0953a",
+  "flash_base": 16384,
+  "flash_end": 519196,
+  "upload_headroom": 996,
+  "initial_sp": 536870912,
+  "reset_vector": 16841,
+  "codec_regions": {
+    ".codec_bin_section_1": {
+      "address": 17408,
+      "size": 3840
+    },
+    ".codec_bin_section_2": {
+      "address": 344064,
+      "size": 163984
+    }
+  },
+  "heap_start": 536843880,
+  "heap_limit": 536847976,
+  "stack_base": 536866816,
+  "ram_sections": [
+    {
+      "start": 536805376,
+      "end": 536843876,
+      "name": ".data"
+    },
+    {
+      "start": 536843880,
+      "end": 536847976,
+      "name": ".heap"
+    },
+    {
+      "start": 536847976,
+      "end": 536852072,
+      "name": ".heap2stackfill"
+    },
+    {
+      "start": 536866816,
+      "end": 536870912,
+      "name": ".stack"
+    },
+    {
+      "start": 536870912,
+      "end": 536919368,
+      "name": ".bss"
+    }
+  ],
+  "codec_merge": "required in CPS using GD-77_V4.3.6.sgl",
+  "rf_validation": "NOT_RUN",
+  "donor": {
+    "file": "GD-77_V4.3.6.sgl",
+    "sha256": "d8bdfcc4c5fbb5e1f58e2d6f243381c673d6d09d4718b1ce9178e50fab01706f",
+    "bytes": 494698,
+    "zip_crc_checked": true
+  }
+}

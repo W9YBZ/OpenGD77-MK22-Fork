@@ -1,5 +1,29 @@
 # GD-77 R20260131 功能迁移与固件交付报告
 
+
+## 本轮公共音频诊断交付
+
+用户补充确认：前次固件启动、CPS E2026.05.26.01 读取/写入、设置保存、FM 接收
+及麦克风发射语音正常；DMR 暂未测试。但按键音、Talk Permit、本应有的 PTT RF
+尾音无声（用户配置已确认）。**这些声音项目在前次实机反馈中为 Fail。**
+本轮修复并验证了任务创建及 C6000 错误处理缺陷，增加 RAM 计数器和固件信息
+Audio 三页诊断；仍不能仅凭软件测试宣称实机无声根因已确认。
+
+已分阶段提交，源码 `40f5034`，四套固件均完整链接、通过镜像与 CPS ZIP 检查。
+优先复测包：`artifacts/gd77-audio/ptt-permit/OpenGD77-PTT-TalkPermit.zip`。
+完整实验包：`artifacts/gd77-audio/full-lto/OpenGD77-MDC1200-EXP.zip`。
+另有无自定义功能的基础代码诊断包、音频单元关闭 LTO 的对照包；不是官方发布固件。
+
+已通过真实按键函数/旋律/worker 的主机故障注入及 -O2/-flto/UBSan 测试、四平台
+语法、设置 57 字段 ABI、未修改的 MDC 独立参考解码回归。Flash 固定地址与上限
+不变；完整 LTO 的 codec2 前余量 1008 字节，音频 no-LTO 对照余 404 字节。
+所有新包的真实音频、RF、CPS 和任务栈余量复验均为 **Not Run**。
+
+[完整根因边界、改动、构建命令、SHA256、诊断解释及人工验收](AUDIO_DIAGNOSTICS.md)；
+[构建汇总](validation/audio/summary.json)；[本轮用户反馈](validation/audio/hardware-feedback.json)。
+本轮没有刷写、清空电台数据或修改 MDC 编码/调制算法。此前 Flash、EEPROM、CPS、
+Codeplug/校准/设置 ABI 修复与兼容性保留。下方是前次 Flash 交付及更早记录。
+
 **旧版 8f64d48 固件用户实机启动失败：FLASH MEM ERROR，验收状态为 Fail。**
 已修正外部 Flash 位操作的时序隐患并加入失败 ID 显示。用户随后确认新固件
 可以正常开机：新固件启动验收 Pass（用户实机反馈）。现在 `--link` 一条命令

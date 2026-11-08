@@ -1,0 +1,51 @@
+{
+  "bytes": 502812,
+  "sha256": "70899d18335a133bc08a2eb6445c40b9e08d26ca4279d50163b1d199c2da2252",
+  "flash_base": 16384,
+  "flash_end": 519196,
+  "upload_headroom": 996,
+  "initial_sp": 536870912,
+  "reset_vector": 16841,
+  "codec_regions": {
+    ".codec_bin_section_1": {
+      "address": 17408,
+      "size": 3840
+    },
+    ".codec_bin_section_2": {
+      "address": 344064,
+      "size": 163984
+    }
+  },
+  "heap_start": 536843888,
+  "heap_limit": 536847984,
+  "stack_base": 536866816,
+  "ram_sections": [
+    {
+      "start": 536805376,
+      "end": 536843884,
+      "name": ".data"
+    },
+    {
+      "start": 536843888,
+      "end": 536847984,
+      "name": ".heap"
+    },
+    {
+      "start": 536847984,
+      "end": 536852080,
+      "name": ".heap2stackfill"
+    },
+    {
+      "start": 536866816,
+      "end": 536870912,
+      "name": ".stack"
+    },
+    {
+      "start": 536870912,
+      "end": 536919104,
+      "name": ".bss"
+    }
+  ],
+  "codec_merge": "required in CPS using GD-77_V4.3.6.sgl",
+  "rf_validation": "NOT_RUN"
+}

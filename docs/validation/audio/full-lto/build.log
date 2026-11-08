@@ -1,0 +1,41 @@
+ARM objects: 131 passed, 0 failed; log /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/full-lto/compile.log
+{
+  "file": "OpenGD77-MDC1200-EXP.zip",
+  "sha256": "71f2cdc376d2648461fe7a412a834bf475ff43565a621b59d79ac9e13bf5fdbb",
+  "bytes": 239840,
+  "firmware_sha256": "5f2dc6be4c46c2cdca3ec3b8ca2eebcbf9ccfe30a38bcfa3493c95a77f9773a7",
+  "firmware_source": "40f5034a8e9208585c68a525ae9c7da71eb982ac",
+  "language_count": 18,
+  "entries": [
+    "OpenGD77.bin",
+    "Catalan.gla",
+    "Croatian.gla",
+    "Czech.gla",
+    "Danish.gla",
+    "Dutch.gla",
+    "Finnish.gla",
+    "French.gla",
+    "German.gla",
+    "Hungarian.gla",
+    "Italian.gla",
+    "Polish.gla",
+    "PortuguesBrazil.gla",
+    "Portuguese.gla",
+    "Romanian.gla",
+    "Slovenian.gla",
+    "Spanish.gla",
+    "Swedish.gla",
+    "Turkish.gla"
+  ],
+  "crc_check": "PASS",
+  "bin_unchanged": true,
+  "donor_in_zip": false,
+  "cps_hardware_test": "NOT_RUN"
+}
+   text	   data	    bss	    dec	    hex	filename
+ 462804	  38504	  60608	 561916	  892fc	/home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/full-lto/OpenGD77-MDC1200-EXP.elf
+
+PASS image layout and vectors: /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/full-lto/OpenGD77-MDC1200-EXP.bin
+BIN SHA256: 5f2dc6be4c46c2cdca3ec3b8ca2eebcbf9ccfe30a38bcfa3493c95a77f9773a7
+Required in CPS: GD-77 V4.3.6 donor selected separately. No device action performed.
+CPS ZIP: /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-audio/full-lto/OpenGD77-MDC1200-EXP.zip

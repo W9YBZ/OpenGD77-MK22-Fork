@@ -1,0 +1,10 @@
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:71:6:SPI0Setup	48	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:96:6:SPI1Setup	48	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:38:6:SPIInit	8	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:121:5:SPI0WritePageRegByte	40	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:151:5:SPI0ReadPageRegByte	40	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:186:5:SPI0ClearPageRegByteWithMask	32	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:202:5:SPI0WritePageRegByteArray	176	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:239:5:SPI0ReadPageRegByteArray	232	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:282:5:SPI1WritePageRegByteArray	80	static
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/interfaces/spi.c:317:5:SPI1ReadPageRegByteArray	104	static
