@@ -6,7 +6,7 @@ import tempfile
 ROOT=Path(__file__).resolve().parents[2]
 incs=["-I"+str(d) for d in (ROOT/"firmware").rglob("*") if d.is_dir()]
 with tempfile.TemporaryDirectory() as td:
-    for test in ("settings","tail","tx_helpers","radio_cache","mdc_schedule","mdc_rf","eeprom_bus","tx_helpers_rf","newlib_heap"):
+    for test in ("settings","tail","tx_helpers","radio_cache","mdc_schedule","mdc_rf","eeprom_bus","tx_helpers_rf","newlib_heap","spi_flash"):
         exe=str(Path(td)/test)
         source_test="tx_helpers" if test=="tx_helpers_rf" else test
         defines=["-DGD77_EXPERIMENTAL_MDC_RF=1"] if test=="tx_helpers_rf" else []

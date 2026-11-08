@@ -1079,7 +1079,15 @@ void mainTaskFunction(void *data)
 		menuDataGlobal.currentItemIndex = 0;
 
 		// Prepare the message displayed when root menu is MENU_EMPTY
-		snprintf(globalFailureMessage, SCREEN_LINE_BUFFER_SIZE, "%s", (safeBootMode ? "SAFE BOOT" : (spiFlashInitHasFailed ? "FLASH MEM ERROR" : "CAL DATA ERROR")));
+		if (spiFlashInitHasFailed && !safeBootMode)
+		{
+			// Keep the failed identification visible; never bypass the chip check.
+			snprintf(globalFailureMessage, SCREEN_LINE_BUFFER_SIZE, "FLASH ERR %04X", (unsigned int)flashChipPartNumber);
+		}
+		else
+		{
+			snprintf(globalFailureMessage, SCREEN_LINE_BUFFER_SIZE, "%s", safeBootMode ? "SAFE BOOT" : "CAL DATA ERROR");
+		}
 		showErrorMessage(globalFailureMessage);
 
 		die(true, false, false, safeBootMode);

@@ -64,16 +64,38 @@ uint32_t flashChipPartNumber;
 volatile static bool flashIsBusy = false;
 
 
+/* GPIO hooks let the host test exercise this transport with a timed flash model.
+ * W25Q80BV rev C1 sections 6.1.1, 8.6-8.9: mode 0, DI latched on
+ * rising CLK, DO changes after falling CLK. Do not rely on compiler scheduling
+ * between MMIO accesses for the output-valid/setup/hold intervals.
+ */
+#ifndef SPI_FLASH_PIN_WRITE
+#define SPI_FLASH_PIN_WRITE(port, pin, high) do { \
+    if (high) (port)->PSOR = 1U << (pin); \
+    else (port)->PCOR = 1U << (pin); \
+} while (0)
+#define SPI_FLASH_PIN_READ(port, pin) (((port)->PDIR >> (pin)) & 1U)
+#define SPI_FLASH_DELAY() __asm volatile (".rept 16\nnop\n.endr" ::: "memory")
+#endif
+
 static inline void spi_flash_enable(void)
 {
+	/* Reclaim CS without the output-low config producing a premature select. */
+	gpio_pin_config_t csOutput = pin_config_output;
+	csOutput.outputLogic = 1;
 	GPIO_PinInit(GPIO_SPI_FLASH_DO_U, Pin_SPI_FLASH_DO_U, &pin_config_output);
-	GPIO_PinInit(GPIO_SPI_FLASH_CS_U, Pin_SPI_FLASH_CS_U, &pin_config_output);
-	GPIO_SPI_FLASH_CS_U->PCOR = 1U << Pin_SPI_FLASH_CS_U;
+	SPI_FLASH_PIN_WRITE(GPIO_SPI_FLASH_CLK_U, Pin_SPI_FLASH_CLK_U, 0);
+	GPIO_PinInit(GPIO_SPI_FLASH_CS_U, Pin_SPI_FLASH_CS_U, &csOutput);
+	SPI_FLASH_DELAY();
+	SPI_FLASH_PIN_WRITE(GPIO_SPI_FLASH_CS_U, Pin_SPI_FLASH_CS_U, 0);
+	SPI_FLASH_DELAY();
 }
 
 static inline void spi_flash_disable(void)
 {
-	GPIO_SPI_FLASH_CS_U->PSOR = 1U << Pin_SPI_FLASH_CS_U;
+	SPI_FLASH_DELAY();
+	SPI_FLASH_PIN_WRITE(GPIO_SPI_FLASH_CS_U, Pin_SPI_FLASH_CS_U, 1);
+	SPI_FLASH_DELAY();
 	GPIO_PinInit(GPIO_SPI_FLASH_CS_U, Pin_SPI_FLASH_CS_U, &pin_config_input);
 	GPIO_PinInit(GPIO_SPI_FLASH_DO_U, Pin_SPI_FLASH_DO_U, &pin_config_input);
 }
@@ -82,23 +104,14 @@ static inline uint8_t spi_flash_transfer(uint8_t c)
 {
 	for (uint8_t bit = 0; bit < 8; bit++)
 	{
-		GPIO_SPI_FLASH_CLK_U->PCOR = 1U << Pin_SPI_FLASH_CLK_U;
-		//		__asm volatile( "nop" );
-		if ((c & 0x80) == 0U)
-		{
-			GPIO_SPI_FLASH_DO_U->PCOR = 1U << Pin_SPI_FLASH_DO_U;// Hopefully the compiler will optimise this to a value rather than using a shift
-		}
-		else
-		{
-			GPIO_SPI_FLASH_DO_U->PSOR = 1U << Pin_SPI_FLASH_DO_U;// Hopefully the compiler will optimise this to a value rather than using a shift
-		}
-		//		__asm volatile( "nop" );
-		c <<= 1;
-		c |= (GPIO_SPI_FLASH_DI_U->PDIR >> Pin_SPI_FLASH_DI_U) & 0x01U;
-		// toggle the clock
-		GPIO_SPI_FLASH_CLK_U->PSOR = 1U << Pin_SPI_FLASH_CLK_U;
-		//		__asm volatile( "nop" );
-
+		SPI_FLASH_PIN_WRITE(GPIO_SPI_FLASH_DO_U, Pin_SPI_FLASH_DO_U, (c & 0x80) != 0);
+		/* 16 explicit NOPs per half-cycle: at least 133 ns at 120 MHz,
+		 * before MMIO/instruction overhead. Also covers fall-to-DO-valid. */
+		SPI_FLASH_DELAY();
+		SPI_FLASH_PIN_WRITE(GPIO_SPI_FLASH_CLK_U, Pin_SPI_FLASH_CLK_U, 1);
+		SPI_FLASH_DELAY();
+		c = (uint8_t)((c << 1) | SPI_FLASH_PIN_READ(GPIO_SPI_FLASH_DI_U, Pin_SPI_FLASH_DI_U));
+		SPI_FLASH_PIN_WRITE(GPIO_SPI_FLASH_CLK_U, Pin_SPI_FLASH_CLK_U, 0);
 	}
 	return c;
 }
