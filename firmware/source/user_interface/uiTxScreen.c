@@ -122,6 +122,7 @@ static bool fmPermitStop(void)
 }
 static void fmPermitStart(uint32_t now)
 {
+ soundDiagnostics.permitRequests++;
  if (!manualFMSession || !settingsGetFMFeatures().talkPermit ||
      nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT ||
      codeplugChannelGetFlag(currentChannelData, CHANNEL_FLAG_NO_BEEP) ||
@@ -138,6 +139,7 @@ static void fmPermitStart(uint32_t now)
  fmPermitDraining = false;
  // HR-C6000 speaker audio only. AT1846 MIC is disconnected until completion.
  soundSetMelody(MELODY_FM_TALK_PERMIT);
+ if (melody_play == MELODY_FM_TALK_PERMIT) soundDiagnostics.permitStarts++;
  if (melody_play != MELODY_FM_TALK_PERMIT && !fmPermitStop()) transmitError = true;
 }
 static bool fmPermitTick(uint32_t now, bool release)
@@ -198,7 +200,13 @@ static bool fmTailStartFrequency(uint16_t frequency10)
  FM_FEATURE_TRACE("tail-start", fmTail.started);
  return true;
 }
-static bool fmTailStart(void) {return fmTailStartFrequency(10000);}
+static bool fmTailStart(void)
+{
+ soundDiagnostics.tailRequests++;
+ bool ok = fmTailStartFrequency(10000);
+ if (ok) soundDiagnostics.tailStarts++;
+ return ok;
+}
 #if GD77_EXPERIMENTAL_MDC_RF
 static bool fmMDCHandleRelease(bool eligible, bool abort, uint32_t now)
 {

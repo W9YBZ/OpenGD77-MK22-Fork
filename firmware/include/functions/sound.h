@@ -36,6 +36,22 @@
 
 extern Task_t beepTask;
 
+/* RAM-only diagnostics; no logs, persistent data or CPS interface changes.
+ * One writer per counter (main task or beep task); UI snapshots under critical.
+ */
+typedef struct
+{
+    uint32_t keyRequests, requests, accepted, channelRejected, voiceRejected, notes;
+    uint32_t createOK, createFailed, ticks, timerArms;
+    uint32_t openOK, openFailed, statusFailed, fifoBusy, blocks, writeFailed;
+    uint32_t closeOK, closeFailed, aborts;
+    uint32_t permitRequests, permitStarts, tailRequests, tailStarts;
+    int32_t lastStatus;
+    uint8_t lastFIFO, lastMode, ampAtNote, muxAtNote, mutedAtNote;
+} soundDiagnostics_t;
+extern volatile soundDiagnostics_t soundDiagnostics;
+
+
 extern int16_t melody_generic[512];
 extern const int16_t MELODY_POWER_ON[];
 extern const int16_t MELODY_PRIVATE_CALL[];

@@ -4,6 +4,7 @@
 #include <string.h>
 #include "../../firmware/source/user_interface/uiTxScreen.c"
 
+volatile soundDiagnostics_t soundDiagnostics;
 volatile int isI2cInUse;
 volatile bool trxTransmissionEnabled, trxIsTransmitting, txPAEnabled;
 settingsStruct_t nonVolatileSettings;

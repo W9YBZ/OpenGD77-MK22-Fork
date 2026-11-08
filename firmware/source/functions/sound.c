@@ -46,6 +46,7 @@ typedef union
 byteSwap16_t swapper;
 
 Task_t beepTask;
+volatile soundDiagnostics_t soundDiagnostics;
 
 __attribute__((section(".data.$RAM2"))) union sharedDataBuffer audioAndHotspotDataBuffer;
 __attribute__((section(".data.$RAM2"))) uint8_t spi_sound[NUM_I2S_BUFFERS][WAV_BUFFER_SIZE * 2];
@@ -192,6 +193,7 @@ bool audioAmpIsMuted(void)
 
 void soundSetMelody(const int16_t *melody)
 {
+	if (melody != NULL) soundDiagnostics.requests++;
 	rxPowerSavingSetState(ECOPHASE_POWERSAVE_INACTIVE);
 
 	if ((melody == MELODY_ERROR_BEEP) || (melody == MELODY_ACK_BEEP))
@@ -209,12 +211,15 @@ void soundSetMelody(const int16_t *melody)
 		{
 			sine_beep_freq = 0;
 			sine_beep_duration = 0;
+			if (melody != NULL) soundDiagnostics.accepted++;
 			melody_play = (int16_t *)melody;
 			melody_idx = 0;
 			soundResetDMRRxAGCGain();
 		}
+		else soundDiagnostics.voiceRejected++;
 		taskEXIT_CRITICAL();
 	}
+	else soundDiagnostics.channelRejected++;
 }
 
 void soundCreateSong(const uint8_t *melody)
@@ -247,7 +252,7 @@ void soundInitBeepTask(void)
 	sine_beep_duration = 0;
 	taskEXIT_CRITICAL();
 
-	xTaskCreate(soundBeepTaskFunction,           /* pointer to the task */
+	BaseType_t created = xTaskCreate(soundBeepTaskFunction,           /* pointer to the task */
 			"beepTask",                          /* task name for kernel awareness debugging */
 			1000L / sizeof(portSTACK_TYPE),      /* task stack size */
 			NULL,                      			 /* optional task startup argument */
@@ -255,8 +260,10 @@ void soundInitBeepTask(void)
 			&beepTask.Handle                     /* optional task handle to create */
 	);
 
-	beepTask.Running = true;
-	beepTask.AliveCount = TASK_FLAGGED_ALIVE;
+	beepTask.Running = (created == pdPASS);
+	beepTask.AliveCount = beepTask.Running ? TASK_FLAGGED_ALIVE : 0;
+	if (beepTask.Running) soundDiagnostics.createOK++;
+	else { beepTask.Handle = NULL; soundDiagnostics.createFailed++; }
 }
 
 void soundInit(void)
@@ -516,6 +523,10 @@ void soundTickMelody(void)
 						GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 0);// set the audio mux   HR-C6000 -> audio amp
 					}
 				}
+				soundDiagnostics.ampAtNote = GPIO_PinRead(GPIO_audio_amp_enable, Pin_audio_amp_enable);
+				soundDiagnostics.muxAtNote = GPIO_PinRead(GPIO_RX_audio_mux, Pin_RX_audio_mux);
+				soundDiagnostics.mutedAtNote = audioAmpIsMuted();
+				soundDiagnostics.notes++;
 				sine_beep_freq = melody_play[melody_idx];
 				sine_beep_duration = melody_play[melody_idx + 1];
 				melody_idx = melody_idx + 2;
@@ -525,101 +536,131 @@ void soundTickMelody(void)
 	taskEXIT_CRITICAL();
 }
 
+/* No scheduler calls while PORTC is masked. Each failure is retried on a
+ * subsequent 1ms service tick, and every non-success SDK result is rejected.
+ */
+typedef struct
+{
+    bool open, closePending;
+    uint8_t failures;
+    uint16_t phase;
+} beepState_t;
+
+static int beepSPI(unsigned operation, uint8_t *data)
+{
+    uint32_t enabled = NVIC_GetEnableIRQ(PORTC_IRQn);
+    NVIC_DisableIRQ(PORTC_IRQn);
+    int status;
+    switch (operation)
+    {
+        case 0: status = SPI0ClearPageRegByteWithMask(0x04, 0x06, 0xfd, 2); break;
+        case 1: status = SPI0ReadPageRegByte(0x04, 0x88, data); break;
+        case 2: status = SPI0WritePageRegByteArray(0x03, 0, data, 32); break;
+        case 3: status = SPI0ClearPageRegByteWithMask(0x04, 0x06, 0xfd, 0); break;
+        default: status = SPI0ReadPageRegByte(0x04, 0x06, data); break;
+    }
+    if (enabled) NVIC_EnableIRQ(PORTC_IRQn);
+    soundDiagnostics.lastStatus = status;
+    return status;
+}
+
+static void beepFault(beepState_t *state)
+{
+    if (++state->failures >= 10)
+    {
+        soundDiagnostics.aborts++;
+        soundStopMelody();
+        // A failed transfer may still have affected hardware. Keep retrying
+        // the close before allowing a new melody to enter OpenMusic.
+        state->closePending = true;
+        state->failures = 0;
+    }
+}
+
+static void soundBeepTaskStep(beepState_t *state)
+{
+    soundDiagnostics.ticks++;
+    beepTask.AliveCount = TASK_FLAGGED_ALIVE;
+    if (state->closePending || (sine_beep_duration == 0 && state->open))
+    {
+        if (beepSPI(3, NULL) != kStatus_Success)
+        {
+            soundDiagnostics.closeFailed++;
+            state->closePending = true;
+            return;
+        }
+        soundDiagnostics.closeOK++;
+        state->open = state->closePending = false;
+        state->failures = 0;
+    }
+    if (sine_beep_duration <= 0) return;
+    if (!rxPowerSavingIsRxOn()) rxPowerSavingSetState(ECOPHASE_POWERSAVE_INACTIVE);
+    if (!state->open)
+    {
+        uint8_t mode = 0;
+        if (beepSPI(0, NULL) != kStatus_Success ||
+            beepSPI(4, &mode) != kStatus_Success || !(mode & 2))
+        {
+            soundDiagnostics.openFailed++;
+            beepFault(state);
+            return;
+        }
+        soundDiagnostics.lastMode = mode;
+        soundDiagnostics.openOK++;
+        state->open = true;
+    }
+    uint8_t fifo = 0; // Never consume this value unless the read succeeded.
+    if (beepSPI(1, &fifo) != kStatus_Success)
+    {
+        soundDiagnostics.statusFailed++;
+        beepFault(state);
+        return;
+    }
+    soundDiagnostics.lastFIFO = fifo;
+    if (fifo & 1) soundDiagnostics.fifoBusy++;
+    else
+    {
+        uint8_t pcm[32];
+        unsigned phase = state->phase;
+        int frequency = sine_beep_freq;
+        unsigned step = frequency > 0 ? (unsigned)(frequency / 3.915f) : 0;
+        for (unsigned i = 0; i < 16; i++)
+        {
+            /* Local sample: the SAI/audio path also uses the old global swapper.
+             * Rest notes must be zero PCM, not the last non-zero phase value. */
+            int16_t sample = frequency > 0 ? sine_beep16[phase] >> soundBeepVolumeDivider : 0;
+            pcm[2*i] = (uint16_t)sample >> 8;
+            pcm[2*i+1] = (uint8_t)sample;
+            phase = (phase + step) & 0x7ff;
+        }
+        if (beepSPI(2, pcm) != kStatus_Success)
+        {
+            soundDiagnostics.writeFailed++;
+            beepFault(state);
+            return;
+        }
+        state->phase = phase;
+        soundDiagnostics.blocks++;
+    }
+    state->failures = 0;
+    // Main may have cancelled/replaced the melody while the task was preempted.
+    taskENTER_CRITICAL();
+    if (sine_beep_duration > 0) sine_beep_duration--;
+    taskEXIT_CRITICAL();
+}
+
 static void soundBeepTaskFunction(void *data)
 {
-	const int WAIT_TIMEOUT_COUNT = 10;
-	uint8_t tmp_val;
-	int beep_idx = 0;
-	bool beep = false;
-	uint8_t task_spi_sound[32];
-	int waitTimeout;
-
-	while (1U)
-	{
-		if (timer_beeptask == 0)
-		{
-			beepTask.AliveCount = TASK_FLAGGED_ALIVE;
-
-			if (sine_beep_duration > 0)
-			{
-				if (rxPowerSavingIsRxOn() == false)
-				{
-					rxPowerSavingSetState(ECOPHASE_POWERSAVE_INACTIVE);
-				}
-
-				if (!beep)
-				{
-					waitTimeout = WAIT_TIMEOUT_COUNT;
-#warning ERRR NO
-					NVIC_DisableIRQ(PORTC_IRQn);
-					// Set C6000 audio path to "OpenMusic" for beep
-					while ((SPI0ClearPageRegByteWithMask(0x04, 0x06, 0xFD, 0x02) == -1) &&  ((waitTimeout--) > 0))
-					{
-						vTaskDelay((0U / portTICK_PERIOD_MS));
-					}
-					NVIC_EnableIRQ(PORTC_IRQn);
-					beep = true;
-				}
-
-				waitTimeout = WAIT_TIMEOUT_COUNT;
-#warning ERRR NO
-				NVIC_DisableIRQ(PORTC_IRQn);
-				while ((SPI0ReadPageRegByte(0x04, 0x88, &tmp_val) == -1) &&  ((waitTimeout--) > 0))
-				{
-					vTaskDelay((0U / portTICK_PERIOD_MS));
-				}
-				NVIC_EnableIRQ(PORTC_IRQn);
-
-				if ( !(tmp_val & 1))
-				{
-					for (int i = 0; i < 16; i++)
-					{
-						swapper.byte16 = ((int)sine_beep16[beep_idx]) >> soundBeepVolumeDivider;
-						task_spi_sound[(2 * i) + 1] = swapper.bytes8[0];// low byte
-						task_spi_sound[2 * i] = swapper.bytes8[1];// high byte
-
-						if (sine_beep_freq != 0)
-						{
-							beep_idx = beep_idx + (int)(sine_beep_freq / 3.915f);
-
-							// Stay in sine_beep16[] boundaries.
-							while (beep_idx >= 0x0800)
-							{
-								beep_idx = beep_idx - 0x0800;
-							}
-						}
-					}
-#warning ERRR NO
-					NVIC_DisableIRQ(PORTC_IRQn);
-					waitTimeout = WAIT_TIMEOUT_COUNT;
-					while ((SPI0WritePageRegByteArray(0x03, 0x00, task_spi_sound, 0x20) == -1) &&  ((waitTimeout--) > 0))
-					{
-						vTaskDelay((0U / portTICK_PERIOD_MS));
-					}
-					NVIC_EnableIRQ(PORTC_IRQn);
-				}
-
-				sine_beep_duration--;
-			}
-			else
-			{
-				if (beep)
-				{
-					waitTimeout = WAIT_TIMEOUT_COUNT;
-#warning ERRR NO
-					NVIC_DisableIRQ(PORTC_IRQn);
-					while ((SPI0ClearPageRegByteWithMask(0x04, 0x06, 0xFD, 0x00) == -1) &&  ((waitTimeout--) >> 0))
-					{
-						vTaskDelay((0U / portTICK_PERIOD_MS));
-					}
-					NVIC_EnableIRQ(PORTC_IRQn);
-					beep = false;
-				}
-			}
-
-			timer_beeptask = 1; // Reset PIT Counter
-		}
-
-		vTaskDelay((0U / portTICK_PERIOD_MS));
-	}
+    (void)data;
+    beepState_t state = {0};
+    for (;;)
+    {
+        if (timer_beeptask == 0)
+        {
+            soundBeepTaskStep(&state);
+            timer_beeptask = 1;
+            soundDiagnostics.timerArms++;
+        }
+        vTaskDelay(0); // Retain the native task cadence; PIT0 supplies 1ms timing.
+    }
 }

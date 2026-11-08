@@ -839,6 +839,7 @@ void powerOffFinalStage(bool maintainRTC, bool forceSuspend)
 
 static void keyBeepHandler(uiEvent_t *ev, bool ptttoggleddown)
 {
+	soundDiagnostics.keyRequests++;
 	bool isScanning = (uiVFOModeIsScanning() || uiChannelModeIsScanning()) && !uiVFOModeSweepScanning(false);
 
 	// Do not send any beep while scanning, otherwise enabling the AMP will be handled as a valid signal detection.
