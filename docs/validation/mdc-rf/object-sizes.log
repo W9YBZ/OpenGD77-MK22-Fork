@@ -1,0 +1,4 @@
+   text	   data	    bss	    dec	    hex	filename
+   1640	      0	    117	   1757	    6dd	/tmp/gd77-mdc-rf-delivery/build/source_functions_mdc1200RF.c.o
+   4136	      0	     73	   4209	   1071	/tmp/gd77-mdc-rf-delivery/build/source_user_interface_uiTxScreen.c.o
+    968	      0	      0	    968	    3c8	/tmp/gd77-mdc-rf-delivery/build/tools_mdc1200_mdc1200_codec.c.o

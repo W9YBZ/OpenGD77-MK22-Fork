@@ -44,6 +44,27 @@ typedef struct
 static RegCache_t registerCache[127];// all values will be initialised to false,0,0 because its a global
 static uint8_t currentRegisterBank = 0; // offset in cached page array
 
+/* Atomic ownership works in both task and APRS ISR context. Only this tiny
+ * check/claim masks interrupts; bus transfers keep their existing context. */
+static bool radioClaimI2C(int owner)
+{
+ uint32_t mask=__get_PRIMASK();
+ __disable_irq();
+ bool available=(isI2cInUse==0);
+ if(available)isI2cInUse=owner;
+ __set_PRIMASK(mask);
+ return available;
+}
+
+void radioInvalidateRegisterCache(uint8_t reg)
+{
+ if(reg < 127) {
+  registerCache[reg].cached[0]=false;
+  registerCache[reg].cached[1]=false;
+ }
+}
+
+
 static const uint8_t AT1846InitSettings[][AT1846_BYTES_PER_COMMAND] = {
 		{0x30, 0x00, 0x04}, // Poweron 1846s
 		{0x04, 0x0F, 0xD0}, // Clock mode 25.6MHz/26MHz
@@ -315,14 +336,10 @@ status_t radioReadReg2byte(uint8_t reg, uint8_t *val1, uint8_t *val2)
     status_t status;
     uint8_t buff[4];// Transfers are always 3 bytes but pad to 4 byte boundary
 
-    if (isI2cInUse)
+    if (!radioClaimI2C(4))
     {
-#if defined(USING_EXTERNAL_DEBUGGER) && defined(DEBUG_I2C)
-    	SEGGER_RTT_printf(0, "Clash in read_I2C_reg_2byte (4) with %d\n",isI2cInUse);
-#endif
-    	return kStatus_Success;
+        return kStatus_I2C_Busy;
     }
-    isI2cInUse = 4;
 
 	buff[0] = reg;
 
@@ -384,14 +401,10 @@ status_t radioWriteReg2byte(uint8_t reg, uint8_t val1, uint8_t val2)
     	}
     }
 
-    if (isI2cInUse)
+    if (!radioClaimI2C(3))
     {
-#if defined(USING_EXTERNAL_DEBUGGER) && defined(DEBUG_I2C)
-    	SEGGER_RTT_printf(0, "Clash in write_I2C_reg_2byte (3) with %d\n",isI2cInUse);
-#endif
-    	return kStatus_Success;
+        return kStatus_I2C_Busy;
     }
-    isI2cInUse = 3;
 
 	buff[0] = reg;
 	buff[1] = val1;
@@ -436,14 +449,10 @@ status_t radioWriteTone1Reg(uint16_t toneFreqVal)
     uint8_t val1 = (toneFreqVal >> 8) & 0xff;
 	uint8_t val2 = (toneFreqVal & 0xff);
 
-    if (isI2cInUse)
+    if (!radioClaimI2C(3))
     {
-#if defined(USING_EXTERNAL_DEBUGGER) && defined(DEBUG_I2C)
-    	SEGGER_RTT_printf(0, "Clash in write_I2C_reg_2byte (3) with %d\n",isI2cInUse);
-#endif
-    	return kStatus_Success;
+        return kStatus_I2C_Busy;
     }
-    isI2cInUse = 3;
 
 	buff[0] = reg;
 	buff[1] = val1;

@@ -32,6 +32,7 @@
 #include "user_interface/uiLocalisation.h"
 #include "interfaces/clockManager.h"
 #include "functions/satellite.h"
+#include "functions/mdc1200RF.h"
 #include <stddef.h>
 #if defined(HAS_GPS)
 #include "interfaces/gps.h"
@@ -67,6 +68,11 @@ static uint32_t fmPermitStarted, fmPermitDrainedAt;
 static bool fmPermitDraining;
 static fmTail_t fmTail;
 static bool fmTailHardwareActive;
+#if GD77_EXPERIMENTAL_MDC_RF
+static bool fmMDCActive;
+static bool fmMDCAttempted;
+static uint32_t fmMDCStarted;
+#endif
 static const uint8_t fmTailRegisters[] = { 0x35, 0x41, 0x79, 0x3a };
 static uint16_t fmTailSnapshot[4];
 #ifndef FM_FEATURE_TRACE
@@ -152,6 +158,10 @@ static bool fmPermitTick(uint32_t now, bool release)
  * mux or channel data are changed. Restore exact snapshots on every exit. */
 static bool fmTailStop(void)
 {
+#if GD77_EXPERIMENTAL_MDC_RF
+ mdcRFStop();
+ fmMDCActive=false;
+#endif
  fmTail.active = false;
  if (!fmTailHardwareActive) return true;
  bool ok = true;
@@ -161,7 +171,7 @@ static bool fmTailStop(void)
  FM_FEATURE_TRACE("tail-stop", ticksGetMillis());
  return ok;
 }
-static bool fmTailStart(void)
+static bool fmTailStartFrequency(uint16_t frequency10)
 {
  if (!fmPermitStop()) return false;
  // Existing tone action owns its own gain snapshot; do not nest tone routes.
@@ -177,7 +187,7 @@ static bool fmTailStart(void)
   return false;
  }
  // TX tone generator -> RF modulation; local speaker amp remains untouched.
- bool ok = fmWriteRegister(0x35, 10000) &&
+ bool ok = fmWriteRegister(0x35, frequency10) &&
   fmWriteRegister(0x41, (fmTailSnapshot[1] & 0xff80) | (cal.value & 0x7f)) &&
   fmWriteRegister(0x79, fmTailSnapshot[2] | 0xc000) &&
   fmWriteRegister(0x3a, (fmTailSnapshot[3] & 0x8fff) | 0x1000);
@@ -188,6 +198,30 @@ static bool fmTailStart(void)
  FM_FEATURE_TRACE("tail-start", fmTail.started);
  return true;
 }
+static bool fmTailStart(void) {return fmTailStartFrequency(10000);}
+#if GD77_EXPERIMENTAL_MDC_RF
+static bool fmMDCHandleRelease(bool eligible, bool abort, uint32_t now)
+{
+ if (fmMDCActive) {
+  mdcRFStatus_t rf=mdcRFStatus();
+  if (!abort && eligible && (uint32_t)(now-fmMDCStarted)<250U && rf==MDC_RF_RUNNING) return true;
+  if (rf!=MDC_RF_DONE) transmitError=true;
+  if (!fmTailStop()) transmitError=true;
+ } else if (!fmMDCAttempted && settingsGetFMFeatures().mode==PTT_TONE_MDC1200) {
+  fmMDCAttempted=true;
+  if (eligible && !abort) {
+   if (fmTailStartFrequency(18000) && mdcRFStart(settingsGetFMFeatures().unitId)) {
+    fmMDCStarted=ticksGetMillis();fmMDCActive=true;
+    FM_FEATURE_TRACE("mdc-start",fmMDCStarted);
+    return true;
+   }
+   transmitError=true;
+   (void)fmTailStop();
+  }
+ }
+ return false;
+}
+#endif
 #endif
 
 menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
@@ -204,6 +238,9 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
   fmPermitActive = false;
   fmTail = (fmTail_t){0};
   fmTailHardwareActive = false;
+#if GD77_EXPERIMENTAL_MDC_RF
+  fmMDCActive=false;fmMDCAttempted=false;
+#endif
   manualFMSession = false;
 #endif
 		monitorModeData.isEnabled = false;
@@ -445,7 +482,11 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 
 				// Do not update Mic level on Timeout.
 #if !defined(PLATFORM_GD77S)
-				if (aprsBeaconingIsTransmitting() == false)
+				if (aprsBeaconingIsTransmitting() == false
+#if defined(PLATFORM_GD77) && GD77_EXPERIMENTAL_MDC_RF
+      && !fmMDCActive
+#endif
+    )
 				{
 					if (((((currentChannelData->tot != 0) && (timeInSeconds == 0)) == false) && (ev->time - micm) > 100))
 					{
@@ -578,7 +619,15 @@ static void handleEvent(uiEvent_t *ev)
    bool abortTail = transmitError || (currentChannelData->tot != 0 && timeInSeconds == 0);
    bool eligibleTail = manualFMSession && !voxIsEnabled() && !isSatelliteScreen &&
     aprsBeaconingGetMode() != APRS_BEACONING_MODE_PTT &&
-    !isTransmittingTone && !isTransmittingDTMF && fmTxReady();
+    !isTransmittingTone && !isTransmittingDTMF &&
+#if GD77_EXPERIMENTAL_MDC_RF
+    (fmMDCActive ? (trxTransmissionEnabled && txPAEnabled) : fmTxReady());
+#else
+    fmTxReady();
+#endif
+#if GD77_EXPERIMENTAL_MDC_RF
+   if (fmMDCHandleRelease(eligibleTail,abortTail,ev->time)) return;
+#endif
    fmTailAction_t action = fmTailPoll(&fmTail, eligibleTail, abortTail,
      settingsGetFMFeatures().mode, ev->time);
    if (action == FM_TAIL_START) {

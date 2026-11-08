@@ -50,7 +50,7 @@ static inline fmTailAction_t fmTailPoll(fmTail_t *tail, bool eligible, bool abor
  }
  if (tail->attempted) return FM_TAIL_NONE;
  tail->attempted = true;
- // MDC1200 is deliberately RF-disabled even when selected and persisted.
+ // MDC uses a separate experimental sender, never this 150ms beep controller.
  if (eligible && !abort && mode == PTT_TONE_BEEP) {
   tail->active = true;
   tail->started = now;

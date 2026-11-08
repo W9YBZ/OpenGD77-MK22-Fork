@@ -1,4 +1,10 @@
-# MDC1200 protocol validation — experimental, RF Blocked
+# MDC1200 protocol validation — experimental RF available, RF decode Not Run
+
+Follow-up: [MDC1200_RF_EXPERIMENT.md](MDC1200_RF_EXPERIMENT.md) supersedes the
+initial absence of a backend below. There is now an opt-in PIT/I2C IRQ sender.
+It does not establish hardware phase continuity: a reset-phase channel model
+FAILS external decoding. Production/default RF remains disabled. Prior host
+golden/decoder evidence below is unchanged.
 
 ## Independent sources
 

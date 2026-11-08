@@ -1,0 +1,71 @@
+{
+  "kind": "SYNTHETIC HYPOTHESIS, NOT RF EVIDENCE",
+  "results": [
+    {
+      "profile": "continuous_phase_delayed_write",
+      "unit_id": "0001",
+      "decoded": true,
+      "raw": [
+        1,
+        0,
+        1
+      ],
+      "frames": 1
+    },
+    {
+      "profile": "continuous_phase_delayed_write",
+      "unit_id": "1234",
+      "decoded": true,
+      "raw": [
+        1,
+        0,
+        4660
+      ],
+      "frames": 1
+    },
+    {
+      "profile": "continuous_phase_delayed_write",
+      "unit_id": "FFFF",
+      "decoded": true,
+      "raw": [
+        1,
+        0,
+        65535
+      ],
+      "frames": 1
+    },
+    {
+      "profile": "reset_phase_on_frequency_change",
+      "unit_id": "0001",
+      "decoded": false,
+      "raw": [
+        0,
+        0,
+        0
+      ],
+      "frames": 0
+    },
+    {
+      "profile": "reset_phase_on_frequency_change",
+      "unit_id": "1234",
+      "decoded": false,
+      "raw": [
+        0,
+        0,
+        0
+      ],
+      "frames": 0
+    },
+    {
+      "profile": "reset_phase_on_frequency_change",
+      "unit_id": "FFFF",
+      "decoded": false,
+      "raw": [
+        0,
+        0,
+        0
+      ],
+      "frames": 0
+    }
+  ]
+}

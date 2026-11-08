@@ -43,6 +43,7 @@
 #define AT1846_VOICE_CHANNEL_DTMF   0x30
 #define AT1846_VOICE_CHANNEL_MIC    0x40
 
+void radioInvalidateRegisterCache(uint8_t reg);
 void radioInit(void);
 void radioPostinit(void);
 void radioSetMode(void);

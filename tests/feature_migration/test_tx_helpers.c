@@ -16,6 +16,14 @@ static uint16_t regs[128], original[128];
 static int failWrite, writeCount, failRead, readCount, played;
 static bool voiceBusy;
 static fmFeatures_t config;
+#if GD77_EXPERIMENTAL_MDC_RF
+static mdcRFStatus_t fakeRF;
+static unsigned rfStarts;
+static bool rfStartFails;
+bool mdcRFStart(uint16_t id) {assert(id==config.unitId);rfStarts++;fakeRF=MDC_RF_RUNNING;return !rfStartFails;}
+mdcRFStatus_t mdcRFStatus(void) {return fakeRF;}
+void mdcRFStop(void) {fakeRF=MDC_RF_IDLE;}
+#endif
 void vPortEnterCritical(void) {}
 void vPortExitCritical(void) {}
 int trxGetMode(void) { return RADIO_MODE_ANALOG; }
@@ -45,6 +53,9 @@ static void reset(void)
  memcpy(original,regs,sizeof(regs));
  fmPermitActive=fmTailHardwareActive=transmitError=isTransmittingTone=isTransmittingDTMF=false;
  fmTail=(fmTail_t){0};manualFMSession=trxTransmissionEnabled=txPAEnabled=true;
+#if GD77_EXPERIMENTAL_MDC_RF
+ fmMDCActive=fmMDCAttempted=rfStartFails=false;rfStarts=0;fakeRF=MDC_RF_IDLE;
+#endif
  config=(fmFeatures_t){0x1234,PTT_TONE_BEEP,true};
  nonVolatileSettings.audioPromptMode=AUDIO_PROMPT_MODE_BEEP;
  writeCount=readCount=failWrite=failRead=played=0;voiceBusy=false;melody_play=NULL;
@@ -83,5 +94,29 @@ int main(void)
  reset();isTransmittingTone=true;assert(!fmTailStart() && !writeCount);
  reset();assert(fmTailStart());failWrite=writeCount+1;
  assert(fmTailStop());assert(!memcmp(regs,original,sizeof(regs)));
+#if GD77_EXPERIMENTAL_MDC_RF
+ reset();config.mode=PTT_TONE_MDC1200;
+ assert(fmMDCHandleRelease(true,false,100));
+ assert(rfStarts==1 && fmMDCActive && regs[0x35]==18000);
+ assert(fmMDCHandleRelease(true,false,101) && rfStarts==1);
+ fakeRF=MDC_RF_DONE;
+ assert(!fmMDCHandleRelease(true,false,274) && !fmMDCActive && !transmitError);
+ assert(!memcmp(regs,original,sizeof(regs)));
+ assert(!fmMDCHandleRelease(true,false,275) && rfStarts==1);
+ reset();config.mode=PTT_TONE_MDC1200;
+ assert(!fmMDCHandleRelease(false,false,100));
+ assert(!fmMDCHandleRelease(true,false,101) && rfStarts==0);
+ reset();config.mode=PTT_TONE_MDC1200;
+ assert(fmMDCHandleRelease(true,false,100));
+ assert(!fmMDCHandleRelease(true,true,110) && transmitError && !fmMDCActive);
+ assert(!memcmp(regs,original,sizeof(regs)));
+ reset();config.mode=PTT_TONE_MDC1200;
+ assert(fmMDCHandleRelease(true,false,100));
+ assert(!fmMDCHandleRelease(true,false,350) && transmitError && !fmMDCActive);
+ reset();config.mode=PTT_TONE_MDC1200;rfStartFails=true;
+ assert(!fmMDCHandleRelease(true,false,100) && transmitError && !fmMDCActive);
+ assert(!memcmp(regs,original,sizeof(regs)));
+ puts("PASS: actual MDC release handler: one attempt, completion, exclusions, TOT, 250ms deadline and start failure cleanup");
+#endif
  puts("PASS: actual TX helpers: local MIC gate, RF route, exclusions, I2C failure rollback/retry");
 }

@@ -33,6 +33,7 @@
 #include "hardware/UC1701.h"
 #endif
 #include "hardware/HR-C6000.h"
+#include "functions/mdc1200RF.h"
 #include "user_interface/uiGlobals.h"
 #include "user_interface/menuSystem.h"
 #include "user_interface/uiLocalisation.h"
@@ -163,8 +164,15 @@ static void updateScreen(bool isFirstRun)
 #if defined(PLATFORM_GD77)
     case OPTIONS_FM_PTT_TONE: {
      fmFeatures_t f = settingsGetFMFeatures();
-     leftSide = "PTT Tone";
-     const char *modes[] = { currentLanguage->off, currentLanguage->beep, "MDC1200*" };
+     // Preserve the experimental/disabled marker within the 17-byte line.
+     leftSide = (f.mode==PTT_TONE_MDC1200) ? "PTT" : "PTT Tone";
+     const char *modes[] = { currentLanguage->off, currentLanguage->beep,
+#if GD77_EXPERIMENTAL_MDC_RF
+      "MDC1200 EXP"
+#else
+      "MDC1200*"
+#endif
+     };
      snprintf(rightSideVar, sizeof(rightSideVar), "%s", modes[f.mode]);
      break;
     }

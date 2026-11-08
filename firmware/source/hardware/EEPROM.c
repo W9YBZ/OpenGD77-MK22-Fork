@@ -110,14 +110,15 @@ bool EEPROM_Write(int address, uint8_t *buf, int size)
 {
 	bool retVal;
 
+	taskENTER_CRITICAL();
 	if (isI2cInUse)
 	{
 #if defined(USING_EXTERNAL_DEBUGGER) && defined(DEBUG_I2C)
 		SEGGER_RTT_printf(0, "Clash in EEPROM_Write (2) with %d\n",isI2cInUse);
 #endif
+		taskEXIT_CRITICAL();
 		return false;
 	}
-	taskENTER_CRITICAL();
 	isI2cInUse = 2;
 
 	if ((address / EEPROM_PAGE_SIZE) == ((address + size) / EEPROM_PAGE_SIZE))
@@ -154,14 +155,15 @@ bool EEPROM_Read(int address, uint8_t *buf, int size)
 	i2c_master_transfer_t masterXfer;
 	status_t status;
 
+	taskENTER_CRITICAL();
 	if (isI2cInUse)
 	{
 #if defined(USING_EXTERNAL_DEBUGGER) && defined(DEBUG_I2C)
 		SEGGER_RTT_printf(0, "Clash in EEPROM_Read (2) with %d\n",isI2cInUse);
 #endif
+		taskEXIT_CRITICAL();
 		return false;
 	}
-	taskENTER_CRITICAL();
 	isI2cInUse = 2;
 
 	tmpBuf[0] = address >> 8;

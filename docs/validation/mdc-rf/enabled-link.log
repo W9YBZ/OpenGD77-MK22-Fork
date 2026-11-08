@@ -1,0 +1,2 @@
+/tmp/gd77-toolchain/root/usr/bin/../lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/bin/ld:/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/linkerscripts/firmware_newlib.ld:109 cannot move location counter backwards (from 000000000005f4a8 to 0000000000054000)
+collect2: error: ld returned 1 exit status

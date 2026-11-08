@@ -16,6 +16,7 @@ p.add_argument("--cc", default="arm-none-eabi-gcc")
 p.add_argument("--newlib", type=Path, help="optional extracted Debian newlib usr directory")
 p.add_argument("--out", type=Path, required=True)
 p.add_argument("--source", type=Path, default=ROOT)
+p.add_argument("--experimental-mdc-rf",action="store_true",help="GD77 lab RF sender; GPL codec included, RF validation NOT RUN")
 p.add_argument("--lto", action="store_true", help="use whole-program optimization")
 p.add_argument("--link", action="store_true", help="link using EMPTY codec sections; never a flashable donor image")
 a = p.parse_args()
@@ -33,15 +34,20 @@ flags=["-mcpu=cortex-m4", "-mthumb", "-mfpu=fpv4-sp-d16", "-mfloat-abi=hard",
        "-Os", "-g3", "-std=gnu11", "-ffunction-sections", "-fdata-sections", "-fno-common",
        "-DPLATFORM_GD77", "-DHAS_GPS=1", "-DCPU_MK22FN512VLL12", "-DSDK_OS_FREE_RTOS", "-D__USE_CMSIS",
        '-DGITVERSION="migration-lab"', "-Werror=implicit-function-declaration", *inc]
+if a.experimental_mdc_rf:
+    flags += ["-DGD77_EXPERIMENTAL_MDC_RF=1",
+              "-I"+str(source/"tools/mdc1200")]
 if a.lto: flags += ["-flto"]
 if a.newlib: flags += ["-isystem", str(a.newlib.resolve()/"include/newlib")]
 files=sorted(firmware.rglob("*.c"))
 # Segger syscalls are optional debugger/Redlib integration, not newlib runtime.
 files=[f for f in files if "/SeggerRTT/" not in str(f) and "/include/" not in str(f)
        and not (f.name.startswith("heap_") and f.name != "heap_4.c")]
+if a.experimental_mdc_rf:files.append(source/"tools/mdc1200/mdc1200_codec.c")
 commands=[]
 def compile_one(f):
-    obj=work/(str(f.relative_to(firmware)).replace("/","_")+".o")
+    relative=f.relative_to(firmware) if f.is_relative_to(firmware) else f.relative_to(source)
+    obj=work/(str(relative).replace("/","_")+".o")
     cmd=[cc,*flags,"-c",str(f),"-o",str(obj)]
     result=subprocess.run(cmd,cwd=work,capture_output=True,text=True)
     return f,obj,cmd,result
@@ -52,8 +58,8 @@ with (out/"compile.log").open("w") as log:
     log.write(subprocess.check_output([cc,"--version"],text=True))
     for f,obj,cmd,r in results:
         commands.append(cmd)
-        log.write("\n"+str(f.relative_to(firmware))+"\n"+r.stdout+r.stderr)
-        if r.returncode:failed.append(str(f.relative_to(firmware)))
+        log.write("\n"+str(f.relative_to(source))+"\n"+r.stdout+r.stderr)
+        if r.returncode:failed.append(str(f.relative_to(source)))
         else:objects.append(obj)
 (out/"commands.json").write_text(json.dumps(dict(common=commands[0][:-4],
     jobs=[cmd[-4:] for cmd in commands]),indent=2)+"\n")
