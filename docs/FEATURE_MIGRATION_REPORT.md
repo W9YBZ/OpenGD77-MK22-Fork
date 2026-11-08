@@ -1,139 +1,139 @@
-# GD-77 R20260131 三功能迁移交付报告
+# GD-77 R20260131 功能迁移与固件交付报告
 
-后续按用户请求已开放 **MDC RF 实验构建入口**：`--experimental-mdc-rf`，
-界面为 `PTT:MDC1200 EXP`。板级发送器/中断/清理已实现并有主机假硬件测试，
-默认构建仍关闭；真实 RF 解码为 Not Run，完整固件链接仍 Blocked。
-现状、启用命令和相位模型失败证据见 [RF 实验补充](MDC1200_RF_EXPERIMENT.md)。
-以下阶段 1–5 数据是第一次交付的归档证据，关于“无 RF 后端”的描述已由此补充取代。
+**链接问题已解决，实验固件 BIN 已生成。MDC 真实 RF 解码、启动和 CPS 实机
+回归仍为 Not Run。没有自动刷机或操作电台存储。**
 
-首次交付完成了 PTT Tone/Talk Permit 的源码集成、独立设置记录、受控 FM 尾音、
-主机协议编码/连续相位 PCM 及测试。**首次交付时 MDC1200 RF 保持关闭；没有完整
-链接成功的可刷写固件，没有 RF/电台/CPS 实机 Pass。** 不能声称旧 MDC 已修复。
+固件源代码提交：`8f64d486466b1ee53c036d9c6b1a7e4b15ca3637`，构建时 tracked
+工作区干净。分支为 `feature/gd77-ptt-talk-permit-mdc1200-v2`；`main` 保持
+原始 `72825f2`，未 push。原有未跟踪任务说明未修改或加入提交。
 
-工作分支：`feature/gd77-ptt-talk-permit-mdc1200-v2`，基线 `72825f2`。
-`main` 保持原 SHA；未 push、未自动刷机、未读取/写入任何电台或用户备份。
-用户原有未跟踪的任务说明文件保持原样，未加入提交。
+## 当前产物
 
-## 分阶段提交
+| 文件 | 位置/说明 |
+|---|---|
+| `OpenGD77-MDC1200-EXP.bin` | `artifacts/gd77-mdc1200-exp/`，502812 字节，供 CPS 选择 |
+| `GD-77_V4.3.6.sgl` | 同目录，从用户 ZIP 只提取指定 donor；供 CPS 的 donor 选项 |
+| ELF / map / manifest / README | 同目录，调试、布局、哈希与人工安装说明 |
 
-| 阶段 | 提交 | 内容 |
+BIN SHA256：`58fac6a50d938546db9275dc4553ebf98be382b66857d4dd752a2961891b7150`。
+两个独立目录重建的 BIN 逐字节一致；GCC 日期/时间宏使用源码提交 epoch。
+
+BIN 保留两个 FF 编解码占位段，**需要 CPS 合并 donor**。在现有
+CPS E2026.05.26.01 的 Extras / Firmware Loader 选择 GD-77，先选择
+`GD-77_V4.3.6.sgl` 为 donor，再选择上述 BIN 为 OpenGD77 固件。
+不要把 donor 当成待刷固件，也不要把占位 ELF/BIN 经原始 SWD 直接刷入。
+构建脚本不会调用刷机程序。
+
+用户提供的 ZIP 中 V4.3.6 member 已通过 ZIP CRC、长度、SGL 签名和固定
+SHA256 检查。Donor SHA256：
+`d8bdfcc4c5fbb5e1f58e2d6f243381c673d6d09d4718b1ce9178e50fab01706f`。
+官方其他版本、CPS 安装器和频段解锁文件均未使用。整个产物目录受 Git-ignore
+保护，受限 donor 和生成的二进制均未入库。
+
+## 已实现行为
+
+* Sound Options 追加 PTT Tone、MDC1200 ID、Talk Permit，原项目和 QuickKey
+  编号不变。默认 Off / 非零 DMR low16 ID / On。ID 为 0001..FFFF 的四位
+  十六进制；原确认/取消/保存机制保留。新增标题用英文回退与字母语音提示，
+  不改变 CPS 语言表格式。
+* 设置复用 GD-77 原结构偏移 60/62 的两个未用字，以 tag/version/选项/CRC-8
+  保护。不增加结构长度或存储地址、不改变 magic 0x4784；有效 ID 不跟随
+  后续 DMR ID 静默变化。目标默认 enum ABI 为 112 字节，完整 enum 为 116；
+  全部 57 个字段在两种 ABI 下均与基线一致。
+* Talk Permit 通过既有 int16_t melody/音频仲裁，本机三声 940 Hz ×40 ms，
+  中间 10 ms；播放时断开 MIC，正常结束加 10 ms 排空保护，控制流程最迟
+  250 ms 退出。遵守 silent/no-beep，不覆盖已有语音或提示音。
+* Beep 用 AT1846 tone1 → TX 调制，1000 Hz/150 ms 非阻塞尾音，每次最多一次。
+  保持 PTT 释放锁定；先收尾已有 1750/DTMF，再获取寄存器快照。
+* MDC 实验构建显示 `PTT:MDC1200 EXP`，显式选择后才尝试正常手动 FM 释放
+  POST-ID；默认仍 Off。编码 op=01/arg=00，独立 golden 与外部 PCM 解码通过。
+  PIT1/PIT2 与逐字节 I²C IRQ 控制时序，忙/超期/NACK/取消/TOT 不重发整帧；
+  故障直接关闭 PA，再经原 TX→RX 流程恢复快照。未改 PIT0 或 APRS 的 FTM1。
+* 新效果排除 DMR、错误/TOT、VOX-enabled、APRS PTT Beacon、卫星和其它自动
+  TX 入口。VOX-enabled 时手按 PTT 也保守禁用。设置、CSS、功率、校准和
+  信道原始数据不作新增永久修改。
+* 为异步 I²C 补充原子总线占用、真实 busy 返回及失败写缓存失效；EEPROM 仅
+  将原临界区移到 owner 检查前，不改变地址/页写/数据或 CPS 命令。
+  详细 RF 路径与测量限制见 [RF 实验说明](MDC1200_RF_EXPERIMENT.md)。
+
+## 链接修复与空间证据
+
+此前失败源于重建 GNU 构建入口不完整，并非证明基线源码无法构建：
+
+1. 用 `-nostdlib` 消除 GCC 隐式完整版 libc，只用链接脚本的 newlib-nano；
+   使用一致的 nano headers、`-Os -DNDEBUG` 和显式 LTO。
+2. startup 不参与 LTO，避免 SystemInit/main 被内联进 1 KB 启动窗口。
+   calibration/menuCalibration 也不参与 LTO，以保留目标原 `firmware.ld` 的
+   高位代码布局策略。newlib 脚本显式收集高位语言/校准代码和 ARM 元数据。
+3. 编解码段在汇编中明确为 ALLOC，防止“链接通过但段未真正占位”的伪成功；
+   增加固定地址/大小/载入区/堆栈 ASSERT。**没有移动固定编解码地址。**
+4. 4 KB stack 变为真实 NOLOAD 保留区；GNU-only bounded `_sbrk` 使用预留
+   4 KB heap，而非 libnosys 在上部 BSS 后无限扩展堆。
+5. ELF/BIN 后处理逐段检查，验证通过才发布最终 BIN 文件名。
+
+| 位置/资源 | 最终结果 |
+|---|---|
+| 启动区 / SP / Reset | 0x4000，SP=0x20000000，Reset=0x41C9 |
+| codec1 | 0x4400..0x5300，0xF00 字节，ALLOC/LOAD |
+| codec2 | 0x54000..0x7C090，0x28090 字节，ALLOC/LOAD |
+| 高位应用及异常表结束 | 0x7EC1C |
+| CPS 保守上传上限 | 0x7F000；BIN 尚余 **996 字节**，后续新增代码必须重查 |
+| newlib heap / MSP stack | 各 4096 字节，互不重叠 |
+| GNU size text / data / bss | 461124 / 38504 / 60608；text 含 codec 占位，bss 含 NOLOAD 保留区 |
+
+这不是可任意使用的剩余堆/任务栈统计；运行时峰值和 watchdog 响应仍须实机测量。
+Bootloader 的 FlashConfig 被应用链接脚本明确排除；所有实际载入地址均处于
+应用 Flash 区域，未侵入 bootloader 或保留区。
+
+构建与完整人工安装命令见 [BUILD_GD77.md](BUILD_GD77.md)。原始完整证据见
+[linked-release](validation/linked-release/manifest.json)：编译/链接/命令/size、
+实际 ELF/BIN 布局、哈希、控制构建与独立重建一致性。
+
+## 当前验收矩阵
+
+| 项目 | 状态 | 证据/限制 |
 |---|---|---|
-| 1 | `0ce9651` | 架构/存储/独立协议审计 |
-| 2 | `9f13f8f` | Sound Options、设置记录、本地 Talk Permit |
-| 3 | `8b52a91` | 非阻塞 FM RF Beep、释放锁定与恢复 |
-| 4 | `c6afe71` | 独立 golden、主机编码器/PCM、外部解码器验证 |
-| 5 | 本报告所在提交（`git log -1`） | ARM 编译/ABI/故障注入、最终修正及验收文档 |
+| MDC 实验目标全编译、链接与 BIN 导出 | Pass | 131 C 单元，固定布局和所有载入区检查通过 |
+| 默认 MDC 关闭控制构建 | Pass | 130 C 单元，完整链接并导出检查通过 |
+| 启动向量、Flash/RAM、codec 占位、堆栈/上传大小 | Pass | ELF32/PHDR/节/符号及 BIN 逐字节检查 |
+| 损坏镜像拒绝 | Pass | 向量/数据/codec 翻转、截断、追加、缺 ALLOC 和重叠均拒绝 |
+| newlib heap 边界与极值 | Pass | OOM/收缩/PTRDIFF 极值主机测试，UBSan 无异常 |
+| 设置 ABI / 范围 / CRC / 稳定 ID | Pass | 57 字段、393210 种有效组合、32 种单比特损坏 |
+| 现有菜单/保存/QuickKey 实机操作与断电保存 | Not Run | 复用原接口；源代码和主机记录测试不代替电台操作 |
+| 尾音/permit/实际 MDC IRQ 及释放辅助函数 | Pass | 假硬件/故障注入；一次尝试、完成、TOT、截止、取消与恢复 |
+| 其它 MK22 平台隔离 | Pass | GD77S/DM1801/RD5R 修改单元主机语法检查；非目标实机未测 |
+| CRC/FEC/交织/帧/位序独立向量 | Pass | 0001/1234/FFFF；外部参考生成 golden，无旧 MDC 算法复用 |
+| 外部原版 Kaufman 解码新 PCM | Pass | op/arg/ID 正确，坏 CRC 拒收、单 bit FEC 恢复、1000 CRC 对比 |
+| 延迟且连续相位的合成模型 | Pass | 三 ID 可独立解码；仅模型 |
+| 变频复位相位的合成模型 | Fail | 三 ID 全失败；明确暴露物理通路风险，不是实际 RF 结果 |
+| GD-77 实际启动 / FM 尾音 / Talk Permit 不串入 RF | Not Run | 未刷机、未连接电台或 SDR |
+| MDC 实际相位/baud/频偏/电平/POST-ID/重复成功率 | Not Run | 实验路径已开放，不能称为修复或已兼容 |
+| 完整 DMR/TOT/RX-only/禁发/VOX/APRS/卫星/快速重按回归 | Not Run | 软件隔离与故障测试通过，完整硬件状态机尚未验收 |
+| CPS E2026.05.26.01 读写、Codeplug/校准/回退实机 | Not Run | 协议/布局保留；本次没有电台写入或自动刷机 |
 
-全部变更路径见 [changed-files.txt](validation/changed-files.txt)。原版旧仓库只读
-参考 SHA `57aed1c76ae4fd95363ec36e9c2d59c591f5bc8b`，没有 cherry-pick、
-复制旧驱动/菜单整文件或旧 MDC 算法。旧 RF 失败根因仍未定位，不能推测为
-单一 CRC/位序/PIT 问题。已证实旧 100 us 的 tick 方案不能用于新版 1 ms PIT；
-本分支没有改变全局 PIT。
+原有四个 sound.c #warning、十四个菜单 strncat 警告保留；没有新的未解释警告。
+旧失败日志保留作历史，不能替代此处新的成功构建证据。
 
-## 实现边界
+## 来源、许可和提交
 
-* GD-77 Sound Options 末尾追加三项，原菜单和已有 QuickKey 编号不变。
-  PTT Tone 默认 Off，另有 Beep、`MDC1200*`（星号表示 RF 不可用）；ID 为
-  4 位十六进制、0001..FFFF 循环增减；Talk Permit 默认 On。
-  使用原确认/取消/QuickKey 超时保存，新增标题以拼读方式输出语音提示，
-  没有改变语言表/CPS 语言结构；标题目前为英文回退文本。
-* 配置复用有空间证明的 GD-77 UNUSED_1/2：ID + tag/version/选项 + CRC-8。
-  不增加设置长度、magic、存储地址或 Codeplug 字段。加载时仅在 RAM 初始化，
-  沿用现有保存机制；有效 ID 不跟随后续 DMR ID 静默变化。默认/损坏记录
-  回到 Off/On/非零 DMR low16。断电保存/CPS/回退仍需硬件验证。
-* Talk Permit 用现有 int16_t melody 和声音仲裁，940/40、间隔 10、共三声。
-  先确认 FM PA/硬件 TX 状态；播放前断开 MIC，结束增加 10 ms 缓冲排空保护，
-  最迟 250 ms 结束本机控制流程。释放/错误/新 1750 或 DTMF 动作提前清理。
-  不覆盖正在播放的声音或语音，遵守 silent/no-beep。
-* Beep 使用 AT1846 tone1 → RF 通路，1000 Hz/150 ms；不以本机喇叭代替 RF。
-  独立状态机不忙等，继承 PTT 释放锁定，每次最多一次；既有 1750/DTMF 先
-  收尾再获取尾音快照。保存/恢复 35/41/79/3A，读取 TX 频段音调校准值，
-  不改功率、CSS、滤波或校准数据。失败有有限重试及原 TX→RX 清理出口。
-* 新增效果只接普通有效 FM 手动会话，排除 DMR、TOT/错误、VOX-enabled、
-  APRS PTT Beacon、卫星；自动 TX 的既有入口不接新增效果。VOX-enabled
-  时即使手按 PTT 也禁用新增效果，这是保守隔离策略。
-* AT1846 缓存失败写入时必须失效，否则恢复旧值会被错误缓存跳过；已加实际
-  驱动假总线测试。持续 I²C 硬件故障无法保证寄存器恢复，必须实测 PA 安全
-  关闭。软件测试不等于实机故障安全证明。
+旧仓库只读参考 SHA `57aed1c76ae4fd95363ec36e9c2d59c591f5bc8b`，没有移植
+旧 MDC 编码链或 cherry-pick 老提交。旧实际 RF 失败根因仍未被证明。
+协议参考版本、冲突、CRC 中间值及完整 golden 见
+[MDC1200_PROTOCOL_VALIDATION.md](MDC1200_PROTOCOL_VALIDATION.md)。
 
-## 验证矩阵
+独立主机编码模块明确 GPL-2.0-only，固件保留各作者/依赖的原许可；实验本地
+构建不构成组合发布许可兼容性的结论。受限 donor 与生成产物不在 Git 中，
+不声称合并后可统一按某种单一许可证传播。
 
-| 验收项 | 状态 | 证据/限制 |
-|---|---|---|
-| GD-77 全部目标 C 单元编译 | Pass | ARM GCC 10.3.1，128/128；新增固件逻辑在原实际源单元内 |
-| GD-77 完整链接/可刷写产物/最终空间 | Blocked | 基线和本分支均在现有 newlib 固定编解码段前溢出 |
-| 其他 MK22 平台语法隔离 | Pass | GD77S/DM1801/RD5R 对五个修改单元做主机语法检查；非目标实机未验证 |
-| 设置 ABI、槽位空间、所有原字段 | Pass | 目标编译器比较全部 57 字段，两种 enum ABI 均与基线一致 |
-| 设置编码/范围/损坏恢复/稳定 ID | Pass | 393210 种有效组合、32 种单比特损坏、默认/后续 DMR ID 变化 |
-| 菜单实机显示、确认/取消、QuickKey、断电保存 | Not Run | 已复用原实现，需按 RF_ACCEPTANCE 手工逐项检查 |
-| Beep 一次/150 ms/中止/计时回绕状态机 | Pass | 主机真实控制器测试；不含 RF 时长测量 |
-| Talk Permit MIC gate/Beep RF 路由/清理/失败重试 | Pass | 直接编译实际辅助函数，假寄存器/假 I²C，UBSan 无异常 |
-| RF Beep/本地三声频率时长/不串入 RF | Not Run | 无 GD-77、SDR、音频仪器连接 |
-| DMR/TOT/RX-only/禁发/VOX/APRS/卫星/快速重按完整实机回归 | Not Run | 软件有隔离与控制器测试，尚无完整电台状态机测试 |
-| 实机 MIC/CSS/功率/滤波/音频恢复 | Not Run | 新逻辑不修改后四者，快照恢复有假总线验证 |
-| CPS E2026.05.26.01 实际读写/Codeplug/校准保持 | Not Run | 协议/原字段/校准写入代码未改；不能由静态检查推出实机 Pass |
-| MDC 外部协议参考与可复现 golden | Pass | 独立 Kaufman 固定 commit，3 组 CRC/FEC/交织/完整帧/音调比特 |
-| POST-ID 商业设备语义确认 | Not Run | 01/00 与 sdrtrunk ANI/EOT 一致；与 00/80 网页预设冲突已记录 |
-| 新纯编码器所有层与外部向量一致 | Pass | 0001/1234/FFFF、长度/空指针/容量、1000 随机外部 CRC 比较 |
-| 新 PCM 被原版独立解码器接收 | Pass | 三 ID 的 op=01/arg=00/ID 正确；坏 CRC 拒收、单比特 FEC 恢复 |
-| 48 kHz PCM 的符号率/两音/连续相位 | Pass | 40 样本/符号；8320 样本/帧；分块独立性和解析波形检查；仅主机 |
-| MDC 实际硬件音频路径/DMA/抖动/RF 调制 | Blocked | 没有经过证明的 RF 音频输入；拒绝用 I²C 逐符号切音补丁 |
-| MDC RF POST-ID/Unit ID/CRC 和重复成功率 | Not Run | 无真实 IQ/WAV/商用接收机记录；固件选 MDC 时不发实验帧 |
-| MDC 编码器进入固件链接 | Blocked | 主机 GPL 模块隔离；许可证与物理通路均需解决 |
+| 提交 | 内容 |
+|---|---|
+| `0ce9651` | 架构/存储/独立协议审计 |
+| `9f13f8f` | 设置菜单与本地 Talk Permit |
+| `8b52a91` | 受控 FM RF Beep |
+| `c6afe71` | 独立 golden、PCM 与外部解码测试 |
+| `41e45d3` | ABI/故障测试与第一次交付报告 |
+| `dc2a626` | 显式 MDC RF 实验后端和总线/截止保护 |
+| `8f64d48` | 本次固件源码：修复 GNU 链接、运行时堆和 BIN 导出检查 |
 
-## 构建命令、日志及空间
-
-仓库没有 MCUXpresso .project/.cproject 或 Makefile。新增
-`tools/build_gd77.py` 是重建的 GNU 验证入口，不冒充原版 IDE 工程。
-工具链在 `/tmp/gd77-toolchain/root`，通过 `apt-get download` 下载并
-`dpkg-deb -x` 解包，没有全局安装：gcc-arm-none-eabi 15:10.3-2021.07-4、
-binutils-arm-none-eabi 2.38-3ubuntu1+15build1、newlib 3.3.0-1.3。
-
-```sh
-python3 tests/feature_migration/run_host.py
-python3 tests/feature_migration/test_mdc.py --reference /tmp/mdc-reference --output /tmp/mdc-evidence
-python3 tests/feature_migration/generate_golden.py /tmp/mdc-reference > /tmp/mdc-golden-reproduced.json
-cmp tests/feature_migration/mdc_golden.json /tmp/mdc-golden-reproduced.json
-python3 tests/feature_migration/check_settings_abi.py --baseline /tmp/gd77-baseline --cc /tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc --newlib /tmp/gd77-toolchain/root/usr
-PATH=/tmp/gd77-toolchain/root/usr/bin:$PATH python3 tools/build_gd77.py --cc /tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc --newlib /tmp/gd77-toolchain/root/usr --out /tmp/gd77-arm-final --link
-PATH=/tmp/gd77-toolchain/root/usr/bin:$PATH python3 tools/build_gd77.py --cc /tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc --newlib /tmp/gd77-toolchain/root/usr --source /tmp/gd77-baseline --out /tmp/gd77-arm-baseline-final --link
-```
-
-基线目录来自 `git archive 72825f2`，外部参考 checkout 及复现方法见
-[主机实验模块 README](../tools/mdc1200/README.md)。构建共用 flags 包含
-`HAS_GPS=1`、Cortex-M4F hard-float、`-Os`、section GC，不强制 enum 大小。
-已有 cleaner 复制到临时输出目录后只执行 `-C` 创建空占位段；没有下载 donor。
-没有生成 `.bin/.sgl`，失败 ELF 会删除，**没有可供刷入的产物**。
-
-完整原始诊断见 [validation](validation/feature-compile.log)。其中
-`*-commands.json` 的 `common + jobs[i]` 就是实际单个编译命令；链接命令、
-基线对照、ABI、主机测试、外部解码及 LTO 失败日志均在同目录。
-主构建失败：基线位置 `0x5E0D0`、新版本 `0x5EAD8`，脚本要求下一固定段
-从 `0x54000` 开始；没有移动固定段或改动 linker scripts 以掩盖问题。
-LTO 额外尝试在首个固定段 `0x4400` 也失败；其早期日志中 HAS_GPS include
-顺序导致的类型差异不作为可用构建证据，最终主构建统一了此宏。
-新旧构建警告分类/数量相同：原有 sound.c 四个 `#warning ERRR NO` 和菜单
-十四个 strncat 边界警告；没有新增警告，未做无关全面修复。
-
-在同一目标参数下，五个修改对象总计 **text/rodata +2145 字节、data +0、
-bss +30**，逐对象数值见 [arm-object-sizes.json](validation/arm-object-sizes.json)。
-这是未链接对象统计，不能代替最终 flash/RAM 使用或证明固件装得下。
-目标设置为 112 字节；完整 enum/主机为 116 字节，槽位均在 60/62，
-写入范围仍为原结构范围，详见 [存储证明](FEATURE_MIGRATION_PLAN.md)。
-
-## MDC 证据、许可与未完成项
-
-[协议验证文档](MDC1200_PROTOCOL_VALIDATION.md)逐层给出来源、commit、
-CRC/FEC/位序/映射、向量、软件证据和冲突。软件成功是新的编码器输出经
-外部原版解码器校验，不是新编解码器共用算法的自环。生成的三个合成 WAV
-在 `/tmp/mdc-evidence`，SHA256 在 [结果 JSON](validation/mdc-host-results.json)；
-它们不是 RF 捕获。没有声称准确定位或修复旧版的实际 RF 解码失败。
-
-GPL-2.0-only 主机模块与固件完全分开编译，附完整许可证；参考库未复制进
-固件/仓库。固件保留原作者声明及禁止商用等原条款，不声称可统一按 GPL 或
-另一单一许可证发布。没有 AMBE donor 或其他受限二进制入库。
-
-尚缺：官方可复现 IDE/link 配置及成功 map、经仪器确认的 RF 音频输入和
-时钟/DMA、RF 电平/滤波/稳态验证、独立真实 RF POST-ID 识别、逐 ID 重复
-统计，以及全部电台/CPS 回归。[人工验收与回退步骤](RF_ACCEPTANCE.md)已列明。
-后续先恢复基线构建，再逐项补证；MDC RF 在上述边界解除前保持关闭。
+全部变更路径见 [changed-files.txt](validation/changed-files.txt)。后续由用户
+控制人工刷入和 RF 实测，验收/回退步骤见 [RF_ACCEPTANCE.md](RF_ACCEPTANCE.md)。

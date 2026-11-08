@@ -1,0 +1,3 @@
+PASS: BIN byte-identical across artifacts/gd77-mdc1200-exp and /tmp/gd77-release-repro
+Source: 8f64d486466b1ee53c036d9c6b1a7e4b15ca3637; tracked_dirty=false
+SHA256: 58fac6a50d938546db9275dc4553ebf98be382b66857d4dd752a2961891b7150

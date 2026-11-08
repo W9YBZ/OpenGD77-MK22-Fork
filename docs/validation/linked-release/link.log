@@ -1,0 +1,42 @@
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuAPRSOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuAPRSOptions.c:420:7: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  420 |       strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |       ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuAPRSOptions.c:443:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  443 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuDisplayOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuDisplayOptions.c:375:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  375 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuDisplayOptions.c:397:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  397 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuChannelDetails.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuChannelDetails.c:795:8: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  795 |        strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |        ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuChannelDetails.c:818:7: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  818 |       strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |       ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuGeneralOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuGeneralOptions.c:382:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  382 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuGeneralOptions.c:404:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  404 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuRadioOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuRadioOptions.c:264:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  264 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuRadioOptions.c:286:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  286 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuSoundOptions.c: In function 'updateScreen':
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuSoundOptions.c:350:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  350 |      strncat(rightSideVar, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/user_interface/menuSoundOptions.c:372:6: warning: 'strncat' specified bound 17 equals destination size [-Wstringop-overflow=]
+  372 |      strncat(buf, rightSideUnitsStr, SCREEN_LINE_BUFFER_SIZE);
+      |      ^

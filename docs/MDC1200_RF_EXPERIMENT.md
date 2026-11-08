@@ -11,13 +11,16 @@ MDC，设置默认仍为 Off。实验构建菜单显示 `PTT:MDC1200 EXP`，选�
 PATH=/tmp/gd77-toolchain/root/usr/bin:$PATH python3 tools/build_gd77.py \
   --cc /tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc \
   --newlib /tmp/gd77-toolchain/root/usr \
-  --out /tmp/gd77-mdc-rf-verified --experimental-mdc-rf --link
+  --out artifacts/gd77-mdc1200-exp --experimental-mdc-rf --lto --link
 ```
+
+**后续链接修复已完成，当前固件在 `artifacts/gd77-mdc1200-exp/`，
+见 [成功构建与 donor 安装说明](BUILD_GD77.md)。下方早期 Blocked 链接记录为历史。**
 
 该参数加入 `GD77_EXPERIMENTAL_MDC_RF=1` 和独立 GPL-2.0 编码器对象。
 默认构建不加入该对象，其他平台拒绝启用。AMBE donor 不下载/入库。
-实验对象编译通过不意味着成功链接；现有 newlib 固定段链接问题仍在，
-没有可刷写固件产物。不得用部分对象/失败 ELF 刷电台。
+本次已完成 newlib/LTO 链接修复并导出校验 BIN；实际产物和 donor 的
+CPS 合并步骤见 BUILD_GD77.md。不得用部分对象或占位 ELF 直接刷电台。
 在完整 IDE 工程中也须显式定义该宏，添加 `tools/mdc1200` include 路径和
 `mdc1200_codec.c`，确保全部新增源参与同一目标构建。
 
@@ -102,12 +105,12 @@ op=01/arg=00、Unit ID 和 CRC。每 ID 至少 20 次，保留全部失败捕获
 
 | 项目 | 状态 | 结果 |
 |---|---|---|
-| 实验构建 ARM C 对象 | Pass | 130/130，包含板级后端和独立编码器 |
-| 默认关闭构建 ARM C 对象 | Pass | 129/129，不包含 GPL 编码器对象/新 IRQ 处理器 |
+| 实验构建 ARM C 对象 | Pass | 131/131，包含板级后端、独立编码器和 GNU runtime |
+| 默认关闭构建 ARM C 对象 | Pass | 130/130，不包含 GPL 编码器对象/新 IRQ 处理器 |
 | 主机故障/资源/释放/设置/ABI 测试 | Pass | 全部通过；原设置 57 字段布局仍一致 |
 | 连续相位延迟模型外部解码 | Pass | 3/3 个 ID，仅模型 |
 | 复位相位模型外部解码 | Fail | 0/3 个 ID，暴露待测物理风险 |
-| 实验完整固件链接 | Blocked | 现有 newlib 脚本位置 0x5F4A8 已越过固定 0x54000 |
+| 实验完整固件链接/导出 | Pass | 固定段/载入区/向量/堆栈检查通过，BIN 502812 字节 |
 | 真实 RF 波形/解码/CPS 回归 | Not Run | 未连接或操作电台/SDR |
 
 编译/测试/命令/对象空间日志：[validation/mdc-rf](validation/mdc-rf/host-tests.log)。
