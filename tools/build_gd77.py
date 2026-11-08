@@ -19,6 +19,7 @@ p.add_argument("--out", type=Path, required=True)
 p.add_argument("--source", type=Path, default=ROOT)
 p.add_argument("--experimental-mdc-rf",action="store_true",help="GD77 lab RF sender; GPL codec included, RF validation NOT RUN")
 p.add_argument("--donor-zip",type=Path,help="extract the provided GD-77 V4.3.6 donor for manual CPS merge")
+p.add_argument("--no-lto-audio",action="store_true",help="isolation: compile sound.c/spi.c/fsl_dspi.c without LTO")
 p.add_argument("--lto", action="store_true", help="use whole-program optimization")
 p.add_argument("--link", action="store_true", help="link/check BIN and generate CPS ZIP; CPS must merge the donor")
 a = p.parse_args()
@@ -72,6 +73,8 @@ def compile_one(f):
     obj=work/(str(relative).replace("/","_")+".o")
     # Fixed pre-codec startup must not absorb SystemInit/main via LTO inlining.
     local_flags=flags+["-fno-lto"] if f.name in ("startup_mk22f51212.c", "calibration.c", "menuCalibration.c") else flags
+    if a.no_lto_audio and f.name in ("sound.c", "spi.c", "fsl_dspi.c"):
+        local_flags=flags+["-fno-lto", "-fstack-usage"]
     cmd=[cc,*local_flags,"-c",str(f),"-o",str(obj)]
     result=subprocess.run(cmd,cwd=work,capture_output=True,text=True,env=build_env)
     return f,obj,cmd,result
@@ -109,6 +112,7 @@ cmd=[cc,*flags[:4],"-nostdlib","-Wl,--gc-sections", "-Wl,-Map="+str(out/"GD77.ma
 if a.newlib:cmd += ["-L"+str(a.newlib.resolve()/"lib/arm-none-eabi/newlib/thumb/v7e-m+fp/hard")]
 if a.lto: cmd += ["-flto", "-Os"]
 if a.experimental_mdc_rf:cmd += ["-Wl,-u,mdcRFDiagnostics"]
+cmd += ["-Wl,-u,soundDiagnostics"]
 cmd += ["-o",str(elf)]
 r=subprocess.run(cmd,cwd=work,capture_output=True,text=True,env=build_env)
 (out/"link-command.json").write_text(json.dumps(cmd,indent=2)+"\n")
@@ -131,7 +135,7 @@ except Exception:
 binary=out/(stem+".bin");pending_bin.replace(binary);binary.chmod(0o644)
 (out/"image-check.json").write_text(json.dumps(image_check,indent=2)+"\n")
 manifest=dict(source_revision=revision,tracked_dirty=dirty,source_date_epoch=int(build_epoch),
-              firmware=binary.name,experimental_mdc_rf=a.experimental_mdc_rf,fully_linked=True,donor_required=True,donor_version="GD-77 V4.3.6",
+              firmware=binary.name,experimental_mdc_rf=a.experimental_mdc_rf,audio_no_lto=a.no_lto_audio,fully_linked=True,donor_required=True,donor_version="GD-77 V4.3.6",
               **image_check)
 if donor is not None:
     (out/"GD-77_V4.3.6.sgl").write_bytes(donor)

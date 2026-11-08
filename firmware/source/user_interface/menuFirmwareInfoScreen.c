@@ -29,6 +29,8 @@
 #include "user_interface/menuSystem.h"
 #include "user_interface/uiLocalisation.h"
 #include "user_interface/uiUtilities.h"
+#include "functions/sound.h"
+#include "interfaces/gpio.h"
 
 
 enum
@@ -86,8 +88,70 @@ menuStatus_t menuFirmwareInfoScreen(uiEvent_t *ev, bool isFirstRun)
 	return MENU_STATUS_SUCCESS;
 }
 
+#if defined(PLATFORM_GD77)
+/* Diagnostic pages are read-only; no sound, RF, USB or persistent writes. */
+static void displayAudioDiagnostics(unsigned page)
+{
+    soundDiagnostics_t d;
+    taskENTER_CRITICAL();
+    d = soundDiagnostics;
+    taskEXIT_CRITICAL();
+    char line[40];
+    displayClearBuf();
+    snprintf(line, sizeof(line), "Audio %u/3", page + 1);
+    displayPrintCentered(0, line, FONT_SIZE_2);
+    for (unsigned row = 0; row < 5; row++)
+    {
+#define HEX(v) ((unsigned)(v) & 0xffffU)
+        if (page == 0)
+        {
+            switch (row)
+            {
+                case 0: snprintf(line,sizeof(line),"Create %u Fail %u",HEX(d.createOK),HEX(d.createFailed)); break;
+                case 1: snprintf(line,sizeof(line),"Tick %04X Arm %04X",HEX(d.ticks),HEX(d.timerArms)); break;
+                case 2: snprintf(line,sizeof(line),"Key %04X Set %04X",HEX(d.keyRequests),HEX(d.requests)); break;
+                case 3: snprintf(line,sizeof(line),"Acc %04X Note %04X",HEX(d.accepted),HEX(d.notes)); break;
+                default: snprintf(line,sizeof(line),"Ch %04X VP %04X",HEX(d.channelRejected),HEX(d.voiceRejected)); break;
+            }
+        }
+        else if (page == 1)
+        {
+            switch (row)
+            {
+                case 0: snprintf(line,sizeof(line),"Open %04X E %04X",HEX(d.openOK),HEX(d.openFailed)); break;
+                case 1: snprintf(line,sizeof(line),"ReadE %04X Busy %04X",HEX(d.statusFailed),HEX(d.fifoBusy)); break;
+                case 2: snprintf(line,sizeof(line),"PCM %04X E %04X",HEX(d.blocks),HEX(d.writeFailed)); break;
+                case 3: snprintf(line,sizeof(line),"Close %04X E %04X",HEX(d.closeOK),HEX(d.closeFailed)); break;
+                default: snprintf(line,sizeof(line),"S %ld FIFO %02X M %02X",(long)d.lastStatus,d.lastFIFO,d.lastMode); break;
+            }
+        }
+        else
+        {
+            switch (row)
+            {
+                case 0: snprintf(line,sizeof(line),"Amp%u Mux%u Mute%u",d.ampAtNote,d.muxAtNote,d.mutedAtNote); break;
+                case 1: snprintf(line,sizeof(line),"Heap %u Min %u",(unsigned)xPortGetFreeHeapSize(),(unsigned)xPortGetMinimumEverFreeHeapSize()); break;
+                case 2: snprintf(line,sizeof(line),"Stack %u bytes",beepTask.Handle ? (unsigned)(uxTaskGetStackHighWaterMark(beepTask.Handle)*sizeof(StackType_t)) : 0); break;
+                case 3: snprintf(line,sizeof(line),"Permit %04X/%04X",HEX(d.permitStarts),HEX(d.permitRequests)); break;
+                default: snprintf(line,sizeof(line),"Tail %04X/%04X",HEX(d.tailStarts),HEX(d.tailRequests)); break;
+            }
+        }
+#undef HEX
+        displayPrintCentered(12 + 10*row, line, FONT_SIZE_1);
+    }
+    displayRender();
+}
+#endif
+
 static void updateScreen(bool playVP)
 {
+#if defined(PLATFORM_GD77)
+    if (displayMode > maxCreditsPages)
+    {
+        displayAudioDiagnostics(displayMode - maxCreditsPages - 1);
+        return;
+    }
+#endif
 	switch(displayMode)
 	{
 		case FIRMWARE_INFO_BUILD_DETAILS:
@@ -137,7 +201,11 @@ static void handleEvent(uiEvent_t *ev)
 				break;
 
 			case KEY_DOWN:
-				if (displayMode < maxCreditsPages)
+				if (displayMode < maxCreditsPages
+#if defined(PLATFORM_GD77)
+                    + 3
+#endif
+                    )
 				{
 					displayMode++;
 					updateScreen(true);
