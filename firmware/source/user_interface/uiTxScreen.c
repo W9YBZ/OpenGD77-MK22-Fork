@@ -58,6 +58,87 @@ static bool transmitError = false;
 uint32_t xmitErrorTimer = 0;
 static bool isSatelliteScreen;
 
+#if defined(PLATFORM_GD77)
+/* Only the TX MIC selector is borrowed. The official sound backend owns all
+ * local PCM/amp/mux work. Never select an AT1846 RF tone for Talk Permit. */
+static bool talkPermitActive, talkPermitDraining;
+static uint16_t talkPermitVoice;
+static uint32_t talkPermitStarted, talkPermitDrained;
+
+static bool talkPermitRegister(uint16_t *value, bool write)
+{
+    uint8_t hi = 0, lo = 0;
+    taskENTER_CRITICAL();
+    bool ok = !isI2cInUse;
+    if (ok && write) ok = (radioWriteReg2byte(0x3a, *value >> 8, *value & 0xff) == kStatus_Success);
+    if (ok) ok = (radioReadReg2byte(0x3a, &hi, &lo) == kStatus_Success);
+    taskEXIT_CRITICAL();
+    uint16_t actual = ((uint16_t)hi << 8) | lo;
+    if (!ok || (write && actual != *value)) return false;
+    *value = actual;
+    return true;
+}
+
+static bool talkPermitStop(void)
+{
+    if (!talkPermitActive) return true;
+    if (melody_play == MELODY_FM_TALK_PERMIT) soundStopMelody();
+    if (!talkPermitRegister(&talkPermitVoice, true)) return false;
+    talkPermitActive = false;
+    return true;
+}
+
+static void talkPermitExit(void *data)
+{
+    (void)data;
+    if (!talkPermitStop())
+    {
+        // A failed MIC restore must not leave an unattended transmitter keyed.
+        trxActivateRx(true);
+        trxTransmissionEnabled = false;
+        transmitError = true;
+    }
+}
+
+static void talkPermitStart(uiEvent_t *ev)
+{
+    if (!(ev->buttons & BUTTON_PTT) || isSatelliteScreen || voxIsEnabled() ||
+        aprsBeaconingGetMode() == APRS_BEACONING_MODE_PTT ||
+        settingsIsOptionBitSet(BIT_FM_TALK_PERMIT_OFF) ||
+        nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT ||
+        codeplugChannelGetFlag(currentChannelData, CHANNEL_FLAG_NO_BEEP) ||
+        melody_play != NULL || voicePromptsIsPlaying() ||
+        !trxTransmissionEnabled || !txPAEnabled || trxGetMode() != RADIO_MODE_ANALOG) return;
+    uint8_t hi = 0, lo = 0;
+    taskENTER_CRITICAL();
+    bool tx = !isI2cInUse && (radioReadReg2byte(0x30, &hi, &lo) == kStatus_Success);
+    taskEXIT_CRITICAL();
+    if (!tx || (lo & 0x60) != 0x40 || !talkPermitRegister(&talkPermitVoice, false)) return;
+    uint16_t muted = talkPermitVoice & 0x8fff;
+    talkPermitActive = true; // Own the snapshot even if the write fails.
+    if (!talkPermitRegister(&muted, true)) {talkPermitExit(NULL); return;}
+    talkPermitStarted = ev->time;
+    talkPermitDraining = false;
+    soundSetMelody(MELODY_FM_TALK_PERMIT);
+    if (melody_play != MELODY_FM_TALK_PERMIT) talkPermitExit(NULL);
+}
+
+static void talkPermitTick(uiEvent_t *ev)
+{
+    if (!talkPermitActive) return;
+    if (!(ev->buttons & BUTTON_PTT) || !trxTransmissionEnabled || !txPAEnabled ||
+        transmitError || (currentChannelData->tot && !timeInSeconds) ||
+        (uint32_t)(ev->time - talkPermitStarted) >= 250U)
+    {
+        talkPermitExit(NULL);
+        return;
+    }
+    if (melody_play == MELODY_FM_TALK_PERMIT) return;
+    if (!talkPermitDraining) {talkPermitDraining = true; talkPermitDrained = ev->time;}
+    if ((uint32_t)(ev->time - talkPermitDrained) >= 10U) talkPermitExit(NULL);
+}
+#endif
+
 menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 {
 	int radioMode = trxGetMode();
@@ -73,6 +154,16 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 		startBeepPlayed = false;
 		aprsPTTBeaconTriggered = false;
 		transmitError = false;
+#if defined(PLATFORM_GD77)
+        talkPermitExit(NULL);
+        if (transmitError)
+        {
+            ev->buttons &= ~BUTTON_PTT;
+            pttWasReleased = true;
+            return MENU_STATUS_ERROR;
+        }
+        menuSystemRegisterExitCallback(talkPermitExit, NULL);
+#endif
 		uiDataGlobal.Scan.active = false;
 		uiDataGlobal.displayChannelSettings = false;
 		isTransmittingTone = false;
@@ -150,6 +241,9 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 				}
 
 				trxSetTX();
+#if defined(PLATFORM_GD77)
+                if (!transmitError) talkPermitStart(ev);
+#endif
 
 #if !defined(PLATFORM_GD77S)
 				if (isSatelliteAPRS)
@@ -197,6 +291,10 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 	}
 	else
 	{
+#if defined(PLATFORM_GD77)
+        talkPermitTick(ev);
+        if (transmitError && talkPermitActive) {ev->buttons &= ~BUTTON_PTT; pttWasReleased = true;}
+#endif
 		// Keep displaying the "RX Only" or "Out Of Band" error message
 		if (xmitErrorTimer > 0)
 		{
@@ -411,6 +509,14 @@ static void updateScreen(void)
 
 static void handleEvent(uiEvent_t *ev)
 {
+#if defined(PLATFORM_GD77)
+    // Existing 1750/DTMF actions must not nest over our MIC selector snapshot.
+    if (talkPermitActive && ev->hasEvent)
+    {
+        talkPermitExit(NULL);
+        if (transmitError) {ev->buttons &= ~BUTTON_PTT; pttWasReleased = true;}
+    }
+#endif
 	// Xmiting ends (normal or timeouted)
 	if (((ev->buttons & BUTTON_PTT) == 0) || (((currentChannelData->tot != 0) && (timeInSeconds == 0))))
 	{
@@ -663,6 +769,9 @@ static void handleEvent(uiEvent_t *ev)
 
 void menuTxScreenHandleTxTermination(uiEvent_t *ev, txTerminationReason_t reason)
 {
+#if defined(PLATFORM_GD77)
+    talkPermitExit(NULL);
+#endif
 	PTTToggledDown = false;
 	voxReset();
 

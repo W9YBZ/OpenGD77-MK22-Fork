@@ -162,6 +162,11 @@ typedef enum
 	//BIT_xxxxxxx_xxxxxxxxxxxx          = (SETTINGS_BITS_BANK_3 | (1 << 0)),
 } bitfieldOptions_t;
 
+#if defined(PLATFORM_GD77)
+// Official bank 0 bit 2 is unused; zero keeps Talk Permit enabled by default.
+#define BIT_FM_TALK_PERMIT_OFF BIT_UNUSED_1
+#endif
+
 typedef struct
 {
 	uint32_t   lat; // fixed point encoded as 1 sign bit, 8 bits integer, 23 bits as decimal

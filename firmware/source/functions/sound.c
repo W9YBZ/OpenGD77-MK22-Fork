@@ -107,6 +107,9 @@ const int16_t MELODY_ACK_BEEP[] = { 440, 120, 660, 120, 880, 120, -1, -1 };
 const int16_t MELODY_NACK_BEEP[] = { 494, 120, 466, 120, -1, -1 };
 const int16_t MELODY_ERROR_BEEP[] = { 440, 30, 0, 30, 440, 30, 0, 30, 440, 30, -1, -1 };
 const int16_t MELODY_TX_TIMEOUT_BEEP[] = { 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, -1, -1 };
+#if defined(PLATFORM_GD77)
+const int16_t MELODY_FM_TALK_PERMIT[] = { 940, 40, 0, 10, 940, 40, 0, 10, 940, 40, -1, -1 };
+#endif
 const int16_t MELODY_DMR_TX_START_BEEP[] = { 800, 50, -1, -1 };
 const int16_t MELODY_DMR_TX_STOP_BEEP[] = { 500, 50, -1, -1 };
 const int16_t MELODY_KEY_BEEP_FIRST_ITEM[] = { 800, 100, -1, -1 };

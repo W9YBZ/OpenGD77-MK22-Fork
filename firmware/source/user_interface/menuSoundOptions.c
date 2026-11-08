@@ -77,6 +77,9 @@ enum
 #if defined(PLATFORM_MD9600)
 	OPTIONS_SPEAKER_CLICK_SUPPRESS,
 #endif
+#if defined(PLATFORM_GD77)
+	OPTIONS_FM_TALK_PERMIT,
+#endif
 	NUM_SOUND_MENU_ITEMS
 };
 
@@ -273,6 +276,12 @@ static void updateScreen(bool isFirstRun)
 						rightSideConst = currentLanguage->off;
 					}
 					break;
+#if defined(PLATFORM_GD77)
+				case OPTIONS_FM_TALK_PERMIT:
+					leftSide = "Talk Permit";
+					rightSideConst = settingsIsOptionBitSet(BIT_FM_TALK_PERMIT_OFF) ? currentLanguage->off : currentLanguage->on;
+					break;
+#endif
 #if defined(PLATFORM_MD9600)
 				case OPTIONS_SPEAKER_CLICK_SUPPRESS:
 					leftSide = currentLanguage->speaker_click_suppress;
@@ -294,6 +303,10 @@ static void updateScreen(bool isFirstRun)
 
 				if (!wasPlaying || (menuDataGlobal.newOptionSelected || (menuDataGlobal.menuOptionsTimeout > 0)))
 				{
+#if defined(PLATFORM_GD77)
+					if (mNum == OPTIONS_FM_TALK_PERMIT) voicePromptsAppendString(leftSide);
+					else
+#endif
 					voicePromptsAppendLanguageString(leftSide);
 				}
 
@@ -535,6 +548,11 @@ static void handleEvent(uiEvent_t *ev)
 						settingsIncrement(nonVolatileSettings.dmrRxAGC, 1);
 					}
 					break;
+#if defined(PLATFORM_GD77)
+				case OPTIONS_FM_TALK_PERMIT:
+					settingsSetOptionBit(BIT_FM_TALK_PERMIT_OFF, false);
+					break;
+#endif
 #if defined(PLATFORM_MD9600)
 				case OPTIONS_SPEAKER_CLICK_SUPPRESS:
 					settingsSetOptionBit(BIT_SPEAKER_CLICK_SUPPRESS, true);
@@ -665,6 +683,11 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					}
 					break;
+#if defined(PLATFORM_GD77)
+				case OPTIONS_FM_TALK_PERMIT:
+					settingsSetOptionBit(BIT_FM_TALK_PERMIT_OFF, true);
+					break;
+#endif
 #if defined(PLATFORM_MD9600)
 				case OPTIONS_SPEAKER_CLICK_SUPPRESS:
 					settingsSetOptionBit(BIT_SPEAKER_CLICK_SUPPRESS, false);
