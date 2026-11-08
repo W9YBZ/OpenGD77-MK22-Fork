@@ -1,8 +1,9 @@
 # GD-77 R20260131 功能迁移与固件交付报告
 
 **旧版 8f64d48 固件用户实机启动失败：FLASH MEM ERROR，验收状态为 Fail。**
-已修正外部 Flash 位操作的时序隐患并加入失败 ID 显示；是否解决该台电台故障
-仍待复测。现在 `--link` 一条命令自动生成 CPS ZIP，donor 必须单独选择。
+已修正外部 Flash 位操作的时序隐患并加入失败 ID 显示。用户随后确认新固件
+可以正常开机：新固件启动验收 Pass（用户实机反馈）。现在 `--link` 一条命令
+自动生成 CPS ZIP，donor 必须单独选择。
 没有自动刷机或操作电台存储。详见 [构建与故障复测流程](BUILD_GD77.md)。
 
 新候选输出：`artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.zip`。
@@ -24,9 +25,12 @@ CPS 必须单独选择同目录 `GD-77_V4.3.6.sgl` 为 donor，ZIP 内不含 don
 [主机测试](validation/flash-boot/host-tests.log)、
 [最终 SPI 反汇编](validation/flash-boot/spi-transfer-disassembly.log)。
 
-**根因尚未实机确认，新候选开机、CPS 读回及 RF 解码均待复测。**
-旧错误来自外部 Flash ID 检查；时序修改属于有数据手册依据的修正，不能仅凭
-主机测试宣称已修复用户电台。新的错误屏幕保留 `FLASH ERR XXXX` 供继续定位。
+**2026-11-08 用户确认：新固件可以正常开机。启动状态为 Pass（用户实机反馈）。**
+反馈对应上次交付的源码 `1236a41` 固件；未提供逐次上电、JEDEC ID 或波形记录，
+因此不扩大为完整硬件验收，也不将具体电气根因视为已测量确认。
+CPS 读回、Flash 写入/性能、FM 音频和 MDC RF 解码仍为 Not Run。
+[实机反馈记录](validation/flash-boot/hardware-feedback.json) 与原始构建日志分开保存；
+原始构建时的 Not Run 状态保留。新的错误屏幕仍保留 `FLASH ERR XXXX` 供定位。
 没有放宽芯片白名单，没有新增存储擦写，也没有修改 Codeplug/校准格式。
 重建和实机复测步骤见 [BUILD_GD77.md](BUILD_GD77.md)。
 
@@ -139,7 +143,7 @@ Bootloader 的 FlashConfig 被应用链接脚本明确排除；所有实际载�
 | 外部原版 Kaufman 解码新 PCM | Pass | op/arg/ID 正确，坏 CRC 拒收、单 bit FEC 恢复、1000 CRC 对比 |
 | 延迟且连续相位的合成模型 | Pass | 三 ID 可独立解码；仅模型 |
 | 变频复位相位的合成模型 | Fail | 三 ID 全失败；明确暴露物理通路风险，不是实际 RF 结果 |
-| GD-77 旧固件实际启动 | **Fail** | 用户报告 FLASH MEM ERROR；新候选实机复测 Not Run |
+| GD-77 旧固件实际启动 | **Fail** | 用户报告 FLASH MEM ERROR；新固件用户确认正常开机，Pass；其余硬件回归待验收 |
 | FM 尾音 / Talk Permit 不串入 RF | Not Run | 启动故障尚待实机闭环 |
 | MDC 实际相位/baud/频偏/电平/POST-ID/重复成功率 | Not Run | 实验路径已开放，不能称为修复或已兼容 |
 | 完整 DMR/TOT/RX-only/禁发/VOX/APRS/卫星/快速重按回归 | Not Run | 软件隔离与故障测试通过，完整硬件状态机尚未验收 |

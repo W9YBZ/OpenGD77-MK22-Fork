@@ -11,8 +11,11 @@ against the actual driver; syntax.log additionally checks the changed shared SPI
 source for all four platforms. spi-transfer-disassembly.log is from the candidate
 ELF. Existing compiler warnings are retained in the logs.
 
-Candidate hardware boot, CPS readback, flash-write/performance and RF tests:
-NOT RUN. SPI timing is corrected and failure ID exposed, but the failing radio's
-JEDEC response and waveform are not available, so root cause is not confirmed.
+Hardware update, 2026-11-08: the user confirmed normal boot with the latest
+provided candidate (source 1236a41). Boot = PASS, USER REPORTED. The feedback is
+recorded separately in hardware-feedback.json; original build-time manifests
+are unchanged. CPS readback, flash-write/performance, FM audio and RF tests
+remain NOT RUN. No JEDEC response/waveform was supplied, so the precise electrical
+root cause is not independently measured.
 No radio was connected, flashed or erased by these commands. Donor and firmware
 binary material remain under ignored artifacts/, outside Git.

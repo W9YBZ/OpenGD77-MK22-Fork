@@ -100,11 +100,41 @@ VK7ZCR
 VK7ZJA
 ZL1XE
 
-# Local GD-77 build
+# GD-77 R20260131 feature migration
 
-The GNU build's `--link` generates a checked CPS firmware ZIP automatically,
-including an optional MDC1200 RF experiment. See [build instructions](docs/BUILD_GD77.md).
-Select the official `GD-77_V4.3.6.sgl` separately as the required donor in CPS;
-it is not included in the firmware ZIP. Building never flashes a radio.
-The previous 8f64d48 image failed boot with FLASH MEM ERROR. The SPI timing/ID
-diagnostic candidate is in `artifacts/gd77-flash-fix/`; hardware retest is pending.
+This branch adds three FM options in Sound Options:
+
+* **PTT Tone**: Off, an end-of-transmission beep, or experimental MDC1200 POST-ID.
+* **MDC1200 ID**: a persistent four-digit hexadecimal unit ID for the experimental sender.
+* **Talk Permit**: the local three-tone transmit indication, using the existing audio controls.
+
+The independent MDC encoder has host test vectors and reference-decoder checks.
+Actual RF decoding remains **Not Run**; selecting MDC1200 requires the explicit
+experimental build option and menu selection. PTT Tone defaults to Off.
+
+After the SPI Flash timing correction, the user confirmed that the GD-77 boots
+normally with the firmware built from `1236a41`. The earlier `8f64d48` image
+failed with FLASH MEM ERROR and is retained only as diagnostic history.
+Successful boot does not complete CPS roundtrip, calibration readback, FM audio
+or MDC RF acceptance. See the [migration report](docs/FEATURE_MIGRATION_REPORT.md)
+and [RF acceptance procedure](docs/RF_ACCEPTANCE.md).
+
+The GNU build's `--link` automatically compiles, validates the image and creates
+a CPS firmware ZIP containing `OpenGD77.bin` and matching language files:
+
+```sh
+python3 tools/build_gd77.py --out artifacts/gd77-flash-fix \
+  --experimental-mdc-rf --lto --link --donor-zip '/path/to/official-GD77-donor.zip'
+```
+
+An ARM GNU toolchain and newlib-nano are required; `--cc` and `--newlib` can select
+an extracted toolchain. See [complete build instructions](docs/BUILD_GD77.md).
+The generated package is `artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.zip`.
+
+In the OpenGD77 CPS Firmware Loader, select **GD-77**, select the official
+**GD-77_V4.3.6.sgl** separately as the required donor, then select the generated
+firmware ZIP. `--donor-zip` extracts and validates the V4.3.6 donor from the supplied
+official archive; it is not included in the firmware ZIP or this repository.
+The CPS merges the donor codec during upload. The build never flashes a radio.
+Codeplug, settings ABI, calibration format and CPS protocol are preserved;
+hardware readback verification remains pending.

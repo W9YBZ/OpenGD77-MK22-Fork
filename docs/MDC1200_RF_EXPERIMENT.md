@@ -15,7 +15,7 @@ PATH=/tmp/gd77-toolchain/root/usr/bin:$PATH python3 tools/build_gd77.py \
 ```
 
 **旧版 8f64d48 用户实机启动报 FLASH MEM ERROR。新的 SPI 时序/ID 诊断候选在
-`artifacts/gd77-flash-fix/`，尚待实机复测。`--link` 自动生成 CPS ZIP，donor 必须
+`artifacts/gd77-flash-fix/`，用户已确认正常开机；RF 解码仍待验收。`--link` 自动生成 CPS ZIP，donor 必须
 单独选择；见 [构建、donor 与故障复测流程](BUILD_GD77.md)。下方早期 Blocked 链接记录为历史。**
 
 该参数加入 `GD77_EXPERIMENTAL_MDC_RF=1` 和独立 GPL-2.0 编码器对象。

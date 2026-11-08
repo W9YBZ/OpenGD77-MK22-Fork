@@ -3,8 +3,9 @@
 The GNU release links, checks the BIN and automatically produces the CPS `.zip`
 in one invocation of `--link`. The previous 8f64d48 image failed hardware boot
 with **FLASH MEM ERROR**, reported by the user; retain it for diagnosis, not installation.
-The new SPI timing/ID-diagnostic candidate requires hardware retest. RF decoding
-and CPS roundtrip remain **Not Run**. MDC remains Off in settings by default.
+The user subsequently confirmed normal boot with the SPI timing/ID-diagnostic
+firmware from `1236a41` (2026-11-08). Boot is **Pass, user reported**; RF decoding,
+CPS roundtrip and flash-write/performance tests remain **Not Run**. MDC defaults to Off.
 
 ## Reproduce in this workspace
 
@@ -119,7 +120,9 @@ three rejected IDs, manufacturer readback and absence of write/erase commands.
 This is a transport model, not a measurement of the radio or a flash-write test.
 The slower shared transport must still be checked for UI/scan/voice performance.
 
-On the candidate, verify cold power-on and repeated restarts. If failure persists,
+The user reports normal boot with this candidate; see
+[hardware feedback](validation/flash-boot/hardware-feedback.json). Further acceptance
+should verify cold power-on and repeated restarts. If failure persists,
 record the exact `FLASH ERR XXXX` and whether a full power cycle changes it.
 Do not clear Codeplug/settings or restore calibration to address this ID error.
 If bench access is available, capture CS=A19, CLK=E5, MOSI=E4, MISO=E6, decode

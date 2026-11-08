@@ -1,0 +1,16 @@
+{
+  "reported_date": "2026-11-08",
+  "reported_by": "user",
+  "feedback": "可以正常开机了",
+  "device": "GD-77",
+  "source_revision": "1236a4106d15a8c6c8a4e3274ddc2ceefb5b3ba9",
+  "firmware_sha256": "899f867dd439e8922b9780cdaa0ec8fe666dc0978e1238f4eedeaba937021064",
+  "zip_sha256": "f55286b249b381d7a0fa6099e70942a8e58f2049d24ad0c9028c4cba0fd86e13",
+  "artifact_association": "Latest candidate delivered in preceding turn; no new device hash readback supplied",
+  "hardware_boot": "PASS_USER_REPORTED",
+  "cps_roundtrip": "NOT_RUN",
+  "flash_write_performance": "NOT_RUN",
+  "fm_audio": "NOT_RUN",
+  "mdc_rf_decode": "NOT_RUN",
+  "jedec_waveform": "NOT_PROVIDED"
+}
