@@ -598,14 +598,18 @@ static void soundBeepTaskStep(beepState_t *state)
     if (!state->open)
     {
         uint8_t mode = 0;
-        if (beepSPI(0, NULL) != kStatus_Success ||
-            beepSPI(4, &mode) != kStatus_Success || !(mode & 2))
+        int status = beepSPI(0, NULL);
+        if (status == kStatus_Success)
+        {
+            status = beepSPI(4, &mode);
+            if (status == kStatus_Success) soundDiagnostics.lastMode = mode;
+        }
+        if (status != kStatus_Success || !(mode & 2))
         {
             soundDiagnostics.openFailed++;
             beepFault(state);
             return;
         }
-        soundDiagnostics.lastMode = mode;
         soundDiagnostics.openOK++;
         state->open = true;
     }

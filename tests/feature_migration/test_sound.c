@@ -124,8 +124,8 @@ int main(void)
  failOperation=-1;soundBeepTaskStep(&state);assert(!state.open && !state.closePending);
  reset();state=(beepState_t){0};sine_beep_duration=1;fifoValue=0xff;soundBeepTaskStep(&state);
  assert(soundDiagnostics.fifoBusy==1 && !soundDiagnostics.blocks && sine_beep_duration==0);
- reset();state=(beepState_t){0};sine_beep_duration=1;modeValue=0;soundBeepTaskStep(&state);
- assert(!state.open && !operations[1] && soundDiagnostics.openFailed==1);
+ reset();state=(beepState_t){0};sine_beep_duration=1;modeValue=0;soundDiagnostics.lastMode=2;soundBeepTaskStep(&state);
+ assert(!state.open && !operations[1] && soundDiagnostics.openFailed==1 && soundDiagnostics.lastMode==0);
  reset();state=(beepState_t){0};sine_beep_duration=1;irqEnabled=0;soundBeepTaskStep(&state);assert(!irqEnabled);
  reset();noBeep=true;soundSetMelody(MELODY_KEY_BEEP);assert(!melody_play && soundDiagnostics.channelRejected==1);
  noBeep=false;voice=true;soundSetMelody(MELODY_KEY_BEEP);assert(!melody_play && soundDiagnostics.voiceRejected==1);
