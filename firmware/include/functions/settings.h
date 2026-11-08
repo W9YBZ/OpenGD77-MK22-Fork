@@ -33,6 +33,9 @@
 #include "functions/codeplug.h"
 #include "functions/trx.h"
 #include "utils.h"
+#if defined(PLATFORM_GD77)
+#include "functions/fmFeatures.h"
+#endif
 
 enum USB_MODE { USB_MODE_CPS, USB_MODE_HOTSPOT, USB_MODE_DEBUG };
 enum SETTINGS_UI_MODE { SETTINGS_CHANNEL_MODE = 0, SETTINGS_VFO_A_MODE, SETTINGS_VFO_B_MODE };
@@ -314,6 +317,10 @@ typedef struct
 } monitorModeSettingsStruct_t;
 
 extern settingsStruct_t nonVolatileSettings;
+#if defined(PLATFORM_GD77)
+fmFeatures_t settingsGetFMFeatures(void);
+void settingsSetFMFeatures(fmFeatures_t features);
+#endif
 extern CodeplugChannel_t *currentChannelData;
 extern CodeplugChannel_t channelScreenChannelData;
 extern CodeplugContact_t contactListContactData;

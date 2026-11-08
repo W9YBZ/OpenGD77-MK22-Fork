@@ -77,6 +77,11 @@ enum
 #if defined(PLATFORM_MD9600)
 	OPTIONS_SPEAKER_CLICK_SUPPRESS,
 #endif
+#if defined(PLATFORM_GD77)
+ OPTIONS_FM_PTT_TONE,
+ OPTIONS_FM_MDC_ID,
+ OPTIONS_FM_TALK_PERMIT,
+#endif
 	NUM_SOUND_MENU_ITEMS
 };
 
@@ -155,6 +160,23 @@ static void updateScreen(bool isFirstRun)
 
 			switch(mNum)
 			{
+#if defined(PLATFORM_GD77)
+    case OPTIONS_FM_PTT_TONE: {
+     fmFeatures_t f = settingsGetFMFeatures();
+     leftSide = "PTT Tone";
+     const char *modes[] = { currentLanguage->off, currentLanguage->beep, "MDC1200" };
+     snprintf(rightSideVar, sizeof(rightSideVar), "%s", modes[f.mode]);
+     break;
+    }
+    case OPTIONS_FM_MDC_ID:
+     leftSide = "MDC1200 ID";
+     snprintf(rightSideVar, sizeof(rightSideVar), "%04X", settingsGetFMFeatures().unitId);
+     break;
+    case OPTIONS_FM_TALK_PERMIT:
+     leftSide = "Talk Permit";
+     rightSideConst = settingsGetFMFeatures().talkPermit ? currentLanguage->on : currentLanguage->off;
+     break;
+#endif
 				case OPTIONS_MENU_TIMEOUT_BEEP:
 					leftSide = currentLanguage->timeout_beep;
 					if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT)
@@ -294,7 +316,11 @@ static void updateScreen(bool isFirstRun)
 
 				if (!wasPlaying || (menuDataGlobal.newOptionSelected || (menuDataGlobal.menuOptionsTimeout > 0)))
 				{
-					voicePromptsAppendLanguageString(leftSide);
+					#if defined(PLATFORM_GD77)
+     if (mNum >= OPTIONS_FM_PTT_TONE) voicePromptsAppendString(leftSide);
+     else
+#endif
+     voicePromptsAppendLanguageString(leftSide);
 				}
 
 				if ((rightSideVar[0] != 0) || ((rightSideVar[0] == 0) && (rightSideConst == NULL)))
@@ -436,6 +462,20 @@ static void handleEvent(uiEvent_t *ev)
 			menuDataGlobal.newOptionSelected = false;
 			switch(menuDataGlobal.currentItemIndex)
 			{
+#if defined(PLATFORM_GD77)
+    case OPTIONS_FM_PTT_TONE:
+    case OPTIONS_FM_MDC_ID:
+    case OPTIONS_FM_TALK_PERMIT: {
+     fmFeatures_t f = settingsGetFMFeatures();
+     if (menuDataGlobal.currentItemIndex == OPTIONS_FM_PTT_TONE)
+      f.mode = (f.mode + 1 + 3) % 3;
+     else if (menuDataGlobal.currentItemIndex == OPTIONS_FM_MDC_ID)
+      f.unitId = (1 > 0) ? (f.unitId == 0xFFFF ? 1 : f.unitId + 1) : (f.unitId == 1 ? 0xFFFF : f.unitId - 1);
+     else f.talkPermit = !f.talkPermit;
+     settingsSetFMFeatures(f);
+     break;
+    }
+#endif
 				case OPTIONS_MENU_TIMEOUT_BEEP:
 					if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_SILENT)
 					{
@@ -552,6 +592,20 @@ static void handleEvent(uiEvent_t *ev)
 			menuDataGlobal.newOptionSelected = false;
 			switch(menuDataGlobal.currentItemIndex)
 			{
+#if defined(PLATFORM_GD77)
+    case OPTIONS_FM_PTT_TONE:
+    case OPTIONS_FM_MDC_ID:
+    case OPTIONS_FM_TALK_PERMIT: {
+     fmFeatures_t f = settingsGetFMFeatures();
+     if (menuDataGlobal.currentItemIndex == OPTIONS_FM_PTT_TONE)
+      f.mode = (f.mode + -1 + 3) % 3;
+     else if (menuDataGlobal.currentItemIndex == OPTIONS_FM_MDC_ID)
+      f.unitId = (-1 > 0) ? (f.unitId == 0xFFFF ? 1 : f.unitId + 1) : (f.unitId == 1 ? 0xFFFF : f.unitId - 1);
+     else f.talkPermit = !f.talkPermit;
+     settingsSetFMFeatures(f);
+     break;
+    }
+#endif
 				case OPTIONS_MENU_TIMEOUT_BEEP:
 					if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_SILENT)
 					{

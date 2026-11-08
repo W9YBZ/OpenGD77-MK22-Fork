@@ -90,6 +90,9 @@ extern uint8_t *spi_soundBuf;
 
 void soundInit(void);
 void soundTerminateSound(void);
+#if defined(PLATFORM_GD77)
+extern const int16_t MELODY_FM_TALK_PERMIT[];
+#endif
 void soundSetMelody(const int16_t *melody);
 void soundCreateSong(const uint8_t *melody);
 void soundInitBeepTask(void);

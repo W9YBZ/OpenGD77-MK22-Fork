@@ -410,7 +410,7 @@ status_t radioWriteReg2byte(uint8_t reg, uint8_t val1, uint8_t val2)
 
     isI2cInUse = 0;
 
-    if (reg != 0x7F)
+    if ((reg != 0x7F) && (status == kStatus_Success))
     {
 	    registerCache[reg].cached[currentRegisterBank] = true;
 	    registerCache[reg].highByte[currentRegisterBank] = val1;

@@ -83,6 +83,23 @@ static uint32_t dirtyTime = 0;
 static bool settingsDirty = false;
 static bool settingsVFODirty = false;
 settingsStruct_t nonVolatileSettings;
+#if defined(PLATFORM_GD77)
+#include <stddef.h>
+_Static_assert(sizeof(settingsStruct_t) == 116, "GD77 settings ABI changed");
+_Static_assert(offsetof(settingsStruct_t, UNUSED_1) == 60, "GD77 feature ID slot moved");
+_Static_assert(offsetof(settingsStruct_t, UNUSED_2) == 62, "GD77 feature record slot moved");
+fmFeatures_t settingsGetFMFeatures(void)
+{
+ return fmFeaturesDecode((uint16_t)nonVolatileSettings.UNUSED_1,
+                         (uint16_t)nonVolatileSettings.UNUSED_2, uiDataGlobal.userDMRId);
+}
+void settingsSetFMFeatures(fmFeatures_t f)
+{
+ if (!f.unitId || f.mode > PTT_TONE_MDC1200) return;
+ settingsSet(nonVolatileSettings.UNUSED_1, (int16_t)f.unitId);
+ settingsSet(nonVolatileSettings.UNUSED_2, (int16_t)fmFeaturesRecord(f));
+}
+#endif
 CodeplugChannel_t *currentChannelData;
 CodeplugChannel_t channelScreenChannelData = { .rxFreq = 0 };
 CodeplugContact_t contactListContactData;
@@ -162,6 +179,12 @@ bool settingsLoadSettings(bool reset)
 	*/
 
 	trxDMRID = uiDataGlobal.userDMRId = codeplugGetUserDMRID();
+#if defined(PLATFORM_GD77)
+ // Initialize once in RAM, without changing the storage ABI or writing on load.
+ fmFeatures_t features = settingsGetFMFeatures();
+ nonVolatileSettings.UNUSED_1 = (int16_t)features.unitId;
+ nonVolatileSettings.UNUSED_2 = (int16_t)fmFeaturesRecord(features);
+#endif
 	CodeplugDeviceInfo_t tmpDeviceInfoBuffer;// Temporary buffer to load the data including the CPS user band limits
 	if (codeplugGetDeviceInfo(&tmpDeviceInfoBuffer))
 	{

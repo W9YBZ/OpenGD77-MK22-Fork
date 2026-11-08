@@ -58,6 +58,63 @@ static bool transmitError = false;
 uint32_t xmitErrorTimer = 0;
 static bool isSatelliteScreen;
 
+#if defined(PLATFORM_GD77)
+static bool manualFMSession;
+static bool fmPermitActive;
+static uint16_t fmPermitVoice;
+static uint32_t fmPermitStarted;
+
+/* Existing AT1846 I2C API reports success on contention: guard ownership here.
+ * Only short bounded register transactions; never wait for symbols in a critical section. */
+static bool fmReadRegister(uint8_t reg, uint16_t *value)
+{
+ uint8_t hi = 0, lo = 0;
+ taskENTER_CRITICAL();
+ bool ok = !isI2cInUse && radioReadReg2byte(reg, &hi, &lo) == kStatus_Success;
+ taskEXIT_CRITICAL();
+ if (ok) *value = ((uint16_t)hi << 8) | lo;
+ return ok;
+}
+static bool fmWriteRegister(uint8_t reg, uint16_t value)
+{
+ taskENTER_CRITICAL();
+ bool ok = !isI2cInUse && radioWriteReg2byte(reg, value >> 8, value & 255) == kStatus_Success;
+ taskEXIT_CRITICAL();
+ return ok;
+}
+static bool fmTxReady(void)
+{
+ uint16_t control;
+ return trxGetMode() == RADIO_MODE_ANALOG && trxTransmissionEnabled && txPAEnabled &&
+        fmReadRegister(0x30, &control) && (control & 0x60) == 0x40;
+}
+static bool fmPermitStop(void)
+{
+ if (!fmPermitActive) return true;
+ if (melody_play == MELODY_FM_TALK_PERMIT) soundStopMelody();
+ fmPermitActive = false;
+ // Retry once; failed writes are no longer inserted into register cache.
+ return fmWriteRegister(0x3a, fmPermitVoice) || fmWriteRegister(0x3a, fmPermitVoice);
+}
+static void fmPermitStart(uint32_t now)
+{
+ if (!manualFMSession || !settingsGetFMFeatures().talkPermit ||
+     nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT ||
+     codeplugChannelGetFlag(currentChannelData, CHANNEL_FLAG_NO_BEEP) ||
+     melody_play != NULL || voicePromptsIsPlaying() || !fmTxReady()) return;
+ if (!fmReadRegister(0x3a, &fmPermitVoice)) return;
+ fmPermitActive = true; // owns snapshot even if the following write fails
+ if (!fmWriteRegister(0x3a, fmPermitVoice & 0x8fff)) {
+  if (!fmPermitStop()) transmitError = true;
+  return;
+ }
+ fmPermitStarted = now;
+ // HR-C6000 speaker audio only. AT1846 MIC is disconnected until completion.
+ soundSetMelody(MELODY_FM_TALK_PERMIT);
+ if (melody_play != MELODY_FM_TALK_PERMIT && !fmPermitStop()) transmitError = true;
+}
+#endif
+
 menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 {
 	int radioMode = trxGetMode();
@@ -68,6 +125,10 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 		bool isSatelliteAPRS = false;
 #endif
 
+#if defined(PLATFORM_GD77)
+  fmPermitActive = false;
+  manualFMSession = false;
+#endif
 		monitorModeData.isEnabled = false;
 		voicePromptsTerminateNoTail();
 		startBeepPlayed = false;
@@ -150,6 +211,12 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 				}
 
 				trxSetTX();
+#if defined(PLATFORM_GD77)
+    manualFMSession = !isSatelliteScreen && !voxIsEnabled() &&
+      (ev->buttons & BUTTON_PTT) && aprsBeaconingGetMode() != APRS_BEACONING_MODE_PTT && fmTxReady();
+    fmPermitStart(ev->time);
+    if (transmitError) ev->buttons &= ~BUTTON_PTT;
+#endif
 
 #if !defined(PLATFORM_GD77S)
 				if (isSatelliteAPRS)
@@ -197,6 +264,16 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 	}
 	else
 	{
+#if defined(PLATFORM_GD77)
+  if (fmPermitActive && (melody_play != MELODY_FM_TALK_PERMIT ||
+      (uint32_t)(ev->time - fmPermitStarted) >= 250U ||
+      !(ev->buttons & BUTTON_PTT) || transmitError)) {
+   if (!fmPermitStop()) {
+    transmitError = true;
+    ev->buttons &= ~BUTTON_PTT;
+   }
+  }
+#endif
 		// Keep displaying the "RX Only" or "Out Of Band" error message
 		if (xmitErrorTimer > 0)
 		{
@@ -534,6 +611,16 @@ static void handleEvent(uiEvent_t *ev)
 		return;
 	}
 
+#if defined(PLATFORM_GD77)
+ // A new tone/DTMF action supersedes the local permit, with MIC restored first.
+ if (fmPermitActive && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) || (menuGetKeypadKeyValue(ev, false) != 99))) {
+  if (!fmPermitStop()) {
+   transmitError = true;
+   ev->buttons &= ~BUTTON_PTT;
+   return;
+  }
+ }
+#endif
 	// Key action while xmitting (ANALOG), Tone triggering
 	if ((isTransmittingTone == false) && (isTransmittingDTMF == false) &&
 			((ev->buttons & BUTTON_PTT) != 0) && trxTransmissionEnabled && (trxGetMode() == RADIO_MODE_ANALOG))
@@ -663,6 +750,11 @@ static void handleEvent(uiEvent_t *ev)
 
 void menuTxScreenHandleTxTermination(uiEvent_t *ev, txTerminationReason_t reason)
 {
+#if defined(PLATFORM_GD77)
+ transmitError = true; // TOT/errors must never synthesize a normal release tail
+ manualFMSession = false;
+ (void)fmPermitStop();
+#endif
 	PTTToggledDown = false;
 	voxReset();
 
