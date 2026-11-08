@@ -102,7 +102,9 @@ ZL1XE
 
 # Local GD-77 build
 
-The GNU build can now generate a checked CPS-loadable `.bin`, including an
-explicit MDC1200 RF experiment. See [build instructions](docs/BUILD_GD77.md).
-The generated BIN requires the V4.3.6 donor selected in CPS; building never flashes
-a radio. Hardware/RF acceptance is still pending.
+The GNU build's `--link` generates a checked CPS firmware ZIP automatically,
+including an optional MDC1200 RF experiment. See [build instructions](docs/BUILD_GD77.md).
+Select the official `GD-77_V4.3.6.sgl` separately as the required donor in CPS;
+it is not included in the firmware ZIP. Building never flashes a radio.
+The previous 8f64d48 image failed boot with FLASH MEM ERROR. The SPI timing/ID
+diagnostic candidate is in `artifacts/gd77-flash-fix/`; hardware retest is pending.

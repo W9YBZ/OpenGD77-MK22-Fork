@@ -1,13 +1,18 @@
 # GD-77 R20260131 功能迁移与固件交付报告
 
-**链接问题已解决，实验固件 BIN 已生成。MDC 真实 RF 解码、启动和 CPS 实机
-回归仍为 Not Run。没有自动刷机或操作电台存储。**
+**旧版 8f64d48 固件用户实机启动失败：FLASH MEM ERROR，验收状态为 Fail。**
+已修正外部 Flash 位操作的时序隐患并加入失败 ID 显示；是否解决该台电台故障
+仍待复测。现在 `--link` 一条命令自动生成 CPS ZIP，donor 必须单独选择。
+没有自动刷机或操作电台存储。详见 [构建与故障复测流程](BUILD_GD77.md)。
+
+新候选输出：`artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.zip`。
+下文旧产物哈希和空间表保留为历史证据，不能作为新候选的验收结果。
 
 固件源代码提交：`8f64d486466b1ee53c036d9c6b1a7e4b15ca3637`，构建时 tracked
 工作区干净。分支为 `feature/gd77-ptt-talk-permit-mdc1200-v2`；`main` 保持
 原始 `72825f2`，未 push。原有未跟踪任务说明未修改或加入提交。
 
-## 当前产物
+## 旧产物（已报告启动失败，仅留作排查）
 
 | 文件 | 位置/说明 |
 |---|---|
@@ -110,7 +115,8 @@ Bootloader 的 FlashConfig 被应用链接脚本明确排除；所有实际载�
 | 外部原版 Kaufman 解码新 PCM | Pass | op/arg/ID 正确，坏 CRC 拒收、单 bit FEC 恢复、1000 CRC 对比 |
 | 延迟且连续相位的合成模型 | Pass | 三 ID 可独立解码；仅模型 |
 | 变频复位相位的合成模型 | Fail | 三 ID 全失败；明确暴露物理通路风险，不是实际 RF 结果 |
-| GD-77 实际启动 / FM 尾音 / Talk Permit 不串入 RF | Not Run | 未刷机、未连接电台或 SDR |
+| GD-77 旧固件实际启动 | **Fail** | 用户报告 FLASH MEM ERROR；新候选实机复测 Not Run |
+| FM 尾音 / Talk Permit 不串入 RF | Not Run | 启动故障尚待实机闭环 |
 | MDC 实际相位/baud/频偏/电平/POST-ID/重复成功率 | Not Run | 实验路径已开放，不能称为修复或已兼容 |
 | 完整 DMR/TOT/RX-only/禁发/VOX/APRS/卫星/快速重按回归 | Not Run | 软件隔离与故障测试通过，完整硬件状态机尚未验收 |
 | CPS E2026.05.26.01 读写、Codeplug/校准/回退实机 | Not Run | 协议/布局保留；本次没有电台写入或自动刷机 |

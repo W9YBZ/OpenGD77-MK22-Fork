@@ -20,7 +20,7 @@ p.add_argument("--source", type=Path, default=ROOT)
 p.add_argument("--experimental-mdc-rf",action="store_true",help="GD77 lab RF sender; GPL codec included, RF validation NOT RUN")
 p.add_argument("--donor-zip",type=Path,help="extract the provided GD-77 V4.3.6 donor for manual CPS merge")
 p.add_argument("--lto", action="store_true", help="use whole-program optimization")
-p.add_argument("--link", action="store_true", help="link/export checked CPS BIN; CPS must merge the donor")
+p.add_argument("--link", action="store_true", help="link/check BIN and generate CPS ZIP; CPS must merge the donor")
 a = p.parse_args()
 if a.donor_zip and not a.link:p.error("--donor-zip requires --link")
 donor=None
@@ -42,7 +42,7 @@ build_env=os.environ.copy();build_env["SOURCE_DATE_EPOCH"]=build_epoch
 version=revision[:8]+("+d" if dirty else "")
 stem="OpenGD77-MDC1200-EXP" if a.experimental_mdc_rf else "OpenGD77-PTT-TalkPermit"
 if a.link:
-    for name in [stem+".elf",stem+".bin","manifest.json","image-check.json"]:
+    for name in [stem+".elf",stem+".bin",stem+".zip",stem+".zip.unchecked","package-manifest.json","manifest.json","image-check.json"]:
         (out/name).unlink(missing_ok=True)
 cc = shutil.which(a.cc)
 if not cc: sys.exit("BLOCKED: arm-none-eabi-gcc missing")
@@ -131,7 +131,7 @@ except Exception:
 binary=out/(stem+".bin");pending_bin.replace(binary);binary.chmod(0o644)
 (out/"image-check.json").write_text(json.dumps(image_check,indent=2)+"\n")
 manifest=dict(source_revision=revision,tracked_dirty=dirty,source_date_epoch=int(build_epoch),
-              firmware=binary.name,experimental_mdc_rf=a.experimental_mdc_rf,fully_linked=True,
+              firmware=binary.name,experimental_mdc_rf=a.experimental_mdc_rf,fully_linked=True,donor_required=True,donor_version="GD-77 V4.3.6",
               **image_check)
 if donor is not None:
     (out/"GD-77_V4.3.6.sgl").write_bytes(donor)
@@ -148,4 +148,9 @@ if donor is not None:
     "Donor material and combined build are private local artifacts, not committed/distributed by this task.\n")
 print("PASS image layout and vectors:",binary)
 print("BIN SHA256:",image_check["sha256"])
-print("Select the supplied V4.3.6 donor in CPS before uploading this BIN; no device action performed.")
+print("Required in CPS: GD-77 V4.3.6 donor selected separately. No device action performed.")
+
+# Packaging is a required final build gate, using the same source tree as BIN.
+subprocess.run([sys.executable, str(ROOT/"tools/package_gd77_zip.py"),
+                "--artifacts", str(out), "--source", str(source)], check=True)
+print("CPS ZIP:", out/(stem+".zip"))

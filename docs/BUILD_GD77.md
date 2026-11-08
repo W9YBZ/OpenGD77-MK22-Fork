@@ -1,8 +1,10 @@
 # GD-77 GNU release build and CPS firmware file
 
-The GNU release now links and exports a checked `.bin`. The earlier link-failure
-logs are retained as history. RF decoding, hardware boot and CPS roundtrip remain
-**Not Run**. The MDC sender is experimental and remains Off in settings by default.
+The GNU release links, checks the BIN and automatically produces the CPS `.zip`
+in one invocation of `--link`. The previous 8f64d48 image failed hardware boot
+with **FLASH MEM ERROR**, reported by the user; retain it for diagnosis, not installation.
+The new SPI timing/ID-diagnostic candidate requires hardware retest. RF decoding
+and CPS roundtrip remain **Not Run**. MDC remains Off in settings by default.
 
 ## Reproduce in this workspace
 
@@ -10,28 +12,28 @@ logs are retained as history. RF decoding, hardware boot and CPS roundtrip remai
 PATH=/tmp/gd77-toolchain/root/usr/bin:$PATH python3 tools/build_gd77.py \
   --cc /tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc \
   --newlib /tmp/gd77-toolchain/root/usr \
-  --out artifacts/gd77-mdc1200-exp \
+  --out artifacts/gd77-flash-fix \
   --experimental-mdc-rf --lto --link \
   --donor-zip '/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip'
 ```
 
-Then package the checked BIN in the repository's CPS ZIP layout:
+No second packaging command is needed. `--link` succeeds only after the ZIP
+CRC, BIN and matching languages have passed validation. Stale ZIP/manifest files
+are removed before a new link build, so a failed build cannot leave a previous
+package looking current. The standalone packager remains available for re-packing
+an existing checked build: `python3 tools/package_gd77_zip.py --artifacts DIR`.
 
-```sh
-python3 tools/package_gd77_zip.py --artifacts artifacts/gd77-mdc1200-exp
-```
-
-Select `artifacts/gd77-mdc1200-exp/OpenGD77-MDC1200-EXP.zip` in CPS. Its root
+Select `artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.zip` in CPS. Its root
 contains exactly one `OpenGD77.bin` plus the 18 matching `.gla` files produced
 by the repository language builder, following `package_bin_with_languages/package.bat`.
 English is embedded in the BIN. The BIN SHA256 is unchanged by packaging; all
 ZIP member CRCs and language headers/version/size are checked. The donor remains
 outside the firmware ZIP and is selected separately in CPS.
 
-The raw `artifacts/gd77-mdc1200-exp/OpenGD77-MDC1200-EXP.bin` remains alongside ELF, map,
+The raw `artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.bin` remains alongside ELF, map,
 commands, layout verification, SHA256 manifest, README and `GD-77_V4.3.6.sgl`.
 The output directory is Git-ignored; no donor or generated binary belongs in Git.
-The ZIP is read-only; only its exact V4.3.6 member is extracted, with ZIP CRC,
+The supplied donor ZIP is read-only; only its exact V4.3.6 member is extracted, with ZIP CRC,
 length, SGL signature and the supplied member's SHA256 checked. The other stock
 versions, CPS installers and frequency-unlock file are not used.
 
@@ -92,3 +94,34 @@ All compiler flags and per-file LTO exceptions are in `commands.json`; command
 MDC-on and MDC-off builds have both been fully linked and checked. Successful
 linking and image checks do not replace hardware acceptance in
 [MDC1200_RF_EXPERIMENT.md](MDC1200_RF_EXPERIMENT.md).
+
+## FLASH MEM ERROR investigation and retest
+
+The original binary reached the boot failure branch because `SPI_Flash_init()`
+rejected its external flash part ID. This is before calibration initialization
+and before MDC TX. It is not evidence of erased calibration or a missing donor.
+The previous bitbang driver sampled MISO during the low phase with no explicit
+settling interval, relying on compiler scheduling. ARM disassembly confirms it
+read immediately after the MOSI write. This is a timing risk; the actual failing
+radio ID/waveform is not yet available, so hardware causation is unconfirmed.
+
+The candidate uses explicit mode-0 edges, samples during the high phase, and
+adds 16 compiler-proof NOPs to each half-cycle (at least 133 ns at 120 MHz), plus
+CS setup/hold delays. CS is reclaimed high before asserting it. The basis is the
+[Winbond W25Q80BV datasheet rev C1](https://www.winbond.com/upload/technical-support/f0f72951-b845-42ea-9010-faaeab26872f.pdf),
+sections 6.1.1 and 8.6–8.9 (Read ID fall-to-output-valid maximum 8 ns).
+No ID is newly accepted and no erase/reset/write command is added. Failure now
+shows `FLASH ERR XXXX`, preserving the rejected part ID for diagnosis.
+
+`test_spi_flash.c` includes the actual driver and models delayed MISO, mode-0
+edges, setup/hold and a complete 0x9f transaction. It checks five accepted and
+three rejected IDs, manufacturer readback and absence of write/erase commands.
+This is a transport model, not a measurement of the radio or a flash-write test.
+The slower shared transport must still be checked for UI/scan/voice performance.
+
+On the candidate, verify cold power-on and repeated restarts. If failure persists,
+record the exact `FLASH ERR XXXX` and whether a full power cycle changes it.
+Do not clear Codeplug/settings or restore calibration to address this ID error.
+If bench access is available, capture CS=A19, CLK=E5, MOSI=E4, MISO=E6, decode
+mode 0 / MSB first and compare the response to 9f with the displayed ID. Only
+normal boot plus CPS readback/backup comparison can close hardware acceptance.

@@ -15,14 +15,15 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--artifacts',type=Path,required=True)
-    a=p.parse_args();folder=a.artifacts.resolve()
+    p.add_argument('--source',type=Path,default=ROOT)
+    a=p.parse_args();folder=a.artifacts.resolve();source_root=a.source.resolve()
     manifest=json.loads((folder/'manifest.json').read_text())
     binary=folder/manifest['firmware'];elf=binary.with_suffix('.elf')
     image=binary.read_bytes()
     info=validate(elf.read_bytes(),image,manifest['experimental_mdc_rf'])
     assert info['sha256']==manifest['sha256'],'BIN differs from recorded build'
-    lang=ROOT/'firmware/include/user_interface/languages'
-    subprocess.run(['git','-C',str(ROOT),'diff','--quiet',manifest['source_revision'],'--',str(lang)],check=True)
+    lang=source_root/'firmware/include/user_interface/languages'
+    subprocess.run(['git','-C',str(source_root),'diff','--quiet',manifest['source_revision'],'--',str(lang)],check=True)
     # Match the native package.bat: one OpenGD77.bin and flat, optional GLA files.
     source=lang/'src/languages_builder.c'
     text=source.read_text()
