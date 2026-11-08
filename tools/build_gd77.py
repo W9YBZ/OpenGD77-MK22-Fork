@@ -140,7 +140,7 @@ if donor is not None:
 (out/"README.txt").write_text(
     "GD-77 EXPERIMENTAL firmware. Hardware boot, CPS roundtrip and MDC RF decode: NOT RUN.\n"
     "Use OpenGD77 CPS E2026.05.26.01 Extras / Firmware Loader, select GD-77.\n"
-    "Select official GD-77_V4.3.6.sgl as DONOR, then select "+binary.name+" as OpenGD77 firmware.\n"
+    "Select official GD-77_V4.3.6.sgl as DONOR, then select "+stem+".zip as OpenGD77 firmware package.\n"
     "The BIN contains empty codec slots; CPS merges the donor before upload.\n"
     "Do not flash the donor itself or use this ELF/BIN via raw SWD. No auto flash was performed.\n"
     "PTT Tone defaults Off; choose MDC1200 EXP explicitly for RF tests.\n"
