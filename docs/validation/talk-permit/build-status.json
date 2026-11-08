@@ -1,0 +1,14 @@
+{
+  "native_ide_installation": "BLOCKED_NXP_ACCOUNT_DOWNLOAD",
+  "installed": false,
+  "installer_requested": "mcuxpressoide-24.12.148.x86_64.deb.bin",
+  "download_destination": "login.nxp.com",
+  "sudo_noninteractive_available": false,
+  "native_baseline_commit": "aac8ae0",
+  "feature_commit": "20a47b2",
+  "native_link": "BLOCKED_NO_MCUXPRESSO_REDLIB",
+  "firmware_zip": "NOT_GENERATED",
+  "hardware_audio": "NOT_RUN",
+  "host_tests": "PASS",
+  "settings_abi": "PASS"
+}

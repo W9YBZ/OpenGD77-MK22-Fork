@@ -1,0 +1,13 @@
+{
+  "official_files_unchanged_after_eol_normalization": 311,
+  "allowed_changes": [
+    "README.md",
+    "firmware/include/functions/settings.h",
+    "firmware/include/functions/sound.h",
+    "firmware/source/functions/sound.c",
+    "firmware/source/user_interface/menuSoundOptions.c",
+    "firmware/source/user_interface/uiTxScreen.c"
+  ],
+  "metadata_byte_exact": true,
+  "native_backend_linker_drivers_unchanged": true
+}

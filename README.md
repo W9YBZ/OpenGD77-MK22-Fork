@@ -99,3 +99,29 @@ VK7JS
 VK7ZCR
 VK7ZJA
 ZL1XE
+
+
+# Official R20260131 restart: Talk Permit only
+
+Development on `feature/gd77-talk-permit-official-r20260131` starts from the official
+R20260131 source and restores the official `.project` and `.cproject` files that
+were missing from this fork. The previous three-feature/audio experiment is kept
+on its original branch as unsuccessful diagnostic history.
+
+The only feature added here is **Sound Options → Talk Permit: On / Off**, for
+local three-tone indication at an authorized manual FM TX start. It uses the
+unchanged official sound backend, temporarily disconnects the TX microphone,
+and restores it after playback or cancellation. DMR and special TX paths retain
+their original behavior. Existing settings layout, CPS, Codeplug and calibration
+formats are unchanged; a previously unused settings bit stores the option.
+
+**Native build is currently blocked: MCUXpresso IDE is not installed.** The
+official release requires MCUXpresso IDE v24.12 or older and the original Redlib
+project configuration. The user authorized installation, but NXP's installer
+portal requires account login. No new firmware ZIP has been generated or marked
+hardware-validated, and no radio has been flashed.
+
+See [restart/build status and verification](docs/TALK_PERMIT_RESTART.md) and
+[official source provenance](docs/OFFICIAL_SOURCE.json). The restored baseline
+commit is `aac8ae0`; Talk Permit implementation is `20a47b2`. Verify the baseline's
+original key beep before accepting any feature build.
