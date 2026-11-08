@@ -28,3 +28,6 @@ __pycache__/
 # Backup
 *.bak
 *.orig
+
+# Private local firmware/donor build outputs
+/artifacts/

@@ -99,3 +99,10 @@ VK7JS
 VK7ZCR
 VK7ZJA
 ZL1XE
+
+# Local GD-77 build
+
+The GNU build can now generate a checked CPS-loadable `.bin`, including an
+explicit MDC1200 RF experiment. See [build instructions](docs/BUILD_GD77.md).
+The generated BIN requires the V4.3.6 donor selected in CPS; building never flashes
+a radio. Hardware/RF acceptance is still pending.

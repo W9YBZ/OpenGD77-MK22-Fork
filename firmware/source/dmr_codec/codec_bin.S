@@ -24,8 +24,8 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-.section .codec_bin_section_1
+.section .codec_bin_section_1, "a", %progbits
 .incbin "../linkerdata/codec_bin_section_1.bin"
 
-.section .codec_bin_section_2
+.section .codec_bin_section_2, "a", %progbits
 .incbin "../linkerdata/codec_bin_section_2.bin"
