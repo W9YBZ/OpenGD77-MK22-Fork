@@ -11,11 +11,12 @@ MDC，设置默认仍为 Off。实验构建菜单显示 `PTT:MDC1200 EXP`，选�
 PATH=/tmp/gd77-toolchain/root/usr/bin:$PATH python3 tools/build_gd77.py \
   --cc /tmp/gd77-toolchain/root/usr/bin/arm-none-eabi-gcc \
   --newlib /tmp/gd77-toolchain/root/usr \
-  --out artifacts/gd77-mdc1200-exp --experimental-mdc-rf --lto --link
+  --out artifacts/gd77-flash-fix --experimental-mdc-rf --lto --link
 ```
 
-**后续链接修复已完成，当前固件在 `artifacts/gd77-mdc1200-exp/`，
-见 [成功构建与 donor 安装说明](BUILD_GD77.md)。下方早期 Blocked 链接记录为历史。**
+**旧版 8f64d48 用户实机启动报 FLASH MEM ERROR。新的 SPI 时序/ID 诊断候选在
+`artifacts/gd77-flash-fix/`，尚待实机复测。`--link` 自动生成 CPS ZIP，donor 必须
+单独选择；见 [构建、donor 与故障复测流程](BUILD_GD77.md)。下方早期 Blocked 链接记录为历史。**
 
 该参数加入 `GD77_EXPERIMENTAL_MDC_RF=1` 和独立 GPL-2.0 编码器对象。
 默认构建不加入该对象，其他平台拒绝启用。AMBE donor 不下载/入库。

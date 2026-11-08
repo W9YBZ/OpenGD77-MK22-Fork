@@ -8,7 +8,31 @@
 新候选输出：`artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.zip`。
 下文旧产物哈希和空间表保留为历史证据，不能作为新候选的验收结果。
 
-固件源代码提交：`8f64d486466b1ee53c036d9c6b1a7e4b15ca3637`，构建时 tracked
+## Flash 诊断候选交付
+
+源码：`1236a4106d15a8c6c8a4e3274ddc2ceefb5b3ba9`，构建时 tracked 工作区干净。
+ZIP：`artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.zip`，238867 字节。
+ZIP SHA256：`f55286b249b381d7a0fa6099e70942a8e58f2049d24ad0c9028c4cba0fd86e13`。
+BIN SHA256：`899f867dd439e8922b9780cdaa0ec8fe666dc0978e1238f4eedeaba937021064`，502812 字节。
+CPS 必须单独选择同目录 `GD-77_V4.3.6.sgl` 为 donor，ZIP 内不含 donor。
+
+已通过：131 个 ARM C 单元、完整链接、ELF/BIN 布局与变异拒绝测试、ZIP CRC
+和 18 个 GLA 匹配检查、真实 SPI 驱动 JEDEC 时序模型、原主机回归与四平台语法检查。
+最终反汇编确认两个 16 NOP 等待和高电平采样未被 LTO 消除。
+证据：[构建清单](validation/flash-boot/manifest.json)、
+[ZIP 清单](validation/flash-boot/package-manifest.json)、
+[主机测试](validation/flash-boot/host-tests.log)、
+[最终 SPI 反汇编](validation/flash-boot/spi-transfer-disassembly.log)。
+
+**根因尚未实机确认，新候选开机、CPS 读回及 RF 解码均待复测。**
+旧错误来自外部 Flash ID 检查；时序修改属于有数据手册依据的修正，不能仅凭
+主机测试宣称已修复用户电台。新的错误屏幕保留 `FLASH ERR XXXX` 供继续定位。
+没有放宽芯片白名单，没有新增存储擦写，也没有修改 Codeplug/校准格式。
+重建和实机复测步骤见 [BUILD_GD77.md](BUILD_GD77.md)。
+
+## 历史链接交付记录
+
+旧固件源代码提交：`8f64d486466b1ee53c036d9c6b1a7e4b15ca3637`，构建时 tracked
 工作区干净。分支为 `feature/gd77-ptt-talk-permit-mdc1200-v2`；`main` 保持
 原始 `72825f2`，未 push。原有未跟踪任务说明未修改或加入提交。
 

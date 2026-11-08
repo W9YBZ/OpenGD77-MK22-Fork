@@ -1,0 +1,96 @@
+PASS: 393210 settings records, 32 single-bit corruptions, defaults and stable ID
+PASS: one tail, 150ms, abort, lost TX, excluded modes, millis wrap
+PASS: actual TX helpers: local MIC gate, RF route, exclusions, I2C failure rollback/retry
+PASS: real AT1846 cache invalidates failed writes and retries old/new values
+PASS: rational 1200-baud deadlines, 4 clocks, wrap, pending write and late IRQ faults
+PASS: actual MDC RF IRQ adapter: 3 IDs/208 symbols, ACK bytes, NACK, contention, deadlines, TX loss, cancel and timer restore
+PASS: EEPROM claim race rejects MDC ownership without a bus transaction; normal read/write unchanged
+PASS: actual MDC release handler: one attempt, completion, exclusions, TOT, 250ms deadline and start failure cleanup
+PASS: actual TX helpers: local MIC gate, RF route, exclusions, I2C failure rollback/retry
+PASS: bounded newlib heap, shrink/OOM/extreme increments preserve heap and stack
+In file included from /home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/feature_migration/test_spi_flash.c:17:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/feature_migration/../../firmware/source/hardware/SPI_Flash.c:64:1: warning: ‘static’ is not at beginning of declaration [-Wold-style-declaration]
+   64 | volatile static bool flashIsBusy = false;
+      | ^~~~~~~~
+PASS: real SPI JEDEC transport, mode-0 edges/setup/hold/delayed MISO, supported/rejected IDs, read-only commands
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+PASS syntax: PLATFORM_GD77
+PASS syntax: PLATFORM_GD77S
+PASS syntax: PLATFORM_DM1801
+PASS syntax: PLATFORM_RD5R
+[
+  {
+    "unit_id": "0001",
+    "samples": 8320,
+    "duration_ms": 173.33333333333334,
+    "peak": 12000,
+    "decoder": "Not Run"
+  },
+  {
+    "unit_id": "1234",
+    "samples": 8320,
+    "duration_ms": 173.33333333333334,
+    "peak": 12000,
+    "decoder": "Not Run"
+  },
+  {
+    "unit_id": "FFFF",
+    "samples": 8320,
+    "duration_ms": 173.33333333333334,
+    "peak": 12000,
+    "decoder": "Not Run"
+  }
+]
+PASS: golden CRC/FEC/interleaver/frame/differential/PCM; buffer guards
+NOT RUN: external decoder (pass --reference PATH)

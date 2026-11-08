@@ -1,0 +1,65 @@
+
+artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text_start:
+
+Disassembly of section .text_main:
+
+0000e9e0 <spi_flash_transfer.lto_priv.0>:
+    e9e0:	4a1b      	ldr	r2, [pc, #108]	; (ea50 <spi_flash_transfer.lto_priv.0+0x70>)
+    e9e2:	b530      	push	{r4, r5, lr}
+    e9e4:	2308      	movs	r3, #8
+    e9e6:	2510      	movs	r5, #16
+    e9e8:	2420      	movs	r4, #32
+    e9ea:	0601      	lsls	r1, r0, #24
+    e9ec:	bf4c      	ite	mi
+    e9ee:	6055      	strmi	r5, [r2, #4]
+    e9f0:	6095      	strpl	r5, [r2, #8]
+    e9f2:	bf00      	nop
+    e9f4:	bf00      	nop
+    e9f6:	bf00      	nop
+    e9f8:	bf00      	nop
+    e9fa:	bf00      	nop
+    e9fc:	bf00      	nop
+    e9fe:	bf00      	nop
+    ea00:	bf00      	nop
+    ea02:	bf00      	nop
+    ea04:	bf00      	nop
+    ea06:	bf00      	nop
+    ea08:	bf00      	nop
+    ea0a:	bf00      	nop
+    ea0c:	bf00      	nop
+    ea0e:	bf00      	nop
+    ea10:	bf00      	nop
+    ea12:	6054      	str	r4, [r2, #4]
+    ea14:	bf00      	nop
+    ea16:	bf00      	nop
+    ea18:	bf00      	nop
+    ea1a:	bf00      	nop
+    ea1c:	bf00      	nop
+    ea1e:	bf00      	nop
+    ea20:	bf00      	nop
+    ea22:	bf00      	nop
+    ea24:	bf00      	nop
+    ea26:	bf00      	nop
+    ea28:	bf00      	nop
+    ea2a:	bf00      	nop
+    ea2c:	bf00      	nop
+    ea2e:	bf00      	nop
+    ea30:	bf00      	nop
+    ea32:	bf00      	nop
+    ea34:	6911      	ldr	r1, [r2, #16]
+    ea36:	6094      	str	r4, [r2, #8]
+    ea38:	0040      	lsls	r0, r0, #1
+    ea3a:	3b01      	subs	r3, #1
+    ea3c:	b2c0      	uxtb	r0, r0
+    ea3e:	f3c1 1180 	ubfx	r1, r1, #6, #1
+    ea42:	f013 03ff 	ands.w	r3, r3, #255	; 0xff
+    ea46:	ea40 0001 	orr.w	r0, r0, r1
+    ea4a:	d1ce      	bne.n	e9ea <spi_flash_transfer.lto_priv.0+0xa>
+    ea4c:	bd30      	pop	{r4, r5, pc}
+    ea4e:	bf00      	nop
+    ea50:	400ff100 	.word	0x400ff100
+
+Disassembly of section .upper_text:

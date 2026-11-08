@@ -1,0 +1,41 @@
+ARM objects: 131 passed, 0 failed; log /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-flash-fix/compile.log
+{
+  "file": "OpenGD77-MDC1200-EXP.zip",
+  "sha256": "f55286b249b381d7a0fa6099e70942a8e58f2049d24ad0c9028c4cba0fd86e13",
+  "bytes": 238867,
+  "firmware_sha256": "899f867dd439e8922b9780cdaa0ec8fe666dc0978e1238f4eedeaba937021064",
+  "firmware_source": "1236a4106d15a8c6c8a4e3274ddc2ceefb5b3ba9",
+  "language_count": 18,
+  "entries": [
+    "OpenGD77.bin",
+    "Catalan.gla",
+    "Croatian.gla",
+    "Czech.gla",
+    "Danish.gla",
+    "Dutch.gla",
+    "Finnish.gla",
+    "French.gla",
+    "German.gla",
+    "Hungarian.gla",
+    "Italian.gla",
+    "Polish.gla",
+    "PortuguesBrazil.gla",
+    "Portuguese.gla",
+    "Romanian.gla",
+    "Slovenian.gla",
+    "Spanish.gla",
+    "Swedish.gla",
+    "Turkish.gla"
+  ],
+  "crc_check": "PASS",
+  "bin_unchanged": true,
+  "donor_in_zip": false,
+  "cps_hardware_test": "NOT_RUN"
+}
+   text	   data	    bss	    dec	    hex	filename
+ 461372	  38504	  60608	 560484	  88d64	/home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.elf
+
+PASS image layout and vectors: /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.bin
+BIN SHA256: 899f867dd439e8922b9780cdaa0ec8fe666dc0978e1238f4eedeaba937021064
+Required in CPS: GD-77 V4.3.6 donor selected separately. No device action performed.
+CPS ZIP: /home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/gd77-flash-fix/OpenGD77-MDC1200-EXP.zip
