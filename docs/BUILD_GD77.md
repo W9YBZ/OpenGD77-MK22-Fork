@@ -15,7 +15,20 @@ PATH=/tmp/gd77-toolchain/root/usr/bin:$PATH python3 tools/build_gd77.py \
   --donor-zip '/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip'
 ```
 
-Output is `artifacts/gd77-mdc1200-exp/OpenGD77-MDC1200-EXP.bin` plus ELF, map,
+Then package the checked BIN in the repository's CPS ZIP layout:
+
+```sh
+python3 tools/package_gd77_zip.py --artifacts artifacts/gd77-mdc1200-exp
+```
+
+Select `artifacts/gd77-mdc1200-exp/OpenGD77-MDC1200-EXP.zip` in CPS. Its root
+contains exactly one `OpenGD77.bin` plus the 18 matching `.gla` files produced
+by the repository language builder, following `package_bin_with_languages/package.bat`.
+English is embedded in the BIN. The BIN SHA256 is unchanged by packaging; all
+ZIP member CRCs and language headers/version/size are checked. The donor remains
+outside the firmware ZIP and is selected separately in CPS.
+
+The raw `artifacts/gd77-mdc1200-exp/OpenGD77-MDC1200-EXP.bin` remains alongside ELF, map,
 commands, layout verification, SHA256 manifest, README and `GD-77_V4.3.6.sgl`.
 The output directory is Git-ignored; no donor or generated binary belongs in Git.
 The ZIP is read-only; only its exact V4.3.6 member is extracted, with ZIP CRC,
@@ -24,7 +37,7 @@ versions, CPS installers and frequency-unlock file are not used.
 
 Use the existing **OpenGD77 CPS E2026.05.26.01 → Extras → Firmware Loader**,
 select **GD-77**, choose `GD-77_V4.3.6.sgl` as the **donor**, and the generated
-`OpenGD77-MDC1200-EXP.bin` as the OpenGD77 firmware. CPS performs the AMBE merge
+`OpenGD77-MDC1200-EXP.zip` as the OpenGD77 firmware package. CPS performs the AMBE merge
 before upload. Do not choose the stock donor as the firmware to flash. The `.bin`
 retains empty codec slots and the ELF is a debug artifact, not a donor-merged SWD
 image. No flashing tool is invoked by the build.

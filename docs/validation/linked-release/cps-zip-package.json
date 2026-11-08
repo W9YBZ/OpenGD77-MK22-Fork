@@ -1,0 +1,33 @@
+{
+  "file": "OpenGD77-MDC1200-EXP.zip",
+  "sha256": "927a4e751f0e77c635785771ad41827f348262faee64dbe952ce4287d063fae4",
+  "bytes": 238829,
+  "firmware_sha256": "58fac6a50d938546db9275dc4553ebf98be382b66857d4dd752a2961891b7150",
+  "firmware_source": "8f64d486466b1ee53c036d9c6b1a7e4b15ca3637",
+  "language_count": 18,
+  "entries": [
+    "OpenGD77.bin",
+    "Catalan.gla",
+    "Croatian.gla",
+    "Czech.gla",
+    "Danish.gla",
+    "Dutch.gla",
+    "Finnish.gla",
+    "French.gla",
+    "German.gla",
+    "Hungarian.gla",
+    "Italian.gla",
+    "Polish.gla",
+    "PortuguesBrazil.gla",
+    "Portuguese.gla",
+    "Romanian.gla",
+    "Slovenian.gla",
+    "Spanish.gla",
+    "Swedish.gla",
+    "Turkish.gla"
+  ],
+  "crc_check": "PASS",
+  "bin_unchanged": true,
+  "donor_in_zip": false,
+  "cps_hardware_test": "NOT_RUN"
+}

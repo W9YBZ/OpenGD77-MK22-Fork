@@ -11,16 +11,20 @@
 
 | 文件 | 位置/说明 |
 |---|---|
+| `OpenGD77-MDC1200-EXP.zip` | 同目录，238829 字节；CPS 首选包，根目录 OpenGD77.bin + 18 个 GLA |
 | `OpenGD77-MDC1200-EXP.bin` | `artifacts/gd77-mdc1200-exp/`，502812 字节，供 CPS 选择 |
 | `GD-77_V4.3.6.sgl` | 同目录，从用户 ZIP 只提取指定 donor；供 CPS 的 donor 选项 |
 | ELF / map / manifest / README | 同目录，调试、布局、哈希与人工安装说明 |
 
 BIN SHA256：`58fac6a50d938546db9275dc4553ebf98be382b66857d4dd752a2961891b7150`。
 两个独立目录重建的 BIN 逐字节一致；GCC 日期/时间宏使用源码提交 epoch。
+ZIP SHA256：`927a4e751f0e77c635785771ad41827f348262faee64dbe952ce4287d063fae4`。
+ZIP CRC、唯一根目录 BIN 和所有 18 个匹配 GLA 已验证；donor 不放入 ZIP。
+打包证据见 [cps-zip-package.json](validation/linked-release/cps-zip-package.json)。
 
 BIN 保留两个 FF 编解码占位段，**需要 CPS 合并 donor**。在现有
 CPS E2026.05.26.01 的 Extras / Firmware Loader 选择 GD-77，先选择
-`GD-77_V4.3.6.sgl` 为 donor，再选择上述 BIN 为 OpenGD77 固件。
+`GD-77_V4.3.6.sgl` 为 donor，再选择上述 ZIP 为 OpenGD77 固件包（包内 BIN 与已校验固件逐字节相同）。
 不要把 donor 当成待刷固件，也不要把占位 ELF/BIN 经原始 SWD 直接刷入。
 构建脚本不会调用刷机程序。
 

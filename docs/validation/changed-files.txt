@@ -24,10 +24,12 @@ docs/validation/linked-release/codec-placeholder.log
 docs/validation/linked-release/commands.json
 docs/validation/linked-release/compile.log
 docs/validation/linked-release/control-size.log
+docs/validation/linked-release/cps-zip-package.json
 docs/validation/linked-release/host-tests.log
 docs/validation/linked-release/host-warnings.log
 docs/validation/linked-release/image-check.json
 docs/validation/linked-release/image-mutation-tests.log
+docs/validation/linked-release/languages-build.log
 docs/validation/linked-release/link-command.json
 docs/validation/linked-release/link.log
 docs/validation/linked-release/manifest.json
@@ -87,3 +89,4 @@ tools/mdc1200/COPYING
 tools/mdc1200/README.md
 tools/mdc1200/mdc1200_codec.c
 tools/mdc1200/mdc1200_codec.h
+tools/package_gd77_zip.py
