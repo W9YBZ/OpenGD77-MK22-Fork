@@ -1,0 +1,21 @@
+{
+  "source_url": "https://www.opengd77.com/downloads/releases/MK22/R20260131/sources_and_tools/OPENGD77_MK22_20260131.zip",
+  "downloaded_utc_date": "2026-11-08",
+  "zip_sha256": "4491830bc1a7a9e43f82a6151859e42fbfe17a5a8d96c7cc6b65c11faa32af31",
+  "baseline_commit": "72825f29d19729b0de3ec2711351a2845dbcff91",
+  "compared_files": 317,
+  "matched_after_crlf_normalization": 315,
+  "missing_original_files": [
+    "firmware/.project",
+    "firmware/.cproject"
+  ],
+  "other_content_differences": [],
+  "restored_files": {
+    ".project": "f3735c93a1809bf3175f9cca0e41282fac50e64987c44c1f4ffd60bd902e5b9f",
+    ".cproject": "c0b865c8c99c9d0e2abcd78b32467ff26546d6583091113eb1d289d03d4907ad"
+  },
+  "build_requirement": "NXP MCUXpresso IDE 24.12 or older, original Redlib and per-file options; first validate untouched baseline",
+  "installer_status": "NXP_ACCOUNT_LOGIN_REQUIRED",
+  "superseded_branch": "feature/gd77-ptt-talk-permit-mdc1200-v2",
+  "superseded_head": "d2b3426"
+}

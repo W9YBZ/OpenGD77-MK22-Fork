@@ -28,3 +28,9 @@ __pycache__/
 # Backup
 *.bak
 *.orig
+
+# Official Eclipse project metadata is part of the reproducible source.
+!firmware/.project
+!firmware/.cproject
+/firmware/GD-77/
+/artifacts/
