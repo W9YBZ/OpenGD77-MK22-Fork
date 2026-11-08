@@ -35,4 +35,27 @@ static inline uint16_t fmFeaturesRecord(fmFeatures_t f)
  uint8_t flags = 0xA8U | (f.mode <= PTT_TONE_MDC1200 ? f.mode : PTT_TONE_OFF) | (f.talkPermit ? 4U : 0U);
  return flags | ((uint16_t)fmFeaturesCRC(f.unitId, flags) << 8);
 }
+/* Release-only tail controller. UI release latch prevents re-key while active. */
+typedef struct { bool attempted, active; uint32_t started; } fmTail_t;
+typedef enum { FM_TAIL_NONE, FM_TAIL_START, FM_TAIL_WAIT, FM_TAIL_STOP } fmTailAction_t;
+static inline fmTailAction_t fmTailPoll(fmTail_t *tail, bool eligible, bool abort,
+                                       uint8_t mode, uint32_t now)
+{
+ if (tail->active) {
+  if (abort || !eligible || (uint32_t)(now - tail->started) >= 150U) {
+   tail->active = false;
+   return FM_TAIL_STOP;
+  }
+  return FM_TAIL_WAIT;
+ }
+ if (tail->attempted) return FM_TAIL_NONE;
+ tail->attempted = true;
+ // MDC1200 is deliberately RF-disabled even when selected and persisted.
+ if (eligible && !abort && mode == PTT_TONE_BEEP) {
+  tail->active = true;
+  tail->started = now;
+  return FM_TAIL_START;
+ }
+ return FM_TAIL_NONE;
+}
 #endif

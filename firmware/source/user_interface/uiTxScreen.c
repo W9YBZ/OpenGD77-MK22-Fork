@@ -32,6 +32,7 @@
 #include "user_interface/uiLocalisation.h"
 #include "interfaces/clockManager.h"
 #include "functions/satellite.h"
+#include <stddef.h>
 #if defined(HAS_GPS)
 #include "interfaces/gps.h"
 #endif
@@ -63,6 +64,13 @@ static bool manualFMSession;
 static bool fmPermitActive;
 static uint16_t fmPermitVoice;
 static uint32_t fmPermitStarted;
+static fmTail_t fmTail;
+static bool fmTailHardwareActive;
+static const uint8_t fmTailRegisters[] = { 0x35, 0x41, 0x79, 0x3a };
+static uint16_t fmTailSnapshot[4];
+#ifndef FM_FEATURE_TRACE
+#define FM_FEATURE_TRACE(event, value) ((void)0)
+#endif
 
 /* Existing AT1846 I2C API reports success on contention: guard ownership here.
  * Only short bounded register transactions; never wait for symbols in a critical section. */
@@ -82,6 +90,15 @@ static bool fmWriteRegister(uint8_t reg, uint16_t value)
  taskEXIT_CRITICAL();
  return ok;
 }
+static bool fmRestoreRegister(uint8_t reg, uint16_t value)
+{
+ uint16_t actual;
+ for (unsigned attempt = 0; attempt < 2; attempt++) {
+  if (fmWriteRegister(reg, value) && fmReadRegister(reg, &actual) && actual == value) return true;
+ }
+ FM_FEATURE_TRACE("restore-failed", reg);
+ return false;
+}
 static bool fmTxReady(void)
 {
  uint16_t control;
@@ -94,7 +111,7 @@ static bool fmPermitStop(void)
  if (melody_play == MELODY_FM_TALK_PERMIT) soundStopMelody();
  fmPermitActive = false;
  // Retry once; failed writes are no longer inserted into register cache.
- return fmWriteRegister(0x3a, fmPermitVoice) || fmWriteRegister(0x3a, fmPermitVoice);
+ return fmRestoreRegister(0x3a, fmPermitVoice);
 }
 static void fmPermitStart(uint32_t now)
 {
@@ -104,7 +121,9 @@ static void fmPermitStart(uint32_t now)
      melody_play != NULL || voicePromptsIsPlaying() || !fmTxReady()) return;
  if (!fmReadRegister(0x3a, &fmPermitVoice)) return;
  fmPermitActive = true; // owns snapshot even if the following write fails
- if (!fmWriteRegister(0x3a, fmPermitVoice & 0x8fff)) {
+ uint16_t actual;
+ if (!fmWriteRegister(0x3a, fmPermitVoice & 0x8fff) ||
+     !fmReadRegister(0x3a, &actual) || (actual & 0x7000) != 0) {
   if (!fmPermitStop()) transmitError = true;
   return;
  }
@@ -112,6 +131,46 @@ static void fmPermitStart(uint32_t now)
  // HR-C6000 speaker audio only. AT1846 MIC is disconnected until completion.
  soundSetMelody(MELODY_FM_TALK_PERMIT);
  if (melody_play != MELODY_FM_TALK_PERMIT && !fmPermitStop()) transmitError = true;
+}
+/* Tail modifies only this bounded register set. No power/CSS/filters, speaker
+ * mux or channel data are changed. Restore exact snapshots on every exit. */
+static bool fmTailStop(void)
+{
+ fmTail.active = false;
+ if (!fmTailHardwareActive) return true;
+ bool ok = true;
+ for (unsigned n = 4; n > 0; n--)
+  if (!fmRestoreRegister(fmTailRegisters[n - 1], fmTailSnapshot[n - 1])) ok = false;
+ fmTailHardwareActive = false;
+ FM_FEATURE_TRACE("tail-stop", ticksGetMillis());
+ return ok;
+}
+static bool fmTailStart(void)
+{
+ if (!fmPermitStop()) return false;
+ // Existing tone action owns its own gain snapshot; do not nest tone routes.
+ if (isTransmittingTone || isTransmittingDTMF || !fmTxReady()) return false;
+ for (unsigned n = 0; n < 4; n++)
+  if (!fmReadRegister(fmTailRegisters[n], &fmTailSnapshot[n])) return false;
+ fmTailHardwareActive = true;
+ CalibrationDataResult_t cal = { 0 };
+ cal.offset = offsetof(deviationToneStruct_t, tone);
+ if (!calibrationGetSectionData((trxCurrentBand[TRX_TX_FREQ_BAND] == RADIO_BAND_UHF) ?
+  CalibrationBandUHF : CalibrationBandVHF, CalibrationSection_DEV_TONE, &cal)) {
+  fmTailHardwareActive = false;
+  return false;
+ }
+ // TX tone generator -> RF modulation; local speaker amp remains untouched.
+ bool ok = fmWriteRegister(0x35, 10000) &&
+  fmWriteRegister(0x41, (fmTailSnapshot[1] & 0xff80) | (cal.value & 0x7f)) &&
+  fmWriteRegister(0x79, fmTailSnapshot[2] | 0xc000) &&
+  fmWriteRegister(0x3a, (fmTailSnapshot[3] & 0x8fff) | 0x1000);
+ uint16_t actual;
+ ok = ok && fmReadRegister(0x3a, &actual) && (actual & 0x7000) == 0x1000;
+ if (!ok) { (void)fmTailStop(); return false; }
+ fmTail.started = ticksGetMillis();
+ FM_FEATURE_TRACE("tail-start", fmTail.started);
+ return true;
 }
 #endif
 
@@ -127,6 +186,8 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 
 #if defined(PLATFORM_GD77)
   fmPermitActive = false;
+  fmTail = (fmTail_t){0};
+  fmTailHardwareActive = false;
   manualFMSession = false;
 #endif
 		monitorModeData.isEnabled = false;
@@ -215,7 +276,7 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
     manualFMSession = !isSatelliteScreen && !voxIsEnabled() &&
       (ev->buttons & BUTTON_PTT) && aprsBeaconingGetMode() != APRS_BEACONING_MODE_PTT && fmTxReady();
     fmPermitStart(ev->time);
-    if (transmitError) ev->buttons &= ~BUTTON_PTT;
+    if (transmitError) { ev->buttons &= ~BUTTON_PTT; pttWasReleased = true; }
 #endif
 
 #if !defined(PLATFORM_GD77S)
@@ -271,6 +332,7 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
    if (!fmPermitStop()) {
     transmitError = true;
     ev->buttons &= ~BUTTON_PTT;
+    pttWasReleased = true;
    }
   }
 #endif
@@ -493,6 +555,21 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (trxTransmissionEnabled)
 		{
+#if defined(PLATFORM_GD77)
+   bool abortTail = transmitError || (currentChannelData->tot != 0 && timeInSeconds == 0);
+   bool eligibleTail = manualFMSession && !voxIsEnabled() && !isSatelliteScreen &&
+    aprsBeaconingGetMode() != APRS_BEACONING_MODE_PTT &&
+    !isTransmittingTone && !isTransmittingDTMF && fmTxReady();
+   fmTailAction_t action = fmTailPoll(&fmTail, eligibleTail, abortTail,
+     settingsGetFMFeatures().mode, ev->time);
+   if (action == FM_TAIL_START) {
+    if (fmTailStart()) return;
+    transmitError = true;
+    (void)fmTailStop();
+   } else if (action == FM_TAIL_WAIT) return;
+   else if (action == FM_TAIL_STOP && !fmTailStop()) transmitError = true;
+   if (!fmPermitStop()) transmitError = true;
+#endif
 #if !defined(PLATFORM_GD77S)
 			if ((transmitError == false) &&
 					(isSatelliteScreen == false) && (aprsBeaconingGetMode() == APRS_BEACONING_MODE_PTT) && (aprsPTTBeaconTriggered == false))
@@ -617,6 +694,7 @@ static void handleEvent(uiEvent_t *ev)
   if (!fmPermitStop()) {
    transmitError = true;
    ev->buttons &= ~BUTTON_PTT;
+   pttWasReleased = true;
    return;
   }
  }
@@ -754,6 +832,7 @@ void menuTxScreenHandleTxTermination(uiEvent_t *ev, txTerminationReason_t reason
  transmitError = true; // TOT/errors must never synthesize a normal release tail
  manualFMSession = false;
  (void)fmPermitStop();
+ (void)fmTailStop();
 #endif
 	PTTToggledDown = false;
 	voxReset();

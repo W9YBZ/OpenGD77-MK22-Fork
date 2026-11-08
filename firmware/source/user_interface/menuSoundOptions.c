@@ -164,7 +164,7 @@ static void updateScreen(bool isFirstRun)
     case OPTIONS_FM_PTT_TONE: {
      fmFeatures_t f = settingsGetFMFeatures();
      leftSide = "PTT Tone";
-     const char *modes[] = { currentLanguage->off, currentLanguage->beep, "MDC1200" };
+     const char *modes[] = { currentLanguage->off, currentLanguage->beep, "MDC1200*" };
      snprintf(rightSideVar, sizeof(rightSideVar), "%s", modes[f.mode]);
      break;
     }
