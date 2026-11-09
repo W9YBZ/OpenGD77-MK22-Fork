@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-09",
+  "source_revision": "9f511d2e98b8788c347254c311b7b6dfeeb19dc3",
+  "zip_sha256": "b564cb0b88fc60fbc423ac8fae4eaf5353dbdb656ada9c1d211e1e6c0501ebb2",
+  "feedback": "连续发射Beep 和对端尾音正常",
+  "repeated_manual_ptt": "PASS_USER_REPORTED",
+  "ptt_beep": "PASS_USER_REPORTED",
+  "independent_receiver_tail_audibility": "PASS_USER_REPORTED",
+  "measured_rf_tone_frequency": "NOT_RUN",
+  "measured_rf_tail_duration": "NOT_RUN",
+  "measured_deviation": "NOT_RUN",
+  "cps_roundtrip": "NOT_RUN",
+  "settings_persistence": "NOT_RUN",
+  "talk_permit_rf_isolation": "NOT_RUN",
+  "tot_and_special_paths": "NOT_RUN",
+  "evidence_type": "USER_REPORT_NO_CAPTURE_OR_MEASUREMENT_ATTACHED"
+}

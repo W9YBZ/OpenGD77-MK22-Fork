@@ -124,9 +124,11 @@ Two other unused bits in the existing options word store the mode, without
 changing the settings ABI. The first PTT Beep image **failed hardware acceptance**:
 no received tail and subsequent PTT blocked, including after switching Off.
 The RekeyFix candidate also failed hardware acceptance with `B E35/4`.
-The current Tone35Fix candidate corrects the unvalidated frequency-register echo
-interlock; its hardware/RF acceptance remains **Not Run**. It checks the physical
-frequency-command write and keeps MIC/route readback protection.
+The current Tone35Fix build corrects the unvalidated frequency-register echo
+interlock. The user confirms **continuous PTT, Beep and receiver-audible RF tail
+work**. Exact RF frequency/duration/deviation and other regressions remain
+**Not Run**. Physical frequency-command write checks and MIC/route readback
+protection remain enabled.
 
 MCUXpresso IDE **24.12.148** is now installed locally with its bundled compiler
 and Redlib. Both the restored official baseline and the Talk Permit firmware
@@ -137,7 +139,8 @@ per-file settings and `firmware.ld`; no newlib-nano/LTO recipe is substituted.
 Local packages:
 
 * `artifacts/native-ptt-tone35-fix/OpenGD77-TalkPermit-PTTBeep-Tone35Fix.zip` —
-  current E35 repair candidate. Hardware acceptance **Not Run**.
+  user-confirmed working continuous PTT / Beep / receiver-audible tail build.
+  Keep this ZIP as the current two-feature rollback reference.
 * `artifacts/native-ptt-rekey-fix/OpenGD77-TalkPermit-PTTBeep-RekeyFix.zip` —
   **withdrawn**: user reported persistent failure and `B E35/4`.
 * `artifacts/native-ptt-beep/OpenGD77-TalkPermit-PTTBeep.zip` — **withdrawn**:
@@ -180,4 +183,5 @@ original stable fallback. No donor or generated firmware binaries are in Git.
 See [PTT re-key repair and fault-code procedure](docs/PTT_REKEY_FIX.md) for the
 preceding attempt. The user subsequently identified `E35/4`; see
 [the Tone35 command/readback correction](docs/PTT_TONE35_FIX.md) for the current
-candidate, evidence limits and manual acceptance. RF success is not yet proven.
+build, evidence limits and acceptance. Continuous PTT and receiver-audible Beep
+are now **PASS (user reported)**; precise RF measurements remain **Not Run**.

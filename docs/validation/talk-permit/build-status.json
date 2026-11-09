@@ -19,12 +19,14 @@
     "feature": "Tone35 command/readback correction",
     "native_link": "PASS",
     "image_and_zip": "PASS",
-    "hardware_boot": "NOT_RUN",
-    "hardware_audio": "NOT_RUN",
-    "ptt_rf_beep": "NOT_RUN",
-    "repeated_ptt": "NOT_RUN",
+    "hardware_boot": "OPERATIONAL_INFERRED_FROM_USER_TX_REPORT",
+    "hardware_audio": "PARTIAL_PASS_USER_REPORTED_PTT_RF_TAIL",
+    "ptt_rf_beep": "PASS_USER_REPORTED_RECEIVER_AUDIBLE",
+    "repeated_ptt": "PASS_USER_REPORTED",
     "frequency_readback_contract": "UNVERIFIED_NOT_USED_AS_INTERLOCK",
-    "cps_roundtrip": "NOT_RUN"
+    "cps_roundtrip": "NOT_RUN",
+    "acceptance": "docs/validation/ptt-tone35/user-acceptance.json",
+    "rf_frequency_duration_deviation_measurements": "NOT_RUN"
   },
   "initial_ptt_beep_hardware": "FAIL_USER_REPORTED_NO_TAIL_AND_SUBSEQUENT_TX_BLOCK",
   "rekeyfix_hardware": "FAIL_USER_REPORTED_E35_4"

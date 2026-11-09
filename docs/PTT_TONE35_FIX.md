@@ -75,8 +75,9 @@ host O2/LTO and GD77/GD77S/DM1801/RD5R syntax: PASS. All 57 settings fields stil
 match the baseline with the bundled target compiler in both enum modes.
 
 These are host models and source checks, not a full radio/scheduler simulation.
-Hardware acceptance of this image, repeated PTT, RF audibility, measured
-1000 Hz/150 ms, DMR and CPS roundtrip: **Not Run**.
+At build time hardware checks were Not Run. The subsequent user report confirms
+repeated PTT, Beep and receiver-audible RF tail work. Measured 1000 Hz/150 ms,
+deviation, DMR and CPS roundtrip remain **Not Run**; see the acceptance update below.
 
 ## Native build
 
@@ -112,7 +113,7 @@ Evidence: [manifest](validation/ptt-tone35/native/manifest.json),
 [image mutation tests](validation/ptt-tone35/native/image-mutations.log),
 [source audit](validation/ptt-tone35/native/official-diff.log).
 
-## Manual acceptance — Not Run
+## Manual acceptance procedure — user-confirmed subset below
 
 1. Use this newly named ZIP with the usual separate donor. First check original
    key beep, Talk Permit and ordinary FM speech. PTTFix remains the working
@@ -128,3 +129,28 @@ Evidence: [manifest](validation/ptt-tone35/native/manifest.json),
 5. Recheck quick taps, re-press, TOT and 1750/DTMF, saved options/CPS and
    Talk Permit RF isolation as available. Unmeasured RF parameters and
    untested special/DMR paths remain Not Run.
+
+## Hardware acceptance update — 2026-11-09
+
+The user reports: “连续发射Beep 和对端尾音正常”. For the unchanged Tone35Fix ZIP:
+
+| Check | Status |
+| --- | --- |
+| Consecutive manual PTT transmissions | PASS — user reported |
+| PTT Beep operation | PASS — user reported |
+| RF tail audible at the receiving radio | PASS — user reported |
+| Measured frequency, duration and deviation | Not Run |
+| CPS roundtrip and saved-setting persistence on this image | Not Run |
+| Talk Permit RF isolation, TOT, quick re-key, DTMF/1750 and special-path regression | Not Run |
+
+No RF capture, repeat count or instrument measurement was supplied, so this
+confirms successful operation and audibility without establishing exact waveform
+parameters or every exclusion/failure path. The earlier local Talk Permit
+success remains separately recorded for PTTFix. No new image is built for this
+documentation update: retain Tone35Fix (ZIP SHA256
+`b564cb0b88fc60fbc423ac8fae4eaf5353dbdb656ada9c1d211e1e6c0501ebb2`)
+as the user-confirmed two-feature rollback reference.
+
+The original build manifest preserves its build-time Not Run values; subsequent
+hardware evidence is in [user-acceptance.json](validation/ptt-tone35/user-acceptance.json).
+MDC1200 remains reserved/unimplemented in this native branch.
