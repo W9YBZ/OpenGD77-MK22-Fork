@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Verify this fork against the pinned official archive, allowing only the scoped FM audio features."""
-import argparse,hashlib,json,zipfile
+import argparse,hashlib,json,zipfile,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 p=argparse.ArgumentParser();p.add_argument('--source-zip',type=Path,required=True);a=p.parse_args()
@@ -16,6 +16,9 @@ with zipfile.ZipFile(a.source_zip) as z:
   if info.is_dir():continue
   rel=info.filename.split('/',1)[1];old=z.read(info);new=(ROOT/rel).read_bytes()
   if rel.endswith(('/.project','/.cproject')):assert old==new,'official project metadata changed'
+  if rel=='firmware/source/hardware/AT1846S.c':
+   stripped,n=re.subn(rb'#if defined\(PLATFORM_GD77\)\nstatus_t radioWriteReg2byteFresh.*?\n}\n#endif\n\n',b'',new.replace(b'\r\n',b'\n'),flags=re.S)
+   assert n==1 and stripped==old.replace(b'\r\n',b'\n'),'existing AT1846 driver implementation changed'
   if old.replace(b'\r\n',b'\n')!=new.replace(b'\r\n',b'\n'):
    assert rel in allowed,('unexpected source change',rel);changed.append(rel)
   else:same+=1

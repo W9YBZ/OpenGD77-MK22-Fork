@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-09",
+  "zip_sha256": "c31e11843eb79036acdc044547b01a2b88ec9a7637da3b38518eb32b91faa6e9",
+  "ptt_tone": "Beep",
+  "first_tx": "PASS_USER_REPORTED",
+  "rf_tail": "FAIL_USER_REPORTED",
+  "subsequent_tx": "FAIL_USER_REPORTED",
+  "switch_off_after_failure": "DOES_NOT_RESTORE_TX_USER_REPORTED",
+  "off_from_fresh_boot": "NOT_RUN",
+  "root_register": "UNCONFIRMED",
+  "status": "WITHDRAWN"
+}

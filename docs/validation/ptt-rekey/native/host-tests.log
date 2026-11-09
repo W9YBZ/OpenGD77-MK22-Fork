@@ -1,0 +1,83 @@
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/talk_permit/test_talk_permit.c: In function ‘radioWriteReg2byte’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/talk_permit/test_talk_permit.c:64:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   64 |  if(!ignoreWrite)*regPtr(reg)=val;return kStatus_Success;
+      |  ^~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/talk_permit/test_talk_permit.c:64:35: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   64 |  if(!ignoreWrite)*regPtr(reg)=val;return kStatus_Success;
+      |                                   ^~~~~~
+PASS: 100 consecutive Off and 100 consecutive Beep sessions retain hardware/cache state through native RX/menu cleanup
+PASS: PTT RF tail 1000 Hz / 150 ms state, one-shot, mode exclusions, full register restore, TX-band calibration, setup/readback/cache failures, TOT/exit/re-key/wrap and Talk Permit coexistence
+PASS: synthetic menu entry / real PTT event / one-shot / key preemption; actual Talk Permit MIC gate/restore/drain/deadline, release/TOT/exit, exclusions, I2C failure and PA shutdown
+PASS: real settings bit helpers, Off default, three-mode range, invalid->Off, dirty flag, byte/neighbor isolation and snapshot restoration
+PASS: actual native failed-write cache bug reproduced; fresh writes reach physical bus, failed transfers invalidate cache, busy/bank writes rejected
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/talk_permit/test_talk_permit.c: In function ‘radioWriteReg2byte’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/talk_permit/test_talk_permit.c:64:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   64 |  if(!ignoreWrite)*regPtr(reg)=val;return kStatus_Success;
+      |  ^~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/tests/talk_permit/test_talk_permit.c:64:35: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   64 |  if(!ignoreWrite)*regPtr(reg)=val;return kStatus_Success;
+      |                                   ^~~~~~
+PASS: 100 consecutive Off and 100 consecutive Beep sessions retain hardware/cache state through native RX/menu cleanup
+PASS: PTT RF tail 1000 Hz / 150 ms state, one-shot, mode exclusions, full register restore, TX-band calibration, setup/readback/cache failures, TOT/exit/re-key/wrap and Talk Permit coexistence
+PASS: synthetic menu entry / real PTT event / one-shot / key preemption; actual Talk Permit MIC gate/restore/drain/deadline, release/TOT/exit, exclusions, I2C failure and PA shutdown
+PASS: real settings bit helpers, Off default, three-mode range, invalid->Off, dirty flag, byte/neighbor isolation and snapshot restoration
+PASS: actual native failed-write cache bug reproduced; fresh writes reach physical bus, failed transfers invalidate cache, busy/bank writes rejected
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c: In function ‘soundBeepTaskFunction’:
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:553:2: warning: #warning ERRR NO [-Wcpp]
+  553 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:565:2: warning: #warning ERRR NO [-Wcpp]
+  565 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:592:2: warning: #warning ERRR NO [-Wcpp]
+  592 | #warning ERRR NO
+      |  ^~~~~~~
+/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware/source/functions/sound.c:609:2: warning: #warning ERRR NO [-Wcpp]
+  609 | #warning ERRR NO
+      |  ^~~~~~~
+PASS syntax: PLATFORM_GD77
+PASS syntax: PLATFORM_GD77S
+PASS syntax: PLATFORM_DM1801
+PASS syntax: PLATFORM_RD5R
+PASS: nominal three-tone 140ms melody; setting aliases official unused bank-0 bit 2
+PASS: official synthetic first-run boundary arms pending request; real menu tick consumes it
+PASS: EOT placement before native RF-off, existing PTT release latch and appended menu with original cancel snapshot

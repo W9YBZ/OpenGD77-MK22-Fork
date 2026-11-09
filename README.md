@@ -121,7 +121,10 @@ nominal 1000 Hz / 150 ms RF tail at normal release. It excludes DMR, VOX-enabled
 APRS-on-PTT, satellite, TOT and TX-error paths. The reserved MDC selection emits
 no tail; MDC1200 implementation and independent RF validation remain deferred.
 Two other unused bits in the existing options word store the mode, without
-changing the settings ABI. RF audibility/frequency/duration are **Not Run**.
+changing the settings ABI. The first PTT Beep image **failed hardware acceptance**:
+no received tail and subsequent PTT blocked, including after switching Off.
+The RekeyFix candidate addresses a reproduced register-cache recovery bug and
+adds visible fault codes; its hardware/RF acceptance remains **Not Run**.
 
 MCUXpresso IDE **24.12.148** is now installed locally with its bundled compiler
 and Redlib. Both the restored official baseline and the Talk Permit firmware
@@ -131,9 +134,10 @@ per-file settings and `firmware.ld`; no newlib-nano/LTO recipe is substituted.
 
 Local packages:
 
-* `artifacts/native-ptt-beep/OpenGD77-TalkPermit-PTTBeep.zip` — latest candidate:
-  working Talk Permit implementation plus the new PTT Tone menu and RF Beep.
-  This new image requires hardware acceptance; set PTT Tone to Beep to test.
+* `artifacts/native-ptt-rekey-fix/OpenGD77-TalkPermit-PTTBeep-RekeyFix.zip` —
+  current repair/diagnostic candidate. Hardware acceptance **Not Run**.
+* `artifacts/native-ptt-beep/OpenGD77-TalkPermit-PTTBeep.zip` — **withdrawn**:
+  user reported no RF tail and subsequent TX blocked.
 * `artifacts/native-official-baseline/OpenGD77-Official-Base.zip` — test original
   key beeps, boot and CPS first.
 * `artifacts/native-talk-permit-trigger-fix/OpenGD77-TalkPermit-PTTFix.zip` —
@@ -142,7 +146,7 @@ Local packages:
 * `artifacts/native-talk-permit/OpenGD77-TalkPermit.zip` — superseded: user
   confirmed key beeps work, but Talk Permit did not play.
 
-Both need the official `GD-77_V4.3.6.sgl` selected separately as donor in CPS.
+All packages need the official `GD-77_V4.3.6.sgl` selected separately as donor in CPS.
 The ZIP contains OpenGD77.bin and 18 matching language files, without the donor.
 The preceding Talk Permit package has user-confirmed working key beeps; its
 Talk Permit playback failed. The user subsequently confirmed PTTFix local Talk Permit playback succeeds.
@@ -152,8 +156,8 @@ published release and still requires its own hardware acceptance.
 One-command native build and ZIP packaging in this workspace:
 
 ```sh
-python3 tools/build_native_gd77.py --out artifacts/native-ptt-beep \
-  --name OpenGD77-TalkPermit-PTTBeep \
+python3 tools/build_native_gd77.py --out artifacts/native-ptt-rekey-fix \
+  --name OpenGD77-TalkPermit-PTTBeep-RekeyFix \
   --donor-zip '/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip'
 ```
 
@@ -162,9 +166,13 @@ See [build commands, hashes and acceptance steps](docs/TALK_PERMIT_RESTART.md),
 [native build evidence](docs/validation/talk-permit/native/summary.json).
 
 See [PTT trigger fix, evidence and acceptance](docs/TALK_PERMIT_PTT_TRIGGER_FIX.md)
-for the latest candidate; earlier build reports describe the superseded ZIP.
+for the user-confirmed local Talk Permit build.
 
 See [PTT Beep scope, build hashes and independent receiver acceptance](docs/PTT_BEEP_STAGE.md)
-for the current two-feature candidate. Keep the user-confirmed PTTFix ZIP as the
+for the initial two-feature design and failed hardware candidate. Keep the user-confirmed PTTFix ZIP as the
 Talk Permit rollback package, and the published official R20260131 as the
 original stable fallback. No donor or generated firmware binaries are in Git.
+
+See [PTT re-key repair and fault-code procedure](docs/PTT_REKEY_FIX.md) for the
+latest candidate. A reproduced host-side defect does not establish the first
+hardware failure's exact register or prove RF playback is now successful.

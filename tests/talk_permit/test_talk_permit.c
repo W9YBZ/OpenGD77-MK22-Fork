@@ -13,7 +13,7 @@ const int16_t MELODY_FM_TALK_PERMIT[]={940,40,0,10,940,40,0,10,940,40,-1,-1};
 static uint16_t voiceReg,txReg,toneReg,gainReg,singleReg;
 int trxCurrentBand[2];
 static uint32_t now;
-static bool calibrationFails,cacheEnabled;
+static bool calibrationFails,cacheEnabled,ignoreWrite;
 static unsigned reads,failReadNth,failWriteNth;
 static uint16_t cache[128];
 static bool cached[128];
@@ -61,7 +61,7 @@ status_t radioWriteReg2byte(uint8_t reg,uint8_t hi,uint8_t lo)
  if(cacheEnabled && cached[reg] && cache[reg]==val)return kStatus_Success;
  cache[reg]=val;cached[reg]=true; // Model the native driver's cache-on-failure.
  if(failWrite || (unsigned)writes==failWriteNth)return kStatus_Fail;
- *regPtr(reg)=val;return kStatus_Success;
+ if(!ignoreWrite)*regPtr(reg)=val;return kStatus_Success;
 }
 status_t radioWriteReg2byteFresh(uint8_t reg,uint8_t hi,uint8_t lo)
 {
@@ -76,7 +76,7 @@ static uiEvent_t reset(void)
 {
  assert(!depth);talkPermitActive=talkPermitDraining=talkPermitPending=transmitError=false;
  pttToneActive=pttToneArmed=false;fmAudioFault=0;now=100;reads=failReadNth=failWriteNth=0;
- calibrationFails=cacheEnabled=false;memset(cached,0,sizeof(cached));
+ calibrationFails=cacheEnabled=ignoreWrite=false;memset(cached,0,sizeof(cached));
  nonVolatileSettings.bitfieldOptions[0]=0;
  toneReg=0x4567;gainReg=0x6f35;singleReg=0x0211;
  trxCurrentBand[TRX_TX_FREQ_BAND]=RADIO_BAND_UHF;
@@ -213,6 +213,13 @@ int main(void)
  assert(pttToneHandleRelease(&ev));failWrite=true;
  fmTxAudioExit(NULL);assert(pttToneActive && !txPAEnabled && transmitError);
  failWrite=false;fmTxAudioExit(NULL);assert(!pttToneActive && voiceReg==0x40ac);
+ // ACKed writes with a wrong physical readback must remain fail-closed.
+ ev=reset();ev.buttons=0;pttToneArmed=true;
+ nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
+ assert(pttToneHandleRelease(&ev));ignoreWrite=true;fmTxAudioExit(NULL);
+ assert(pttToneActive && !txPAEnabled && transmitError);
+ assert(menuTxScreenGetAudioFault()==0x0479);
+ ignoreWrite=false;fmTxAudioExit(NULL);assert(!pttToneActive && voiceReg==0x40ac);
  // Consecutive sessions MUST keep real register/cache state across each TX.
  // Native RX changes the CSS bits in 3a between sessions; next TX preserves them.
  for(int option=0;option<2;option++)

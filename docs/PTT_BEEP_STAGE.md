@@ -149,3 +149,12 @@ Evidence: [manifest](validation/ptt-beep/native/manifest.json),
 If hardware regression appears, use the retained user-confirmed PTTFix ZIP
 (with the same donor) to isolate this stage; published official R20260131 is
 the known original fallback. No image checker or host test proves RF success.
+
+## Hardware feedback / superseding repair
+
+The user reports this original PTT Beep candidate failed: Beep selected, no
+received tail, and later PTT blocked (red TX LED off / error beep). Selecting
+Off after the fault did not restore repeated TX. Its software checks remain
+valid, but RF audibility and repeated-TX acceptance are **FAIL (user reported)**.
+See [re-key repair and diagnostics](PTT_REKEY_FIX.md) for the new candidate;
+its actual hardware behavior is Not Run.
