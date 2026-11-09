@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify this fork against the pinned official archive, allowing only Talk Permit."""
+"""Verify this fork against the pinned official archive, allowing only the scoped FM audio features."""
 import argparse,hashlib,json,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]

@@ -11,5 +11,17 @@
   "cps_roundtrip": "NOT_RUN",
   "host_tests": "PASS",
   "settings_abi": "PASS_USING_BUNDLED_COMPILER",
-  "previous_download_blocker": "RESOLVED_USER_PROVIDED_AUTHORIZED_LINK"
+  "previous_download_blocker": "RESOLVED_USER_PROVIDED_AUTHORIZED_LINK",
+  "pttfix_local_talk_permit": "PASS_USER_REPORTED_2026-11-09",
+  "latest_candidate": {
+    "source_commit": "0c7b4409f9b3fc3858f0dcb6190d4599f25f20c4",
+    "manifest": "docs/validation/ptt-beep/native/manifest.json",
+    "feature": "Talk Permit + PTT RF Beep",
+    "native_link": "PASS",
+    "image_and_zip": "PASS",
+    "hardware_boot": "NOT_RUN",
+    "hardware_audio": "NOT_RUN",
+    "ptt_rf_beep": "NOT_RUN",
+    "cps_roundtrip": "NOT_RUN"
+  }
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Talk-Permit-only host tests; never builds or flashes a radio image."""
+"""Talk Permit / PTT Beep host tests; never builds or flashes a radio image."""
 from pathlib import Path
 import re,subprocess,tempfile
 ROOT=Path(__file__).resolve().parents[2]

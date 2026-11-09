@@ -101,19 +101,27 @@ VK7ZJA
 ZL1XE
 
 
-# Official R20260131 restart: Talk Permit only
+# Official R20260131 restart: Talk Permit and PTT Beep
 
 Development on `feature/gd77-talk-permit-official-r20260131` starts from the official
 R20260131 source and restores the official `.project` and `.cproject` files that
 were missing from this fork. The previous three-feature/audio experiment is kept
 on its original branch as unsuccessful diagnostic history.
 
-The only feature added here is **Sound Options → Talk Permit: On / Off**, for
-local three-tone indication at an authorized manual FM TX start. It uses the
+**Sound Options → Talk Permit: On / Off** provides local three-tone indication
+at an authorized manual FM TX start. It uses the
 unchanged official sound backend, temporarily disconnects the TX microphone,
 and restores it after playback or cancellation. DMR and special TX paths retain
 their original behavior. Existing settings layout, CPS, Codeplug and calibration
 formats are unchanged; a previously unused settings bit stores the option.
+
+The next candidate adds **Sound Options → PTT Tone: Off / Beep / MDC N/A**.
+Off is the default. Beep holds an established ordinary manual FM TX for a
+nominal 1000 Hz / 150 ms RF tail at normal release. It excludes DMR, VOX-enabled,
+APRS-on-PTT, satellite, TOT and TX-error paths. The reserved MDC selection emits
+no tail; MDC1200 implementation and independent RF validation remain deferred.
+Two other unused bits in the existing options word store the mode, without
+changing the settings ABI. RF audibility/frequency/duration are **Not Run**.
 
 MCUXpresso IDE **24.12.148** is now installed locally with its bundled compiler
 and Redlib. Both the restored official baseline and the Talk Permit firmware
@@ -123,6 +131,9 @@ per-file settings and `firmware.ld`; no newlib-nano/LTO recipe is substituted.
 
 Local packages:
 
+* `artifacts/native-ptt-beep/OpenGD77-TalkPermit-PTTBeep.zip` — latest candidate:
+  working Talk Permit implementation plus the new PTT Tone menu and RF Beep.
+  This new image requires hardware acceptance; set PTT Tone to Beep to test.
 * `artifacts/native-official-baseline/OpenGD77-Official-Base.zip` — test original
   key beeps, boot and CPS first.
 * `artifacts/native-talk-permit-trigger-fix/OpenGD77-TalkPermit-PTTFix.zip` —
@@ -141,8 +152,8 @@ published release and still requires its own hardware acceptance.
 One-command native build and ZIP packaging in this workspace:
 
 ```sh
-python3 tools/build_native_gd77.py --out artifacts/native-talk-permit-trigger-fix \
-  --name OpenGD77-TalkPermit-PTTFix \
+python3 tools/build_native_gd77.py --out artifacts/native-ptt-beep \
+  --name OpenGD77-TalkPermit-PTTBeep \
   --donor-zip '/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip'
 ```
 
@@ -152,3 +163,8 @@ See [build commands, hashes and acceptance steps](docs/TALK_PERMIT_RESTART.md),
 
 See [PTT trigger fix, evidence and acceptance](docs/TALK_PERMIT_PTT_TRIGGER_FIX.md)
 for the latest candidate; earlier build reports describe the superseded ZIP.
+
+See [PTT Beep scope, build hashes and independent receiver acceptance](docs/PTT_BEEP_STAGE.md)
+for the current two-feature candidate. Keep the user-confirmed PTTFix ZIP as the
+Talk Permit rollback package, and the published official R20260131 as the
+original stable fallback. No donor or generated firmware binaries are in Git.
