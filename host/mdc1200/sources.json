@@ -1,0 +1,53 @@
+{
+  "kaufman_commit": "45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12",
+  "sdrtrunk_commit": "02c62d012fe88ea581f05c6082af12ca7adf65dc",
+  "kaufman_license": "GPL-2.0-only",
+  "sdrtrunk_license": "GPL-3.0-or-later",
+  "files": [
+    {
+      "path": "kaufman/README.md",
+      "sha256": "f8815fe2a785aef69197ebe29fef939a04dca4f9d91f67959150fe1e2272191b",
+      "url": "https://raw.githubusercontent.com/atmatthewat/mdc-encode-decode/45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12/README.md"
+    },
+    {
+      "path": "kaufman/mdc_common.c",
+      "sha256": "727969c7e538088e3b9e2e5c72d6cccfa5657fdef76732e8e74c692811b6c156",
+      "url": "https://raw.githubusercontent.com/atmatthewat/mdc-encode-decode/45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12/mdc_common.c"
+    },
+    {
+      "path": "kaufman/mdc_encode.c",
+      "sha256": "db88cb1111eaa762df35f58af61111a725f1bf4ee2aa9ae9f9d5f262b5adf4dc",
+      "url": "https://raw.githubusercontent.com/atmatthewat/mdc-encode-decode/45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12/mdc_encode.c"
+    },
+    {
+      "path": "kaufman/mdc_encode.h",
+      "sha256": "f13ee686bed9e828ae97291fd44a0744de265070ccdcc31ea242356624e59461",
+      "url": "https://raw.githubusercontent.com/atmatthewat/mdc-encode-decode/45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12/mdc_encode.h"
+    },
+    {
+      "path": "kaufman/mdc_decode.c",
+      "sha256": "f78ff609bc893086f59ae3e67bba4108d4a368a7c52a0ad8b1a3d12561f7474e",
+      "url": "https://raw.githubusercontent.com/atmatthewat/mdc-encode-decode/45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12/mdc_decode.c"
+    },
+    {
+      "path": "kaufman/mdc_decode.h",
+      "sha256": "6cdd7165c5badbebea50be1f1f84ef56a682b0e9dbbcb0023d3d15dfb556f59e",
+      "url": "https://raw.githubusercontent.com/atmatthewat/mdc-encode-decode/45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12/mdc_decode.h"
+    },
+    {
+      "path": "kaufman/mdc_types.h",
+      "sha256": "637b8573065d2f70d4aab955348742afcc5abdf46be0baf399bbcde26d8d33a8",
+      "url": "https://raw.githubusercontent.com/atmatthewat/mdc-encode-decode/45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12/mdc_types.h"
+    },
+    {
+      "path": "sdrtrunk/MDCMessage.java",
+      "sha256": "27a81eff0ca5996afbf1e6fccb1848e7b8ef3c3c11df31352148395ba919cadb",
+      "url": "https://raw.githubusercontent.com/DSheirer/sdrtrunk/02c62d012fe88ea581f05c6082af12ca7adf65dc/src/main/java/io/github/dsheirer/module/decode/mdc1200/MDCMessage.java"
+    },
+    {
+      "path": "sdrtrunk/MDCMessageProcessor.java",
+      "sha256": "f28558313893c842b34808afeb223dac197a2c6cdc752548ed41f1e2f7d693ae",
+      "url": "https://raw.githubusercontent.com/DSheirer/sdrtrunk/02c62d012fe88ea581f05c6082af12ca7adf65dc/src/main/java/io/github/dsheirer/module/decode/mdc1200/MDCMessageProcessor.java"
+    }
+  ]
+}

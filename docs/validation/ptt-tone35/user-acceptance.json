@@ -13,5 +13,7 @@
   "settings_persistence": "NOT_RUN",
   "talk_permit_rf_isolation": "NOT_RUN",
   "tot_and_special_paths": "NOT_RUN",
-  "evidence_type": "USER_REPORT_NO_CAPTURE_OR_MEASUREMENT_ATTACHED"
+  "evidence_type": "USER_REPORT_NO_CAPTURE_OR_MEASUREMENT_ATTACHED",
+  "followup_general_use": "PASS_USER_REPORTED_OTHER_USE_AND_FUNCTIONS_NORMAL_UNSPECIFIED",
+  "followup_measurement_availability": "USER_CURRENTLY_CANNOT_MEASURE_RECEIVED_AUDIO"
 }

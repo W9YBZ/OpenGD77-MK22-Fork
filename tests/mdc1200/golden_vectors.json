@@ -1,0 +1,140 @@
+{
+  "oracle": "atmatthewat/mdc-encode-decode",
+  "commit": "45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12",
+  "evidence": "external software, not captured RF",
+  "vectors": [
+    {
+      "profile": "candidate_post",
+      "op": "01",
+      "arg": "00",
+      "unit_id": "0001",
+      "crc_prefix_raw": [
+        "1189",
+        "19D8",
+        "5ADC",
+        "0D32"
+      ],
+      "crc": "F2CD",
+      "info": "01000001CDF200",
+      "fec": "01000001CDF2006500006519D321",
+      "logical_frame": "5555555555555507092A446F8484000C028A16100E0B02960C86",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF665846C6000A03CF1D18090E83DD0AC5",
+      "frame_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "profile": "candidate_post",
+      "op": "01",
+      "arg": "00",
+      "unit_id": "1234",
+      "crc_prefix_raw": [
+        "1189",
+        "19D8",
+        "694F",
+        "CD3D"
+      ],
+      "crc": "32C2",
+      "info": "01001234C23200",
+      "fec": "01001234C2320065009A6201110A",
+      "logical_frame": "5555555555555507092A446F88810808029B2620041818A424A0",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF66584CC18C0C03D6B530061414F636F0",
+      "frame_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "profile": "candidate_post",
+      "op": "01",
+      "arg": "00",
+      "unit_id": "FFFF",
+      "crc_prefix_raw": [
+        "1189",
+        "19D8",
+        "55A4",
+        "EC03"
+      ],
+      "crc": "13FC",
+      "info": "0100FFFFFC1300",
+      "fec": "0100FFFFFC130065002300AFDC06",
+      "logical_frame": "5555555555555507092A446F9C971C033EA63C20340E348A3C88",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF665852DC9202A1F522302E092ECF22CC",
+      "frame_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "profile": "bot_control",
+      "op": "01",
+      "arg": "80",
+      "unit_id": "0001",
+      "crc_prefix_raw": [
+        "1189",
+        "9DD0",
+        "D610",
+        "01DE"
+      ],
+      "crc": "FE21",
+      "info": "0180000121FE00",
+      "fec": "0180000121FE0065803265C54A23",
+      "logical_frame": "5555555555555507092A446F8291222A068812340A0F029004AE",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF665843D9B33F05CC1B2E0F0883D806F9",
+      "frame_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "profile": "bot_control",
+      "op": "01",
+      "arg": "80",
+      "unit_id": "1234",
+      "crc_prefix_raw": [
+        "1189",
+        "9DD0",
+        "E583",
+        "C1D1"
+      ],
+      "crc": "3E2E",
+      "info": "018012342E3E00",
+      "fec": "018012342E3E006580A862DD8808",
+      "logical_frame": "5555555555555507092A446F8E942A2E06992204001C18A22C88",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF665849DE3F3905D5B306001214F33ACC",
+      "frame_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "profile": "bot_control",
+      "op": "01",
+      "arg": "80",
+      "unit_id": "FFFF",
+      "crc_prefix_raw": [
+        "1189",
+        "9DD0",
+        "D968",
+        "E0EF"
+      ],
+      "crc": "1F10",
+      "info": "0180FFFF101F00",
+      "fec": "0180FFFF101F0065801100734504",
+      "logical_frame": "5555555555555507092A446F9A823E253AA43804300A348C34A0",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF665857C32137A7F62406280F2ECA2EF0",
+      "frame_bytes": 26,
+      "symbols": 208
+    },
+    {
+      "profile": "conflicting_preset_control",
+      "op": "00",
+      "arg": "80",
+      "unit_id": "1234",
+      "crc_prefix_raw": [
+        "0000",
+        "8408",
+        "BF5F",
+        "DD6A"
+      ],
+      "crc": "2295",
+      "info": "00801234952200",
+      "fec": "008012349522000080A8622A5F0C",
+      "logical_frame": "5555555555555507092A446F08162C2B001F22000C12102C2C04",
+      "tone_bits": "FFFFFFFFFFFFFF848DBF66588C1D3A3E8010B3000A1B183A3A06",
+      "frame_bytes": 26,
+      "symbols": 208
+    }
+  ]
+}
