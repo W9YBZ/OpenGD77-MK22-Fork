@@ -185,3 +185,18 @@ preceding attempt. The user subsequently identified `E35/4`; see
 [the Tone35 command/readback correction](docs/PTT_TONE35_FIX.md) for the current
 build, evidence limits and acceptance. Continuous PTT and receiver-audible Beep
 are now **PASS (user reported)**; precise RF measurements remain **Not Run**.
+
+# MDC1200 independent host validation
+
+A separate [GPL-2.0-only host encoder lab](host/mdc1200/README.md) now validates
+CRC/FEC/interleave/frame/tone decisions against freshly generated external
+vectors for IDs 0001/1234/FFFF, with original external block and ideal-PCM audio
+decoding. Goldens were committed before the new encoder. Random, mutation and
+boundary tests pass; see [protocol evidence](docs/MDC1200_PROTOCOL_VALIDATION.md).
+
+This phase changes no firmware source or CPS ZIP. Keep using Tone35Fix.
+MDC N/A remains reserved: RF modulation/sending and commercial POST-ID acceptance
+are not implemented or verified. The `01/00` candidate and conflicting `00/80`
+preset are explicitly documented. Precise received-audio measurements of the
+working PTT Beep remain Not Run; the user's general other-use report is recorded
+without treating it as instrumented or individually enumerated regression tests.

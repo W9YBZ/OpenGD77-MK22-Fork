@@ -72,15 +72,79 @@ python3 tests/mdc1200/generate_vectors.py \
 cmp tests/mdc1200/golden_vectors.json artifacts/mdc1200-protocol/regenerated-vectors.json
 ```
 
-## Implementation / tests to complete in this stage
+## Completed implementation and actual validation
 
-Implement a fixed-size hardware-independent encoder under `host/mdc1200`, then
-compare every intermediate with the external goldens. Check random packets/CRC,
-bounds/null/ID-zero behavior, external block decoder CRC/FEC acceptance and
-negative CRC/bit mutations. A test-only ideal PCM fixture may exercise the
-external sample decoder; that would not constitute RF modulation or a captured
-radio signal. Source-level SDRTrunk flag auditing is distinct from running its
-full receiver. Record actual test outcomes after execution.
+References and expected bytes were committed in `dd95f6a` before implementation;
+new host encoder/tests were committed in `a61d205`. The encoder is in
+`host/mdc1200/mdc1200_encoder.c/.h`: reflected CRC, systematic/parity FEC,
+interleaving, logical framing and packed differential tone decisions. It has
+no RTOS, driver, radio register, dynamic allocation or RF modulation dependency.
+The trace carries each intermediate so agreement is checked at every layer.
+
+| Candidate POST unit | CRC value | CRC bytes before FEC |
+| --- | --- | --- |
+| 0001 | F2CD | CD F2 |
+| 1234 | 32C2 | C2 32 |
+| FFFF | 13FC | FC 13 |
+
+These values were newly generated from the pinned external encoder, not copied
+from the archived experiment or produced by the new implementation. Complete
+bytes/intermediates are in [golden_vectors.json](../tests/mdc1200/golden_vectors.json).
+A fresh regeneration is byte-identical to the committed JSON.
+
+Actual command (GCC 11.4.0 host compiler):
+
+```sh
+python3 tests/mdc1200/run.py \
+  --references artifacts/mdc1200-protocol/references \
+  --out artifacts/mdc1200-protocol/results
+```
+
+| Check | Result |
+| --- | --- |
+| All intermediates, frames and tone decisions of seven golden cases | PASS |
+| 1000 deterministic random CRC comparisons against original external CRC | PASS |
+| 512 random opcode-1 argument/ID frame/tone comparisons and external block decodes | PASS |
+| Original external CRC/FEC block decoder recovers all three candidate IDs | PASS |
+| Ideal host PCM accepted by original external audio demodulator for all three IDs | PASS |
+| All 112 single-bit payload mutations recover the original packet via external FEC | PASS |
+| Six valid-FEC packets with deliberately stale/corrupt CRC are rejected externally | PASS |
+| All 65535 nonzero candidate IDs, raw ID zero, null/empty/buffer boundary guards | PASS |
+| UBSan baseline and host O2/LTO guard suite | PASS |
+| SDRTrunk pinned-source flag/interleave audit | PASS — source audit only |
+| Firmware diff versus user-confirmed two-feature baseline | EMPTY |
+| Captured RF / commercial receiver POST-ID event and ID/CRC | Not Run |
+
+The external encoder and decoder compile as separate shared objects; their
+original CRC/FEC routines never call the new implementation. This gives external
+software agreement beyond a new encoder/new decoder self-roundtrip. It remains
+one external modem family, not two independent RF implementations. SDRTrunk adds
+an independently authored semantic/source check, not a claimed full Java decode
+or CRC result.
+
+The test-only PCM writer uses continuous phase at 48 ksample/s, 40 samples per
+symbol, amplitude 12000, 8320 frame samples, and 40/80 ms leading/trailing silence.
+Frame time is 173.333 ms; the complete WAV is longer because of padding. This is
+an ideal synthetic signal, not captured RF, calibrated deviation, a transmitter
+backend or proof the AT1846 tone-command path can generate it. WAVs are local
+ignored artifacts; their hashes are in the results. No RF was transmitted.
+
+The conflicting `00/80` control passes the raw reference decoder's CRC but gives
+SDRTrunk source flags ANI=false/EOT=false. Candidate `01/00` gives true/true and
+BOT control `01/80` gives true/false. Thus a raw CRC/ID match alone cannot resolve
+the event semantics. Candidate POST interpretation is still **Unverified on RF**.
+
+Evidence: [results](validation/mdc1200-host/results.json),
+[host log](validation/mdc1200-host/host-tests.log),
+[source/hash/isolation manifest](validation/mdc1200-host/stage-manifest.json),
+[official firmware audit](validation/mdc1200-host/official-firmware-audit.json),
+[host usage and licensing](../host/mdc1200/README.md).
+
+No firmware rebuild or new CPS ZIP is needed: all firmware files remain identical
+to `af624f3` and the accepted Tone35Fix ZIP remains SHA256
+`b564cb0b88fc60fbc423ac8fae4eaf5353dbdb656ada9c1d211e1e6c0501ebb2`.
+The user can retain the current firmware. MDC N/A remains a non-transmitting
+reserved menu choice.
 
 ## RF and firmware boundary
 

@@ -1,0 +1,102 @@
+PASS: all 65535 nonzero IDs, raw ID zero, null/empty CRC, rejected output unchanged, capacities 0..25 and exact-boundary canaries
+PASS: all 65535 nonzero IDs, raw ID zero, null/empty CRC, rejected output unchanged, capacities 0..25 and exact-boundary canaries
+{
+  "scope": "HOST_ONLY_NO_FIRMWARE_CHANGE",
+  "kaufman_commit": "45fc9095fbde8bf6a6988c7dc0de64a4ec0ffe12",
+  "sdrtrunk_commit": "02c62d012fe88ea581f05c6082af12ca7adf65dc",
+  "golden_layers": "PASS_7_CASES",
+  "random_crc_comparisons": 1000,
+  "random_packet_comparisons": 512,
+  "external_block_decodes": "PASS",
+  "external_ideal_pcm_demodulates": "PASS_3_IDS",
+  "single_bit_mutations_corrected": 112,
+  "valid_fec_stale_crc_rejections": 6,
+  "ubsan_and_host_lto": "PASS",
+  "firmware_unchanged_from": "af624f3",
+  "rf_decode": "NOT_RUN",
+  "commercial_post_id_event": "UNVERIFIED",
+  "vectors": [
+    {
+      "profile": "candidate_post",
+      "unit": "0001",
+      "block_decode": "PASS",
+      "semantic_source_audit": {
+        "ani": true,
+        "eot": true
+      },
+      "ideal_pcm_external_demodulator": "PASS",
+      "wav_sha256": "dd81cf4d197800f89b8e8714bdcc67c230327df3356e499948a5da15590bfb31"
+    },
+    {
+      "profile": "candidate_post",
+      "unit": "1234",
+      "block_decode": "PASS",
+      "semantic_source_audit": {
+        "ani": true,
+        "eot": true
+      },
+      "ideal_pcm_external_demodulator": "PASS",
+      "wav_sha256": "18f5861a4b7d752281174328d2e25f2b0ff1526dc45891170449f4b41d3770ee"
+    },
+    {
+      "profile": "candidate_post",
+      "unit": "FFFF",
+      "block_decode": "PASS",
+      "semantic_source_audit": {
+        "ani": true,
+        "eot": true
+      },
+      "ideal_pcm_external_demodulator": "PASS",
+      "wav_sha256": "0dba2e3d3e5ddc1d7c4c793a6b7d3d1f23ff4ffafdeb830519280b1344b5923f"
+    },
+    {
+      "profile": "bot_control",
+      "unit": "0001",
+      "block_decode": "PASS",
+      "semantic_source_audit": {
+        "ani": true,
+        "eot": false
+      }
+    },
+    {
+      "profile": "bot_control",
+      "unit": "1234",
+      "block_decode": "PASS",
+      "semantic_source_audit": {
+        "ani": true,
+        "eot": false
+      }
+    },
+    {
+      "profile": "bot_control",
+      "unit": "FFFF",
+      "block_decode": "PASS",
+      "semantic_source_audit": {
+        "ani": true,
+        "eot": false
+      }
+    },
+    {
+      "profile": "conflicting_preset_control",
+      "unit": "1234",
+      "block_decode": "PASS",
+      "semantic_source_audit": {
+        "ani": false,
+        "eot": false
+      }
+    }
+  ],
+  "compiler_version": "11.4.0",
+  "encoder_sha256": "a89b8209fc7916b35eb3875e34a730357d376991cf3c530e2ebd8b930a36c281",
+  "goldens_sha256": "f7baa741c106590f8255062e79538097d52408b20789a2890165afae20299c91",
+  "source_lock_sha256": "b23402118ba14da339f7d079d5e9dd24b2b457eba9ffda8b04c51fc4fda9947c",
+  "ideal_pcm_fixture": {
+    "sample_rate": 48000,
+    "samples_per_symbol": 40,
+    "frame_samples": 8320,
+    "leading_silence_samples": 1920,
+    "trailing_silence_samples": 3840,
+    "amplitude": 12000,
+    "rf_deviation_claim": false
+  }
+}

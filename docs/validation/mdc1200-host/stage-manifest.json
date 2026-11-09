@@ -1,0 +1,18 @@
+{
+  "stage": "INDEPENDENT_PROTOCOL_AND_HOST_ENCODER_ONLY",
+  "references_and_goldens_commit": "dd95f6a",
+  "encoder_commit": "a61d205",
+  "goldens_regenerated": "BYTE_IDENTICAL",
+  "firmware_diff_from_af624f3": "EMPTY",
+  "firmware_rebuilt": false,
+  "radio_accessed": false,
+  "mdc_rf_sender_present": false,
+  "current_cps_zip": "artifacts/native-ptt-tone35-fix/OpenGD77-TalkPermit-PTTBeep-Tone35Fix.zip",
+  "current_cps_zip_sha256": "b564cb0b88fc60fbc423ac8fae4eaf5353dbdb656ada9c1d211e1e6c0501ebb2",
+  "source_hashes": {
+    "host/mdc1200/mdc1200_encoder.c": "a89b8209fc7916b35eb3875e34a730357d376991cf3c530e2ebd8b930a36c281",
+    "host/mdc1200/mdc1200_encoder.h": "6829bf9bd7f03a6f7b5b459a7102cd564eddec4315eea3e51a925782a80daed5",
+    "tests/mdc1200/golden_vectors.json": "f7baa741c106590f8255062e79538097d52408b20789a2890165afae20299c91",
+    "host/mdc1200/sources.json": "b23402118ba14da339f7d079d5e9dd24b2b457eba9ffda8b04c51fc4fda9947c"
+  }
+}
