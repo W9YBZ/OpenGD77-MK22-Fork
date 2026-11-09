@@ -1,0 +1,11 @@
+{
+  "active_preset": "GD-77",
+  "changes": [
+    {
+      "option": "Heap and Stack placement",
+      "added_value": "Default",
+      "effect": "manual firmware.ld remains selected"
+    }
+  ],
+  "other_options_unchanged": true
+}

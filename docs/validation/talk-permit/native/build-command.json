@@ -1,0 +1,17 @@
+[
+  "/home/yuhui/.local/opt/nxp/headless-deps/usr/bin/xvfb-run",
+  "-a",
+  "/home/yuhui/.local/opt/nxp/mcuxpresso-24.12-root/usr/local/mcuxpressoide-24.12.148/ide/mcuxpressoide",
+  "-nosplash",
+  "--launcher.suppressErrors",
+  "-application",
+  "org.eclipse.cdt.managedbuilder.core.headlessbuild",
+  "-data",
+  "/home/yuhui/software_ws/OpenGD77-MK22-Fork/artifacts/native-talk-permit/workspace",
+  "-no-indexer",
+  "-import",
+  "/home/yuhui/software_ws/OpenGD77-MK22-Fork/firmware",
+  "-cleanBuild",
+  "firmware/GD-77",
+  "-printErrorMarkers"
+]

@@ -1,0 +1,16 @@
+{
+  "version": "24.12.148",
+  "package_version": "24.12",
+  "installation_mode": "User-local extraction of official Debian package; no system maintainer scripts",
+  "ide_root": "/home/yuhui/.local/opt/nxp/mcuxpressoide-24.12.148",
+  "launcher": "/home/yuhui/.local/bin/mcuxpressoide-24.12",
+  "desktop_entry": "/home/yuhui/.local/share/applications/mcuxpressoide-24.12.desktop",
+  "installer_sha256": "34b9163869d9d274ddcc2b2482d51d9aa2bf5f1cf0581b885172d4c107c58ed5",
+  "installer_bytes": 1470604047,
+  "source_host": "freescaleesd.flexnetoperations.com",
+  "embedded_integrity_check": "PASS (MD5)",
+  "compiler": "Arm GNU Toolchain 13.2.rel1, 13.2.1 20231009",
+  "redlib": true,
+  "xvfb": "User-local Ubuntu packages",
+  "system_usb_debug_drivers_installed": false
+}

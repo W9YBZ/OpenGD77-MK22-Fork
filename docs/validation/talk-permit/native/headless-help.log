@@ -1,0 +1,29 @@
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Usage: /home/yuhui/.local/opt/nxp/mcuxpresso-24.12-root/usr/local/mcuxpressoide-24.12.148/ide/mcuxpressoide -data <workspace> -application org.eclipse.cdt.managedbuilder.core.headlessbuild [ OPTIONS ]
+
+   -data       {/path/to/workspace}
+   -remove     {[uri:/]/path/to/project}
+   -removeAll  {[uri:/]/path/to/projectTreeURI} Remove all projects under URI
+   -import     {[uri:/]/path/to/project}
+   -importAll  {[uri:/]/path/to/projectTreeURI} Import all projects under URI
+   -build      {project_name_reg_ex{/config_reg_ex} | all}
+   -cleanBuild {project_name_reg_ex{/config_reg_ex} | all}
+   -markerType Marker types to fail build on {all | cdt | marker_id}
+   -no-indexer Disable indexer
+   -verbose    Verbose progress monitor updates
+   -printErrorMarkers Print all error markers
+   -I          {include_path} additional include_path to add to tools
+   -include    {include_file} additional include_file to pass to tools
+   -D          {prepoc_define} addition preprocessor defines to pass to the tools
+   -E          {var=value} replace/add value to environment variable when running all tools
+   -Ea         {var=value} append value to environment variable when running all tools
+   -Ep         {var=value} prepend value to environment variable when running all tools
+   -Er         {var} remove/unset the given environment variable
+   -T          {toolid} {optionid=value} replace a tool option value in each configuration built
+   -Ta         {toolid} {optionid=value} append to a tool option value in each configuration built
+   -Tp         {toolid} {optionid=value} prepend to a tool option value in each configuration built
+   -Tr         {toolid} {optionid=value} remove a tool option value in each configuration built
+               Tool option values are parsed as a string, comma separated list of strings or a boolean based on the options type
+

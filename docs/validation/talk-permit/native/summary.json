@@ -1,0 +1,24 @@
+[
+  {
+    "variant": "baseline",
+    "source_revision": "aac8ae042001244b021ef164069ce7d79b7a7d4a",
+    "file": "OpenGD77-Official-Base.zip",
+    "bytes": 502768,
+    "sha256": "af6f02c3ea5e8f1e9dc5f2565f17816a6ab489640212bd59c8492397f55b2f1e",
+    "zip_bytes": 227932,
+    "zip_sha256": "d55d21084b696ba1f187becc707401f2a0edca0c4445b53f7d2934a6f4509caf",
+    "precodec_headroom": 3720,
+    "upload_headroom": 1040
+  },
+  {
+    "variant": "talk-permit",
+    "source_revision": "f610134e245ea9dd92858dcb12ecb19d1ea30f6a",
+    "file": "OpenGD77-TalkPermit.zip",
+    "bytes": 502768,
+    "sha256": "62c19b6b0de3ddfa31cf71c1ba0634a1f36dc0e064a8e56f76703862cfec48eb",
+    "zip_bytes": 228580,
+    "zip_sha256": "c9d7af70290e58d926074002c60ca785106bbc1c1d540a53afc0acb0520cd6b0",
+    "precodec_headroom": 2848,
+    "upload_headroom": 1040
+  }
+]

@@ -15,7 +15,8 @@
     ".cproject": "c0b865c8c99c9d0e2abcd78b32467ff26546d6583091113eb1d289d03d4907ad"
   },
   "build_requirement": "NXP MCUXpresso IDE 24.12 or older, original Redlib and per-file options; first validate untouched baseline",
-  "installer_status": "NXP_ACCOUNT_LOGIN_REQUIRED",
   "superseded_branch": "feature/gd77-ptt-talk-permit-mdc1200-v2",
-  "superseded_head": "d2b3426"
+  "superseded_head": "d2b3426",
+  "initial_installer_status": "NXP_ACCOUNT_LOGIN_REQUIRED",
+  "installer_status": "INSTALLED_USER_LOCAL_MCUXPRESSO_24.12.148"
 }
