@@ -1,0 +1,59 @@
+{
+  "source_revision": "7f109777b793e7c9e64766b96aebe8bee468f625",
+  "build": "Official GD-77 MCUXpresso preset / Redlib; no LTO",
+  "file": "OpenGD77-TalkPermit-PTTFix.zip",
+  "zip_sha256": "3bedbd64832118c63284aa26ba8bb283c5c4c538dd641e0a664d2d40c99775ec",
+  "zip_bytes": 228628,
+  "language_count": 18,
+  "zip_crc": "PASS",
+  "donor_required": true,
+  "donor_in_zip": false,
+  "hardware_boot": "NOT_RUN",
+  "hardware_audio": "NOT_RUN",
+  "cps_roundtrip": "NOT_RUN",
+  "bytes": 502768,
+  "sha256": "599c22b10308b014d7fc99f5303d4ba5ae221bcbcb88d329fbb78f43bdd8f5c7",
+  "elf_sha256": "104c18eef077faa0826d2d4c25e63a69b31daa2aa68000fff682d114780b22d4",
+  "flash_end": 519152,
+  "precodec_headroom": 2836,
+  "upload_headroom": 1040,
+  "initial_sp": 536870912,
+  "reset_vector": 16785,
+  "heap_start": 536843736,
+  "heap_limit": 536847832,
+  "stack_base": 536866816,
+  "stack_top": 536870912,
+  "vector_handlers": {
+    "SVC_Handler": 11,
+    "PendSV_Handler": 14,
+    "SysTick_Handler": 15,
+    "I2S0_Tx_IRQHandler": 44,
+    "I2S0_Rx_IRQHandler": 45,
+    "PIT0_IRQHandler": 64,
+    "PORTC_IRQHandler": 77
+  },
+  "codec_placeholders": "FF at 0x4400/0x54000; CPS donor required",
+  "ram_sections": [
+    [
+      536805376,
+      536843736,
+      ".data"
+    ],
+    [
+      536870912,
+      536921096,
+      ".bss"
+    ],
+    [
+      536843736,
+      536847832,
+      ".heap"
+    ],
+    [
+      536847832,
+      536851928,
+      ".heap2stackfill"
+    ]
+  ],
+  "donor_sha256": "d8bdfcc4c5fbb5e1f58e2d6f243381c673d6d09d4718b1ce9178e50fab01706f"
+}

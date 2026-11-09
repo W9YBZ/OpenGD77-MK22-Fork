@@ -125,22 +125,30 @@ Local packages:
 
 * `artifacts/native-official-baseline/OpenGD77-Official-Base.zip` — test original
   key beeps, boot and CPS first.
-* `artifacts/native-talk-permit/OpenGD77-TalkPermit.zip` — test only after the
-  baseline works; Sound Options → Talk Permit On/Off.
+* `artifacts/native-talk-permit-trigger-fix/OpenGD77-TalkPermit-PTTFix.zip` —
+  current Talk Permit candidate; fixes the synthetic menu-entry event that
+  prevented playback. Sound Options → Talk Permit On/Off.
+* `artifacts/native-talk-permit/OpenGD77-TalkPermit.zip` — superseded: user
+  confirmed key beeps work, but Talk Permit did not play.
 
 Both need the official `GD-77_V4.3.6.sgl` selected separately as donor in CPS.
 The ZIP contains OpenGD77.bin and 18 matching language files, without the donor.
-New-build hardware boot/audio/RF/CPS acceptance remains **Not Run**. No radio was
-flashed, reset or erased. The rebuilt baseline is not byte-identical to the
+The preceding Talk Permit package has user-confirmed working key beeps; its
+Talk Permit playback failed. Hardware acceptance of the PTTFix build remains
+**Not Run**. No radio was flashed, reset or erased by the build tools. The rebuilt baseline is not byte-identical to the
 published release and still requires its own hardware acceptance.
 
 One-command native build and ZIP packaging in this workspace:
 
 ```sh
-python3 tools/build_native_gd77.py --out artifacts/native-talk-permit \
+python3 tools/build_native_gd77.py --out artifacts/native-talk-permit-trigger-fix \
+  --name OpenGD77-TalkPermit-PTTFix \
   --donor-zip '/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip'
 ```
 
 See [build commands, hashes and acceptance steps](docs/TALK_PERMIT_RESTART.md),
 [official source provenance](docs/OFFICIAL_SOURCE.json), and
 [native build evidence](docs/validation/talk-permit/native/summary.json).
+
+See [PTT trigger fix, evidence and acceptance](docs/TALK_PERMIT_PTT_TRIGGER_FIX.md)
+for the latest candidate; earlier build reports describe the superseded ZIP.
