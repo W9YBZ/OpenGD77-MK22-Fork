@@ -26,4 +26,3 @@ Usage: /home/yuhui/.local/opt/nxp/mcuxpresso-24.12-root/usr/local/mcuxpressoide-
    -Tp         {toolid} {optionid=value} prepend to a tool option value in each configuration built
    -Tr         {toolid} {optionid=value} remove a tool option value in each configuration built
                Tool option values are parsed as a string, comma separated list of strings or a boolean based on the options type
-
