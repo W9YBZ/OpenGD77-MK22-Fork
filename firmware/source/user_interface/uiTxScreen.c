@@ -86,6 +86,18 @@ static bool fmAudioRegister(uint8_t reg, uint16_t *value, bool write)
     return true;
 }
 
+// Tone1 is a command in native trxSetTone1/APRS. Its frequency readback is
+// not a validated command echo. Never use it as a MIC/TX safety interlock.
+static bool fmToneFrequency(uint16_t frequency10)
+{
+    taskENTER_CRITICAL();
+    unsigned fault = isI2cInUse ? 1 : 0;
+    if (!fault && radioWriteReg2byteFresh(0x35, frequency10 >> 8, frequency10 & 0xff) != kStatus_Success) fault = 2;
+    taskEXIT_CRITICAL();
+    if (fault) fmAudioFault = (fault << 8) | 0x35;
+    return fault == 0;
+}
+
 static bool talkPermitStop(void)
 {
     if (!talkPermitActive) return true;
@@ -109,9 +121,10 @@ static void talkPermitExit(void *data)
     }
 }
 
-// Own only these registers; do not alter CSS, RF power, filters or local audio.
-static const uint8_t pttToneRegs[] = { 0x3a, 0x35, 0x41, 0x79 };
-static uint16_t pttToneSaved[4];
+// Snapshot the readable route/gain controls. Tone frequency is a separate
+// command: consumers program it before use; cleanup sets it idle after MIC restore.
+static const uint8_t pttToneRegs[] = { 0x3a, 0x41, 0x79 };
+static uint16_t pttToneSaved[3];
 static bool pttToneArmed, pttToneActive;
 static uint32_t pttToneStarted;
 
@@ -134,16 +147,19 @@ static void pttToneExit(void)
     pttToneArmed = false;
     if (!pttToneActive) return;
     bool ok = true;
-    for (unsigned i = 0; i < 4; i++)
+    for (unsigned i = 0; i < 3; i++)
     {
         // Retry once, physically, even if the driver's cache claimed success.
         if (!fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], true) &&
             !fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], true)) ok = false;
     }
-    // A cached-success write is insufficient: fmAudioRegister checks readback.
-    // Keep snapshot ownership on failure and block subsequent TX until restored.
+    // Like native APRS stop, leave the unselected generator idle. No readback
+    // snapshot/identity test of 0x35: a command value is not a verified read value.
+    bool idle = fmToneFrequency(0);
+    // MIC/route failure retains ownership and blocks TX. A failed idle command
+    // ends this TX, but cannot lock future voice TX after the MIC is verified.
     if (ok) pttToneActive = false;
-    else pttToneFail();
+    if (!ok || !idle) pttToneFail();
 }
 
 static void fmTxAudioExit(void *data)
@@ -175,15 +191,14 @@ static bool pttToneHandleRelease(uiEvent_t *ev)
     if (!fmAudioRegister(0x30, &tx, false) || (tx & 0x60) != 0x40 ||
         !calibrationGetSectionData(band, CalibrationSection_DEV_TONE, &cal))
     { pttToneFail(); return false; }
-    for (unsigned i = 0; i < 4; i++)
+    for (unsigned i = 0; i < 3; i++)
         if (!fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], false))
         { pttToneFail(); return false; }
     pttToneActive = true; // Roll back even partially completed setup.
-    uint16_t tone = 1000U * 10U; // Native trxSetTone1 units: 0.1 Hz
-    uint16_t gain = (pttToneSaved[2] & 0xff80) | (cal.value & 0x7f);
-    uint16_t single = pttToneSaved[3] | 0xc000;
+    uint16_t gain = (pttToneSaved[1] & 0xff80) | (cal.value & 0x7f);
+    uint16_t single = pttToneSaved[2] | 0xc000;
     uint16_t selector = (pttToneSaved[0] & 0x8fff) | (AT1846_VOICE_CHANNEL_TONE1 << 8);
-    if (!fmAudioRegister(0x35, &tone, true) ||
+    if (!fmToneFrequency(1000U * 10U) ||
         !fmAudioRegister(0x79, &single, true) ||
         !fmAudioRegister(0x41, &gain, true) ||
         !fmAudioRegister(0x3a, &selector, true))

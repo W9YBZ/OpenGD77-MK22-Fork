@@ -13,7 +13,8 @@ const int16_t MELODY_FM_TALK_PERMIT[]={940,40,0,10,940,40,0,10,940,40,-1,-1};
 static uint16_t voiceReg,txReg,toneReg,gainReg,singleReg;
 int trxCurrentBand[2];
 static uint32_t now;
-static bool calibrationFails,cacheEnabled,ignoreWrite;
+static bool calibrationFails,cacheEnabled,ignoreWrite,nonEchoTone;
+static unsigned toneReads;
 static unsigned reads,failReadNth,failWriteNth;
 static uint16_t cache[128];
 static bool cached[128];
@@ -52,7 +53,9 @@ void trxActivateRx(bool critical) {assert(critical);txPAEnabled=false;rxOff++;}
 status_t radioReadReg2byte(uint8_t reg,uint8_t *hi,uint8_t *lo)
 {
  assert(depth);reads++;if(failRead || reads==failReadNth)return kStatus_Fail;
- uint16_t val=*regPtr(reg);*hi=val>>8;*lo=val;return kStatus_Success;
+ uint16_t val=*regPtr(reg);
+ if(reg==0x35){toneReads++;if(nonEchoTone)val^=0x4000;}
+ *hi=val>>8;*lo=val;return kStatus_Success;
 }
 status_t radioWriteReg2byte(uint8_t reg,uint8_t hi,uint8_t lo)
 {
@@ -61,7 +64,8 @@ status_t radioWriteReg2byte(uint8_t reg,uint8_t hi,uint8_t lo)
  if(cacheEnabled && cached[reg] && cache[reg]==val)return kStatus_Success;
  cache[reg]=val;cached[reg]=true; // Model the native driver's cache-on-failure.
  if(failWrite || (unsigned)writes==failWriteNth)return kStatus_Fail;
- if(!ignoreWrite)*regPtr(reg)=val;return kStatus_Success;
+ if(!ignoreWrite)*regPtr(reg)=val;
+ return kStatus_Success;
 }
 status_t radioWriteReg2byteFresh(uint8_t reg,uint8_t hi,uint8_t lo)
 {
@@ -76,7 +80,7 @@ static uiEvent_t reset(void)
 {
  assert(!depth);talkPermitActive=talkPermitDraining=talkPermitPending=transmitError=false;
  pttToneActive=pttToneArmed=false;fmAudioFault=0;now=100;reads=failReadNth=failWriteNth=0;
- calibrationFails=cacheEnabled=ignoreWrite=false;memset(cached,0,sizeof(cached));
+ calibrationFails=cacheEnabled=ignoreWrite=nonEchoTone=false;toneReads=0;memset(cached,0,sizeof(cached));
  nonVolatileSettings.bitfieldOptions[0]=0;
  toneReg=0x4567;gainReg=0x6f35;singleReg=0x0211;
  trxCurrentBand[TRX_TX_FREQ_BAND]=RADIO_BAND_UHF;
@@ -147,7 +151,7 @@ int main(void)
  assert(gainReg==0x6f2a && singleReg==0xc211 && !played);
  ev.time=249;assert(pttToneHandleRelease(&ev));assert(txPAEnabled);
  ev.time=250;assert(!pttToneHandleRelease(&ev));
- assert(!pttToneActive && voiceReg==0x40ac && toneReg==0x4567 && gainReg==0x6f35 && singleReg==0x0211);
+ assert(!pttToneActive && voiceReg==0x40ac && toneReg==0 && gainReg==0x6f35 && singleReg==0x0211);
  int doneWrites=writes;assert(!pttToneHandleRelease(&ev));assert(writes==doneWrites);
  // RF tail is independent of local Silent/no-beep policy and uses TX-band calibration.
  ev=reset();optionOff=true;noBeep=true;nonVolatileSettings.audioPromptMode=AUDIO_PROMPT_MODE_SILENT;
@@ -170,7 +174,7 @@ int main(void)
   assert(!pttToneHandleRelease(&ev));assert(!pttToneActive && !writes);
  }
  // Lost hardware TX, calibration failure, I2C contention and snapshot failure.
- for(int n=0;n<8;n++)
+ for(int n=0;n<7;n++)
  {
   ev=reset();ev.buttons=0;pttToneArmed=true;nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
   switch(n){case 0:txReg=0x7026;break;case 1:calibrationFails=true;break;
@@ -178,15 +182,35 @@ int main(void)
   assert(!pttToneHandleRelease(&ev));assert(!pttToneActive && !txPAEnabled && transmitError && !writes);
  }
  // Fail each setup write or its readback, and restore every partially changed register.
- for(int n=1;n<=8;n++)
+ for(int n=1;n<=7;n++)
  {
   ev=reset();ev.buttons=0;pttToneArmed=true;cacheEnabled=true;
   nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
-  if(n<=4)failWriteNth=n;else failReadNth=n+1;
+  if(n<=4)failWriteNth=n;else failReadNth=n;
   assert(!pttToneHandleRelease(&ev));
   assert(!txPAEnabled && !trxTransmissionEnabled && transmitError);
-  assert(!pttToneActive && voiceReg==0x40ac && toneReg==0x4567 && gainReg==0x6f35 && singleReg==0x0211);
+  assert(!pttToneActive && voiceReg==0x40ac && toneReg==0 && gainReg==0x6f35 && singleReg==0x0211);
  }
+ // Reproduce E35/4's unvalidated echo assumption: a non-echoing frequency
+ // register must not be read/snapshotted or prevent tail setup and future TX.
+ ev=reset();nonEchoTone=true;pttToneArmed=true;ev.buttons=0;
+ nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
+ assert(pttToneHandleRelease(&ev));assert(toneReg==10000 && toneReads==0);
+ ev.time=250;assert(!pttToneHandleRelease(&ev));
+ assert(!pttToneActive && toneReg==0 && voiceReg==0x40ac && toneReads==0 && !fmAudioFault);
+ // A physical frequency-command failure still aborts; it is never ignored.
+ ev=reset();pttToneArmed=true;ev.buttons=0;failWriteNth=1;
+ nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
+ assert(!pttToneHandleRelease(&ev));
+ assert(!txPAEnabled && transmitError && !pttToneActive && fmAudioFault==0x0235);
+ // An idle-command fault cannot retain ownership after verified MIC restore.
+ ev=reset();pttToneArmed=true;ev.buttons=0;
+ nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
+ assert(pttToneHandleRelease(&ev));failWriteNth=writes+4;
+ fmTxAudioExit(NULL);assert(!pttToneActive && !txPAEnabled && transmitError && voiceReg==0x40ac);
+ assert(fmAudioFault==0x0235);
+ transmitError=false;fmTxAudioExit(NULL);assert(!transmitError && !pttToneActive);
+ puts("PASS: 0x35 non-echo command model, no frequency reads/snapshots, actual write failures abort, idle failure cannot latch verified MIC");
  // Live tail aborts on TOT, TX failure or exit; wraparound remains bounded.
  for(int n=0;n<4;n++)
  {
@@ -224,7 +248,7 @@ int main(void)
  // Native RX changes the CSS bits in 3a between sessions; next TX preserves them.
  for(int option=0;option<2;option++)
  {
-  ev=reset();cacheEnabled=true;optionOff=true;
+  ev=reset();cacheEnabled=true;optionOff=true;nonEchoTone=true;
   nonVolatileSettings.bitfieldOptions[0]=option?BIT_FM_PTT_TONE_LOW:0;
   for(int session=0;session<100;session++)
   {
@@ -241,6 +265,7 @@ int main(void)
    voiceReg=(voiceReg&0xffe0)|1;
    fmTxAudioExit(NULL);assert(!pttToneActive && !talkPermitActive && !transmitError);
   }
+  assert(toneReads==0);
  }
  puts("PASS: 100 consecutive Off and 100 consecutive Beep sessions retain hardware/cache state through native RX/menu cleanup");
  // Early release during Talk Permit restores MIC before the tail snapshots it.
@@ -248,7 +273,7 @@ int main(void)
  talkPermitTick(&ev);assert(talkPermitActive && pttToneArmed);
  ev.buttons=0;talkPermitTick(&ev);assert(!talkPermitActive && voiceReg==0x40ac);
  assert(pttToneHandleRelease(&ev));fmTxAudioExit(NULL);assert(!pttToneActive && voiceReg==0x40ac);
- puts("PASS: PTT RF tail 1000 Hz / 150 ms state, one-shot, mode exclusions, full register restore, TX-band calibration, setup/readback/cache failures, TOT/exit/re-key/wrap and Talk Permit coexistence");
+ puts("PASS: PTT RF tail 1000 Hz / 150 ms state, one-shot, mode exclusions, route/gain restore and tone idle, TX-band calibration, setup/readback/cache failures, TOT/exit/re-key/wrap and Talk Permit coexistence");
  assert(!depth);
  puts("PASS: synthetic menu entry / real PTT event / one-shot / key preemption; actual Talk Permit MIC gate/restore/drain/deadline, release/TOT/exit, exclusions, I2C failure and PA shutdown");
 }
