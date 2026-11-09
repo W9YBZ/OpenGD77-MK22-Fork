@@ -123,8 +123,10 @@ no tail; MDC1200 implementation and independent RF validation remain deferred.
 Two other unused bits in the existing options word store the mode, without
 changing the settings ABI. The first PTT Beep image **failed hardware acceptance**:
 no received tail and subsequent PTT blocked, including after switching Off.
-The RekeyFix candidate addresses a reproduced register-cache recovery bug and
-adds visible fault codes; its hardware/RF acceptance remains **Not Run**.
+The RekeyFix candidate also failed hardware acceptance with `B E35/4`.
+The current Tone35Fix candidate corrects the unvalidated frequency-register echo
+interlock; its hardware/RF acceptance remains **Not Run**. It checks the physical
+frequency-command write and keeps MIC/route readback protection.
 
 MCUXpresso IDE **24.12.148** is now installed locally with its bundled compiler
 and Redlib. Both the restored official baseline and the Talk Permit firmware
@@ -134,8 +136,10 @@ per-file settings and `firmware.ld`; no newlib-nano/LTO recipe is substituted.
 
 Local packages:
 
+* `artifacts/native-ptt-tone35-fix/OpenGD77-TalkPermit-PTTBeep-Tone35Fix.zip` —
+  current E35 repair candidate. Hardware acceptance **Not Run**.
 * `artifacts/native-ptt-rekey-fix/OpenGD77-TalkPermit-PTTBeep-RekeyFix.zip` —
-  current repair/diagnostic candidate. Hardware acceptance **Not Run**.
+  **withdrawn**: user reported persistent failure and `B E35/4`.
 * `artifacts/native-ptt-beep/OpenGD77-TalkPermit-PTTBeep.zip` — **withdrawn**:
   user reported no RF tail and subsequent TX blocked.
 * `artifacts/native-official-baseline/OpenGD77-Official-Base.zip` — test original
@@ -156,8 +160,8 @@ published release and still requires its own hardware acceptance.
 One-command native build and ZIP packaging in this workspace:
 
 ```sh
-python3 tools/build_native_gd77.py --out artifacts/native-ptt-rekey-fix \
-  --name OpenGD77-TalkPermit-PTTBeep-RekeyFix \
+python3 tools/build_native_gd77.py --out artifacts/native-ptt-tone35-fix \
+  --name OpenGD77-TalkPermit-PTTBeep-Tone35Fix \
   --donor-zip '/home/yuhui/Downloads/2021-01-26 GD-77 CPS & Firmware Changelog - Ham Version.zip'
 ```
 
@@ -174,5 +178,6 @@ Talk Permit rollback package, and the published official R20260131 as the
 original stable fallback. No donor or generated firmware binaries are in Git.
 
 See [PTT re-key repair and fault-code procedure](docs/PTT_REKEY_FIX.md) for the
-latest candidate. A reproduced host-side defect does not establish the first
-hardware failure's exact register or prove RF playback is now successful.
+preceding attempt. The user subsequently identified `E35/4`; see
+[the Tone35 command/readback correction](docs/PTT_TONE35_FIX.md) for the current
+candidate, evidence limits and manual acceptance. RF success is not yet proven.

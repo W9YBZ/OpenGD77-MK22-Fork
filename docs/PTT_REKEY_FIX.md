@@ -118,3 +118,10 @@ Git. Evidence is in [the native manifest](validation/ptt-rekey/native/manifest.j
    persistence, CPS read/write and Talk Permit RF isolation as available. Any
    untested item remains Not Run; DMR/VOX/APRS/satellite hardware regression also
    remains Not Run.
+
+## Subsequent hardware result
+
+The user reports this image still fails and displays `B E35/4`. This candidate
+is withdrawn. The cache defect remains independently reproduced, but it did
+not explain/resolve the user's whole failure. See [the Tone35 correction](PTT_TONE35_FIX.md)
+for the updated command/readback contract, test-model limits and new candidate.

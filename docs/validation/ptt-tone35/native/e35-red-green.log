@@ -1,0 +1,3 @@
+old_24e155f: started=0 fault=0435 retained=1 tone_reads=4
+current: started=1 fault=0000 retained=1 tone_reads=0
+PASS: old code reproduces E35/4 and retained ownership under non-echo model; current code starts and cleans up without reading 0x35

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-09",
+  "zip_sha256": "b08f4a40c8927ec241990293f74b277023802a12ca49b57911a2c0a6ddc42346",
+  "acceptance": "FAIL_USER_REPORTED",
+  "display": "PTT Tone: B E35/4",
+  "last_fault_register": "0x35",
+  "last_fault_stage": "WRITE_READBACK_MISMATCH",
+  "actual_readback_word": "UNKNOWN",
+  "fault_phase": "UNKNOWN_SETUP_OR_RESTORE",
+  "status": "WITHDRAWN"
+}

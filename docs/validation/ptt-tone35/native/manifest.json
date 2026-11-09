@@ -1,0 +1,59 @@
+{
+  "source_revision": "9f511d2e98b8788c347254c311b7b6dfeeb19dc3",
+  "build": "Official GD-77 MCUXpresso preset / Redlib; no LTO",
+  "file": "OpenGD77-TalkPermit-PTTBeep-Tone35Fix.zip",
+  "zip_sha256": "b564cb0b88fc60fbc423ac8fae4eaf5353dbdb656ada9c1d211e1e6c0501ebb2",
+  "zip_bytes": 229457,
+  "language_count": 18,
+  "zip_crc": "PASS",
+  "donor_required": true,
+  "donor_in_zip": false,
+  "hardware_boot": "NOT_RUN",
+  "hardware_audio": "NOT_RUN",
+  "cps_roundtrip": "NOT_RUN",
+  "bytes": 502768,
+  "sha256": "6cb76147fee6e8a50745c880b3acbdef2127b1ac52a7114720b810bc1823c9ed",
+  "elf_sha256": "f81188fa710d0ca531c61b7c6eacc7e99159379c252452003b9404163a5b96c5",
+  "flash_end": 519152,
+  "precodec_headroom": 1716,
+  "upload_headroom": 1040,
+  "initial_sp": 536870912,
+  "reset_vector": 16785,
+  "heap_start": 536843736,
+  "heap_limit": 536847832,
+  "stack_base": 536866816,
+  "stack_top": 536870912,
+  "vector_handlers": {
+    "SVC_Handler": 11,
+    "PendSV_Handler": 14,
+    "SysTick_Handler": 15,
+    "I2S0_Tx_IRQHandler": 44,
+    "I2S0_Rx_IRQHandler": 45,
+    "PIT0_IRQHandler": 64,
+    "PORTC_IRQHandler": 77
+  },
+  "codec_placeholders": "FF at 0x4400/0x54000; CPS donor required",
+  "ram_sections": [
+    [
+      536805376,
+      536843736,
+      ".data"
+    ],
+    [
+      536870912,
+      536921112,
+      ".bss"
+    ],
+    [
+      536843736,
+      536847832,
+      ".heap"
+    ],
+    [
+      536847832,
+      536851928,
+      ".heap2stackfill"
+    ]
+  ],
+  "donor_sha256": "d8bdfcc4c5fbb5e1f58e2d6f243381c673d6d09d4718b1ce9178e50fab01706f"
+}

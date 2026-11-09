@@ -14,17 +14,18 @@
   "previous_download_blocker": "RESOLVED_USER_PROVIDED_AUTHORIZED_LINK",
   "pttfix_local_talk_permit": "PASS_USER_REPORTED_2026-11-09",
   "latest_candidate": {
-    "source_commit": "50eb7cd6c4866ada8ed2d3dbb90c368316079483",
-    "manifest": "docs/validation/ptt-rekey/native/manifest.json",
-    "feature": "PTT cache-recovery repair and fault diagnostics",
+    "source_commit": "9f511d2e98b8788c347254c311b7b6dfeeb19dc3",
+    "manifest": "docs/validation/ptt-tone35/native/manifest.json",
+    "feature": "Tone35 command/readback correction",
     "native_link": "PASS",
     "image_and_zip": "PASS",
     "hardware_boot": "NOT_RUN",
     "hardware_audio": "NOT_RUN",
     "ptt_rf_beep": "NOT_RUN",
     "repeated_ptt": "NOT_RUN",
-    "hardware_root_register": "UNCONFIRMED",
+    "frequency_readback_contract": "UNVERIFIED_NOT_USED_AS_INTERLOCK",
     "cps_roundtrip": "NOT_RUN"
   },
-  "initial_ptt_beep_hardware": "FAIL_USER_REPORTED_NO_TAIL_AND_SUBSEQUENT_TX_BLOCK"
+  "initial_ptt_beep_hardware": "FAIL_USER_REPORTED_NO_TAIL_AND_SUBSEQUENT_TX_BLOCK",
+  "rekeyfix_hardware": "FAIL_USER_REPORTED_E35_4"
 }
