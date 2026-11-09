@@ -12,8 +12,10 @@ with tempfile.TemporaryDirectory() as tmp:
   subprocess.run([exe],check=True)
   subprocess.run(['gcc',*common,'-DPLATFORM_GD77','-DHAS_GPS=1','-Wno-int-to-pointer-cast','-Wno-pointer-to-int-cast','-ffunction-sections','-fdata-sections','-fsanitize=undefined','-fno-sanitize-recover=all',*flags,str(ROOT/'tests/talk_permit/test_ptt_settings.c'),'-Wl,--gc-sections','-o',exe],check=True)
   subprocess.run([exe],check=True)
+  subprocess.run(['gcc',*common,'-DPLATFORM_GD77','-DHAS_GPS=1','-Wno-int-to-pointer-cast','-Wno-pointer-to-int-cast','-ffunction-sections','-fdata-sections','-fsanitize=undefined','-fno-sanitize-recover=all',*flags,str(ROOT/'tests/talk_permit/test_radio_fresh.c'),'-Wl,--gc-sections','-o',exe],check=True)
+  subprocess.run([exe],check=True)
 for platform in ['PLATFORM_GD77','PLATFORM_GD77S','PLATFORM_DM1801','PLATFORM_RD5R']:
- for f in ['functions/sound.c','user_interface/uiTxScreen.c','user_interface/menuSoundOptions.c']:
+ for f in ['functions/sound.c','user_interface/uiTxScreen.c','user_interface/menuSoundOptions.c','hardware/AT1846S.c']:
   subprocess.run(['gcc',*common,'-D'+platform,'-fsyntax-only','-Werror=implicit-function-declaration','-Wno-int-to-pointer-cast','-Wno-pointer-to-int-cast',str(ROOT/'firmware/source'/f)],check=True)
  print('PASS syntax:',platform)
 s=(ROOT/'firmware/source/functions/sound.c').read_text()

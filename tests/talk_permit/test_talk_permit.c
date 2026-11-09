@@ -63,10 +63,19 @@ status_t radioWriteReg2byte(uint8_t reg,uint8_t hi,uint8_t lo)
  if(failWrite || (unsigned)writes==failWriteNth)return kStatus_Fail;
  *regPtr(reg)=val;return kStatus_Success;
 }
+status_t radioWriteReg2byteFresh(uint8_t reg,uint8_t hi,uint8_t lo)
+{
+ assert(depth);
+ if(isI2cInUse)return kStatus_Fail;
+ cached[reg]=false;
+ status_t status=radioWriteReg2byte(reg,hi,lo);
+ if(status!=kStatus_Success)cached[reg]=false;
+ return status;
+}
 static uiEvent_t reset(void)
 {
  assert(!depth);talkPermitActive=talkPermitDraining=talkPermitPending=transmitError=false;
- pttToneActive=pttToneArmed=false;now=100;reads=failReadNth=failWriteNth=0;
+ pttToneActive=pttToneArmed=false;fmAudioFault=0;now=100;reads=failReadNth=failWriteNth=0;
  calibrationFails=cacheEnabled=false;memset(cached,0,sizeof(cached));
  nonVolatileSettings.bitfieldOptions[0]=0;
  toneReg=0x4567;gainReg=0x6f35;singleReg=0x0211;
@@ -192,13 +201,41 @@ int main(void)
  assert(pttToneHandleRelease(&ev));ev.buttons=BUTTON_PTT;ev.time=249;
  assert(pttToneHandleRelease(&ev));ev.time=250;assert(!pttToneHandleRelease(&ev));
  assert(!pttToneHandleRelease(&ev) && !pttToneActive);
- // Restore failure keeps ownership and disables PA; cached-success cannot bypass readback.
+ // A transient restore failure is retried physically, despite a warm cache.
  ev=reset();ev.buttons=0;pttToneArmed=true;cacheEnabled=true;
  nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
  assert(pttToneHandleRelease(&ev));failWriteNth=writes+1;
+ fmTxAudioExit(NULL);assert(!pttToneActive && txPAEnabled && !transmitError);
+ assert(menuTxScreenGetAudioFault()==0x023a && voiceReg==0x40ac);
+ // Persistent faults still disable PA and retain ownership; recovery can retry.
+ ev=reset();ev.buttons=0;pttToneArmed=true;cacheEnabled=true;
+ nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
+ assert(pttToneHandleRelease(&ev));failWrite=true;
  fmTxAudioExit(NULL);assert(pttToneActive && !txPAEnabled && transmitError);
- failWriteNth=0;fmTxAudioExit(NULL);assert(pttToneActive && !txPAEnabled);
- cacheEnabled=false;fmTxAudioExit(NULL);assert(!pttToneActive && voiceReg==0x40ac);
+ failWrite=false;fmTxAudioExit(NULL);assert(!pttToneActive && voiceReg==0x40ac);
+ // Consecutive sessions MUST keep real register/cache state across each TX.
+ // Native RX changes the CSS bits in 3a between sessions; next TX preserves them.
+ for(int option=0;option<2;option++)
+ {
+  ev=reset();cacheEnabled=true;optionOff=true;
+  nonVolatileSettings.bitfieldOptions[0]=option?BIT_FM_PTT_TONE_LOW:0;
+  for(int session=0;session<100;session++)
+  {
+   transmitError=false;fmTxAudioExit(NULL);assert(!transmitError && !pttToneActive);
+   trxTransmissionEnabled=txPAEnabled=true;txReg=0x7046;
+   voiceReg=0x40ac;pttWasReleased=false;
+   now+=500;ev.time=now;ev.buttons=BUTTON_PTT;ev.hasEvent=true;
+   talkPermitPending=true;talkPermitTick(&ev);assert(pttToneArmed);
+   ev.buttons=0;talkPermitTick(&ev);
+   bool wait=pttToneHandleRelease(&ev);assert(wait==(option!=0));
+   if(wait){now+=150;ev.time=now;assert(!pttToneHandleRelease(&ev));}
+   trxTransmissionEnabled=false;trxActivateRx(true);txReg=0x7026;
+   // Simulate native CSS RX setup before menu-pop's callback.
+   voiceReg=(voiceReg&0xffe0)|1;
+   fmTxAudioExit(NULL);assert(!pttToneActive && !talkPermitActive && !transmitError);
+  }
+ }
+ puts("PASS: 100 consecutive Off and 100 consecutive Beep sessions retain hardware/cache state through native RX/menu cleanup");
  // Early release during Talk Permit restores MIC before the tail snapshots it.
  ev=reset();talkPermitPending=true;nonVolatileSettings.bitfieldOptions[0]=BIT_FM_PTT_TONE_LOW;
  talkPermitTick(&ev);assert(talkPermitActive && pttToneArmed);

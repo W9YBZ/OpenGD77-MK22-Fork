@@ -421,6 +421,19 @@ status_t radioWriteReg2byte(uint8_t reg, uint8_t val1, uint8_t val2)
 }
 
 
+#if defined(PLATFORM_GD77)
+status_t radioWriteReg2byteFresh(uint8_t reg, uint8_t val1, uint8_t val2)
+{
+    // Opt-in for checked audio recovery only; leave native callers unchanged.
+    if (reg >= 0x7f || isI2cInUse) return kStatus_Fail;
+    registerCache[reg].cached[currentRegisterBank] = false;
+    status_t status = radioWriteReg2byte(reg, val1, val2);
+    if (status != kStatus_Success)
+        registerCache[reg].cached[currentRegisterBank] = false;
+    return status;
+}
+#endif
+
 status_t radioWriteTone1Reg(uint16_t toneFreqVal)
 {
 	uint8_t reg = 0x35;// Tone 1 is reg 0x35

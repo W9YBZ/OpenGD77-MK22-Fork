@@ -50,6 +50,10 @@ void radioReadVoxAndMicStrength(void);
 void radioReadRSSIAndNoise(void);
 int radioSetClearReg2byteWithMask(uint8_t reg, uint8_t mask1, uint8_t mask2, uint8_t val1, uint8_t val2);
 status_t radioWriteReg2byte(uint8_t reg, uint8_t val1, uint8_t val2);
+#if defined(PLATFORM_GD77)
+// Caller holds the task critical section. Recovery must reach the physical bus.
+status_t radioWriteReg2byteFresh(uint8_t reg, uint8_t val1, uint8_t val2);
+#endif
 status_t radioReadReg2byte(uint8_t reg, uint8_t *val1, uint8_t *val2);
 status_t radioWriteTone1Reg(uint16_t toneFreqVal);// for AX25 FSK / APRS etc
 

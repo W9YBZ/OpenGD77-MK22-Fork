@@ -68,16 +68,20 @@ static bool talkPermitActive, talkPermitDraining, talkPermitPending;
 static uint16_t talkPermitVoice;
 static uint32_t talkPermitStarted, talkPermitDrained;
 
+static uint16_t fmAudioFault;
+uint16_t menuTxScreenGetAudioFault(void) { return fmAudioFault; }
+
 static bool fmAudioRegister(uint8_t reg, uint16_t *value, bool write)
 {
     uint8_t hi = 0, lo = 0;
     taskENTER_CRITICAL();
-    bool ok = !isI2cInUse;
-    if (ok && write) ok = (radioWriteReg2byte(reg, *value >> 8, *value & 0xff) == kStatus_Success);
-    if (ok) ok = (radioReadReg2byte(reg, &hi, &lo) == kStatus_Success);
+    unsigned fault = isI2cInUse ? 1 : 0;
+    if (!fault && write && radioWriteReg2byteFresh(reg, *value >> 8, *value & 0xff) != kStatus_Success) fault = 2;
+    if (!fault && radioReadReg2byte(reg, &hi, &lo) != kStatus_Success) fault = 3;
     taskEXIT_CRITICAL();
     uint16_t actual = ((uint16_t)hi << 8) | lo;
-    if (!ok || (write && actual != *value)) return false;
+    if (!fault && write && actual != *value) fault = 4;
+    if (fault) { fmAudioFault = (fault << 8) | reg; return false; }
     *value = actual;
     return true;
 }
@@ -86,7 +90,8 @@ static bool talkPermitStop(void)
 {
     if (!talkPermitActive) return true;
     if (melody_play == MELODY_FM_TALK_PERMIT) soundStopMelody();
-    if (!fmAudioRegister(0x3a, &talkPermitVoice, true)) return false;
+    if (!fmAudioRegister(0x3a, &talkPermitVoice, true) &&
+        !fmAudioRegister(0x3a, &talkPermitVoice, true)) return false;
     talkPermitActive = false;
     return true;
 }
@@ -130,7 +135,11 @@ static void pttToneExit(void)
     if (!pttToneActive) return;
     bool ok = true;
     for (unsigned i = 0; i < 4; i++)
-        if (!fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], true)) ok = false;
+    {
+        // Retry once, physically, even if the driver's cache claimed success.
+        if (!fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], true) &&
+            !fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], true)) ok = false;
+    }
     // A cached-success write is insufficient: fmAudioRegister checks readback.
     // Keep snapshot ownership on failure and block subsequent TX until restored.
     if (ok) pttToneActive = false;

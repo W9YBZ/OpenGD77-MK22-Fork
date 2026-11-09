@@ -280,7 +280,9 @@ static void updateScreen(bool isFirstRun)
 #if defined(PLATFORM_GD77)
 				case OPTIONS_FM_PTT_TONE:
 					leftSide = "PTT Tone";
-					if (settingsGetPttToneMode() == PTT_TONE_MDC_RESERVED)
+					if (menuTxScreenGetAudioFault())
+						snprintf(rightSideVar, SCREEN_LINE_BUFFER_SIZE, "%c E%02X/%u", "OBM"[settingsGetPttToneMode()], menuTxScreenGetAudioFault() & 0xff, menuTxScreenGetAudioFault() >> 8);
+					else if (settingsGetPttToneMode() == PTT_TONE_MDC_RESERVED)
 						snprintf(rightSideVar, SCREEN_LINE_BUFFER_SIZE, "MDC N/A");
 					else rightSideConst = settingsGetPttToneMode() == PTT_TONE_BEEP ? currentLanguage->beep : currentLanguage->off;
 					break;

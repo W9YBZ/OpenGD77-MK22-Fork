@@ -7,7 +7,8 @@ p=argparse.ArgumentParser();p.add_argument('--source-zip',type=Path,required=Tru
 assert hashlib.sha256(a.source_zip.read_bytes()).hexdigest()=='4491830bc1a7a9e43f82a6151859e42fbfe17a5a8d96c7cc6b65c11faa32af31'
 allowed={'firmware/include/functions/settings.h','firmware/include/functions/sound.h',
  'firmware/source/functions/sound.c','firmware/source/user_interface/menuSoundOptions.c',
- 'firmware/source/user_interface/uiTxScreen.c','README.md'}
+ 'firmware/source/user_interface/uiTxScreen.c','firmware/include/hardware/AT1846S.h',
+ 'firmware/source/hardware/AT1846S.c','firmware/include/user_interface/menuSystem.h','README.md'}
 changed=[];same=0
 with zipfile.ZipFile(a.source_zip) as z:
  assert z.testzip() is None
@@ -20,4 +21,4 @@ with zipfile.ZipFile(a.source_zip) as z:
   else:same+=1
 assert not (ROOT/'firmware/source/runtime/newlib_heap.c').exists()
 assert not (ROOT/'firmware/source/functions/mdc1200RF.c').exists()
-print(json.dumps(dict(official_files_unchanged_after_eol_normalization=same,allowed_changes=changed,metadata_byte_exact=True,native_backend_linker_drivers_unchanged=True),indent=2))
+print(json.dumps(dict(official_files_unchanged_after_eol_normalization=same,allowed_changes=changed,metadata_byte_exact=True,native_audio_backend_linker_flash_driver_unchanged=True,at1846_opt_in_fresh_write=True),indent=2))

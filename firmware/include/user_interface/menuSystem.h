@@ -241,6 +241,10 @@ void menuPrivateCallDismiss(void);
 void menuHotspotRestoreSettings(void);
 
 bool menuTxScreenDisplaysLastHeard(void);
+#if defined(PLATFORM_GD77)
+// Sticky runtime fault: high byte=busy/write/read/mismatch, low byte=register.
+uint16_t menuTxScreenGetAudioFault(void);
+#endif
 void menuTxScreenHandleTxTermination(uiEvent_t *ev, txTerminationReason_t reason);
 
 void menuSatelliteScreenClearPredictions(bool reloadKeps);
