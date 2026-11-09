@@ -10,6 +10,8 @@ with tempfile.TemporaryDirectory() as tmp:
   exe=str(Path(tmp)/'test')
   subprocess.run(['gcc',*common,'-DPLATFORM_GD77','-DHAS_GPS=1','-Wall','-Wextra','-Wno-int-to-pointer-cast','-Wno-pointer-to-int-cast','-ffunction-sections','-fdata-sections','-fsanitize=undefined','-fno-sanitize-recover=all',*flags,str(ROOT/'tests/talk_permit/test_talk_permit.c'),'-Wl,--gc-sections','-o',exe],check=True)
   subprocess.run([exe],check=True)
+  subprocess.run(['gcc',*common,'-DPLATFORM_GD77','-DHAS_GPS=1','-Wno-int-to-pointer-cast','-Wno-pointer-to-int-cast','-ffunction-sections','-fdata-sections','-fsanitize=undefined','-fno-sanitize-recover=all',*flags,str(ROOT/'tests/talk_permit/test_ptt_settings.c'),'-Wl,--gc-sections','-o',exe],check=True)
+  subprocess.run([exe],check=True)
 for platform in ['PLATFORM_GD77','PLATFORM_GD77S','PLATFORM_DM1801','PLATFORM_RD5R']:
  for f in ['functions/sound.c','user_interface/uiTxScreen.c','user_interface/menuSoundOptions.c']:
   subprocess.run(['gcc',*common,'-D'+platform,'-fsyntax-only','-Werror=implicit-function-declaration','-Wno-int-to-pointer-cast','-Wno-pointer-to-int-cast',str(ROOT/'firmware/source'/f)],check=True)
@@ -29,3 +31,15 @@ first,real=tx.split('menuStatus_t menuTxScreen(',1)[1].split('talkPermitTick(ev)
 assert 'talkPermitPending = !transmitError;' in first and 'talkPermitStart(ev)' not in first
 assert 'if (talkPermitActive && ev->hasEvent)' not in tx
 print('PASS: official synthetic first-run boundary arms pending request; real menu tick consumes it')
+
+# EOT waits inside the ordinary release path before RF is disabled; the
+# established official release latch still masks a rapid re-press.
+release=tx.split('static void handleEvent(uiEvent_t *ev)\n{',1)[1]
+assert release.index('if(isTransmittingTone || isTransmittingDTMF)') < release.index('pttToneHandleRelease(ev)')
+after=release.split('pttToneHandleRelease(ev)',1)[1]
+assert after.index('trxTransmissionEnabled = false') < after.index('trxActivateRx(true)')
+assert 'if ((ev->buttons & BUTTON_PTT) && pttWasReleased)' in tx
+menu=(ROOT/'firmware/source/user_interface/menuSoundOptions.c').read_text()
+assert menu.index('OPTIONS_FM_TALK_PERMIT,') < menu.index('OPTIONS_FM_PTT_TONE,') < menu.index('NUM_SOUND_MENU_ITEMS')
+assert 'memcpy(&nonVolatileSettings, &originalNonVolatileSettings, sizeof(settingsStruct_t))' in menu
+print('PASS: EOT placement before native RF-off, existing PTT release latch and appended menu with original cancel snapshot')

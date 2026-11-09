@@ -27,6 +27,9 @@
  */
 #include "hardware/HR-C6000.h"
 #include "functions/sound.h"
+#if defined(PLATFORM_GD77)
+#include "functions/calibration.h"
+#endif
 #include "user_interface/menuSystem.h"
 #include "user_interface/uiUtilities.h"
 #include "user_interface/uiLocalisation.h"
@@ -65,13 +68,13 @@ static bool talkPermitActive, talkPermitDraining, talkPermitPending;
 static uint16_t talkPermitVoice;
 static uint32_t talkPermitStarted, talkPermitDrained;
 
-static bool talkPermitRegister(uint16_t *value, bool write)
+static bool fmAudioRegister(uint8_t reg, uint16_t *value, bool write)
 {
     uint8_t hi = 0, lo = 0;
     taskENTER_CRITICAL();
     bool ok = !isI2cInUse;
-    if (ok && write) ok = (radioWriteReg2byte(0x3a, *value >> 8, *value & 0xff) == kStatus_Success);
-    if (ok) ok = (radioReadReg2byte(0x3a, &hi, &lo) == kStatus_Success);
+    if (ok && write) ok = (radioWriteReg2byte(reg, *value >> 8, *value & 0xff) == kStatus_Success);
+    if (ok) ok = (radioReadReg2byte(reg, &hi, &lo) == kStatus_Success);
     taskEXIT_CRITICAL();
     uint16_t actual = ((uint16_t)hi << 8) | lo;
     if (!ok || (write && actual != *value)) return false;
@@ -83,7 +86,7 @@ static bool talkPermitStop(void)
 {
     if (!talkPermitActive) return true;
     if (melody_play == MELODY_FM_TALK_PERMIT) soundStopMelody();
-    if (!talkPermitRegister(&talkPermitVoice, true)) return false;
+    if (!fmAudioRegister(0x3a, &talkPermitVoice, true)) return false;
     talkPermitActive = false;
     return true;
 }
@@ -101,6 +104,85 @@ static void talkPermitExit(void *data)
     }
 }
 
+// Own only these registers; do not alter CSS, RF power, filters or local audio.
+static const uint8_t pttToneRegs[] = { 0x3a, 0x35, 0x41, 0x79 };
+static uint16_t pttToneSaved[4];
+static bool pttToneArmed, pttToneActive;
+static uint32_t pttToneStarted;
+
+static bool ordinaryFmTx(void)
+{
+    return trxGetMode() == RADIO_MODE_ANALOG && trxTransmissionEnabled &&
+        txPAEnabled && !transmitError && !isSatelliteScreen && !voxIsEnabled() &&
+        aprsBeaconingGetMode() != APRS_BEACONING_MODE_PTT;
+}
+
+static void pttToneFail(void)
+{
+    trxActivateRx(true);
+    trxTransmissionEnabled = false;
+    transmitError = true;
+}
+
+static void pttToneExit(void)
+{
+    pttToneArmed = false;
+    if (!pttToneActive) return;
+    bool ok = true;
+    for (unsigned i = 0; i < 4; i++)
+        if (!fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], true)) ok = false;
+    // A cached-success write is insufficient: fmAudioRegister checks readback.
+    // Keep snapshot ownership on failure and block subsequent TX until restored.
+    if (ok) pttToneActive = false;
+    else pttToneFail();
+}
+
+static void fmTxAudioExit(void *data)
+{
+    talkPermitExit(data);
+    pttToneExit();
+}
+
+// Called only in the native release/TOT branch, before disabling RF.
+// true means keep this TX screen active; the main loop and watchdog keep running.
+static bool pttToneHandleRelease(uiEvent_t *ev)
+{
+    if (pttToneActive)
+    {
+        if (ordinaryFmTx() && (!currentChannelData->tot || timeInSeconds) &&
+            (uint32_t)(ev->time - pttToneStarted) < 150U) return true;
+        pttToneExit();
+        return false;
+    }
+    bool armed = pttToneArmed;
+    pttToneArmed = false; // Once per session, including excluded/failed attempts.
+    if (!armed || (ev->buttons & BUTTON_PTT) || !ordinaryFmTx() ||
+        (currentChannelData->tot && !timeInSeconds) || talkPermitActive ||
+        settingsGetPttToneMode() != PTT_TONE_BEEP) return false;
+
+    uint16_t tx = 0;
+    CalibrationDataResult_t cal = { .offset = 1 }; // native CAL_DEV_TONE index
+    CalibrationBand_t band = trxCurrentBand[TRX_TX_FREQ_BAND] == RADIO_BAND_UHF ? CalibrationBandUHF : CalibrationBandVHF;
+    if (!fmAudioRegister(0x30, &tx, false) || (tx & 0x60) != 0x40 ||
+        !calibrationGetSectionData(band, CalibrationSection_DEV_TONE, &cal))
+    { pttToneFail(); return false; }
+    for (unsigned i = 0; i < 4; i++)
+        if (!fmAudioRegister(pttToneRegs[i], &pttToneSaved[i], false))
+        { pttToneFail(); return false; }
+    pttToneActive = true; // Roll back even partially completed setup.
+    uint16_t tone = 1000U * 10U; // Native trxSetTone1 units: 0.1 Hz
+    uint16_t gain = (pttToneSaved[2] & 0xff80) | (cal.value & 0x7f);
+    uint16_t single = pttToneSaved[3] | 0xc000;
+    uint16_t selector = (pttToneSaved[0] & 0x8fff) | (AT1846_VOICE_CHANNEL_TONE1 << 8);
+    if (!fmAudioRegister(0x35, &tone, true) ||
+        !fmAudioRegister(0x79, &single, true) ||
+        !fmAudioRegister(0x41, &gain, true) ||
+        !fmAudioRegister(0x3a, &selector, true))
+    { pttToneFail(); pttToneExit(); return false; }
+    pttToneStarted = ticksGetMillis(); // Start after confirmed hardware setup.
+    return true;
+}
+
 static void talkPermitStart(uiEvent_t *ev)
 {
     if (!(ev->buttons & BUTTON_PTT) || isSatelliteScreen || voxIsEnabled() ||
@@ -114,10 +196,10 @@ static void talkPermitStart(uiEvent_t *ev)
     taskENTER_CRITICAL();
     bool tx = !isI2cInUse && (radioReadReg2byte(0x30, &hi, &lo) == kStatus_Success);
     taskEXIT_CRITICAL();
-    if (!tx || (lo & 0x60) != 0x40 || !talkPermitRegister(&talkPermitVoice, false)) return;
+    if (!tx || (lo & 0x60) != 0x40 || !fmAudioRegister(0x3a, &talkPermitVoice, false)) return;
     uint16_t muted = talkPermitVoice & 0x8fff;
     talkPermitActive = true; // Own the snapshot even if the write fails.
-    if (!talkPermitRegister(&muted, true)) {talkPermitExit(NULL); return;}
+    if (!fmAudioRegister(0x3a, &muted, true)) {talkPermitExit(NULL); return;}
     talkPermitStarted = ev->time;
     talkPermitDraining = false;
     soundSetMelody(MELODY_FM_TALK_PERMIT);
@@ -131,6 +213,7 @@ static void talkPermitTick(uiEvent_t *ev)
     if (talkPermitPending)
     {
         talkPermitPending = false;
+        pttToneArmed = (ev->buttons & BUTTON_PTT) && ordinaryFmTx();
         talkPermitStart(ev);
     }
     if (!talkPermitActive) return;
@@ -166,14 +249,14 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 		aprsPTTBeaconTriggered = false;
 		transmitError = false;
 #if defined(PLATFORM_GD77)
-        talkPermitExit(NULL);
+        fmTxAudioExit(NULL);
         if (transmitError)
         {
             ev->buttons &= ~BUTTON_PTT;
             pttWasReleased = true;
             return MENU_STATUS_ERROR;
         }
-        menuSystemRegisterExitCallback(talkPermitExit, NULL);
+        menuSystemRegisterExitCallback(fmTxAudioExit, NULL);
 #endif
 		uiDataGlobal.Scan.active = false;
 		uiDataGlobal.displayChannelSettings = false;
@@ -305,6 +388,7 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 	{
 #if defined(PLATFORM_GD77)
         talkPermitTick(ev);
+        if (pttToneActive && (!ordinaryFmTx() || (currentChannelData->tot && !timeInSeconds))) pttToneExit();
         if (transmitError && talkPermitActive) {ev->buttons &= ~BUTTON_PTT; pttWasReleased = true;}
 #endif
 		// Keep displaying the "RX Only" or "Out Of Band" error message
@@ -547,7 +631,9 @@ static void handleEvent(uiEvent_t *ev)
 			}
 #endif
 
-			trxTransmissionEnabled = false;
+#if !defined(PLATFORM_GD77)
+            trxTransmissionEnabled = false;
+#endif
 
 			if(isTransmittingTone || isTransmittingDTMF)
 			{
@@ -577,6 +663,11 @@ static void handleEvent(uiEvent_t *ev)
 				isTransmittingTone = false;
 				isTransmittingDTMF = false;
 			}
+
+#if defined(PLATFORM_GD77)
+            if (pttToneHandleRelease(ev)) return;
+            trxTransmissionEnabled = false;
+#endif
 
 			if (trxGetMode() == RADIO_MODE_ANALOG)
 			{
@@ -782,7 +873,7 @@ static void handleEvent(uiEvent_t *ev)
 void menuTxScreenHandleTxTermination(uiEvent_t *ev, txTerminationReason_t reason)
 {
 #if defined(PLATFORM_GD77)
-    talkPermitExit(NULL);
+    fmTxAudioExit(NULL);
 #endif
 	PTTToggledDown = false;
 	voxReset();

@@ -79,6 +79,7 @@ enum
 #endif
 #if defined(PLATFORM_GD77)
 	OPTIONS_FM_TALK_PERMIT,
+	OPTIONS_FM_PTT_TONE,
 #endif
 	NUM_SOUND_MENU_ITEMS
 };
@@ -277,6 +278,12 @@ static void updateScreen(bool isFirstRun)
 					}
 					break;
 #if defined(PLATFORM_GD77)
+				case OPTIONS_FM_PTT_TONE:
+					leftSide = "PTT Tone";
+					if (settingsGetPttToneMode() == PTT_TONE_MDC_RESERVED)
+						snprintf(rightSideVar, SCREEN_LINE_BUFFER_SIZE, "MDC N/A");
+					else rightSideConst = settingsGetPttToneMode() == PTT_TONE_BEEP ? currentLanguage->beep : currentLanguage->off;
+					break;
 				case OPTIONS_FM_TALK_PERMIT:
 					leftSide = "Talk Permit";
 					rightSideConst = settingsIsOptionBitSet(BIT_FM_TALK_PERMIT_OFF) ? currentLanguage->off : currentLanguage->on;
@@ -304,7 +311,7 @@ static void updateScreen(bool isFirstRun)
 				if (!wasPlaying || (menuDataGlobal.newOptionSelected || (menuDataGlobal.menuOptionsTimeout > 0)))
 				{
 #if defined(PLATFORM_GD77)
-					if (mNum == OPTIONS_FM_TALK_PERMIT) voicePromptsAppendString(leftSide);
+					if (mNum == OPTIONS_FM_TALK_PERMIT || mNum == OPTIONS_FM_PTT_TONE) voicePromptsAppendString(leftSide);
 					else
 #endif
 					voicePromptsAppendLanguageString(leftSide);
@@ -549,6 +556,9 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 #if defined(PLATFORM_GD77)
+				case OPTIONS_FM_PTT_TONE:
+					settingsSetPttToneMode((settingsGetPttToneMode() + 1) % 3);
+					break;
 				case OPTIONS_FM_TALK_PERMIT:
 					settingsSetOptionBit(BIT_FM_TALK_PERMIT_OFF, false);
 					break;
@@ -684,6 +694,9 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 #if defined(PLATFORM_GD77)
+				case OPTIONS_FM_PTT_TONE:
+					settingsSetPttToneMode((settingsGetPttToneMode() + 2) % 3);
+					break;
 				case OPTIONS_FM_TALK_PERMIT:
 					settingsSetOptionBit(BIT_FM_TALK_PERMIT_OFF, true);
 					break;

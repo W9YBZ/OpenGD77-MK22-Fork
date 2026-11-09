@@ -156,6 +156,10 @@ typedef enum
 	BIT_CHANNELS_ARE_READ_ONLY      	= (SETTINGS_BITS_BANK_0 | (1 << 22)),
 	BIT_UI_USES_DOUBLE_HEIGHT    		= (SETTINGS_BITS_BANK_0 | (1 << 23)),
 
+	#if defined(PLATFORM_GD77)
+	BIT_FM_PTT_TONE_LOW = (SETTINGS_BITS_BANK_0 | (1 << 24)),
+	BIT_FM_PTT_TONE_HIGH = (SETTINGS_BITS_BANK_0 | (1 << 25)),
+#endif
 	// Last usable bit is 29
 	//BIT_xxxxxxx_xxxxxxxxxxxx          = (SETTINGS_BITS_BANK_1 | (1 << 0)),
 	//BIT_xxxxxxx_xxxxxxxxxxxx          = (SETTINGS_BITS_BANK_2 | (1 << 0)),
@@ -395,6 +399,22 @@ void settingsDecUINT32(uint32_t *s, uint32_t v);
 void settingsSetOptionBit(bitfieldOptions_t bit, bool set);
 bool settingsIsOptionBitSetFromSettings(settingsStruct_t *sets, bitfieldOptions_t bit);
 bool settingsIsOptionBitSet(bitfieldOptions_t bit);
+#if defined(PLATFORM_GD77)
+typedef enum { PTT_TONE_OFF, PTT_TONE_BEEP, PTT_TONE_MDC_RESERVED } pttToneMode_t;
+static inline pttToneMode_t settingsGetPttToneMode(void)
+{
+    unsigned mode = settingsIsOptionBitSet(BIT_FM_PTT_TONE_LOW) |
+        (settingsIsOptionBitSet(BIT_FM_PTT_TONE_HIGH) << 1);
+    return mode <= PTT_TONE_MDC_RESERVED ? (pttToneMode_t)mode : PTT_TONE_OFF;
+}
+static inline void settingsSetPttToneMode(unsigned mode)
+{
+    if (mode > PTT_TONE_MDC_RESERVED) mode = PTT_TONE_OFF;
+    settingsSetOptionBit(BIT_FM_PTT_TONE_LOW, (mode & 1U) != 0);
+    settingsSetOptionBit(BIT_FM_PTT_TONE_HIGH, (mode & 2U) != 0);
+}
+#endif
+
 
 void settingsSetDirty(void);
 void settingsSetVFODirty(void);
