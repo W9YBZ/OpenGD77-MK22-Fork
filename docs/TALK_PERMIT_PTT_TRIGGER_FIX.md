@@ -69,3 +69,12 @@ this image remain **Not Run** until tested on the radio. No automatic flashing.
   [host tests](validation/talk-permit/ptt-trigger-fix/host-tests.log),
   [native build](validation/talk-permit/ptt-trigger-fix/build.log),
   [image mutations](validation/talk-permit/ptt-trigger-fix/image-mutations.log).
+
+## User acceptance update
+
+The user reported success with the PTTFix ZIP on 2026-11-09. Mark local Talk
+Permit playback as **PASS (user reported)**, together with the earlier key-beep
+confirmation. The brief success report does not separately establish CPS
+roundtrip, option persistence, MIC restoration fault paths or absence of the
+local tone in an independent RF receiver; those detailed checks remain Not Run.
+The PTTFix ZIP is retained as the working rollback candidate for the next step.

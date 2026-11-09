@@ -126,7 +126,7 @@ Local packages:
 * `artifacts/native-official-baseline/OpenGD77-Official-Base.zip` — test original
   key beeps, boot and CPS first.
 * `artifacts/native-talk-permit-trigger-fix/OpenGD77-TalkPermit-PTTFix.zip` —
-  current Talk Permit candidate; fixes the synthetic menu-entry event that
+  user-confirmed working Talk Permit build; fixes the synthetic menu-entry event that
   prevented playback. Sound Options → Talk Permit On/Off.
 * `artifacts/native-talk-permit/OpenGD77-TalkPermit.zip` — superseded: user
   confirmed key beeps work, but Talk Permit did not play.
@@ -134,8 +134,8 @@ Local packages:
 Both need the official `GD-77_V4.3.6.sgl` selected separately as donor in CPS.
 The ZIP contains OpenGD77.bin and 18 matching language files, without the donor.
 The preceding Talk Permit package has user-confirmed working key beeps; its
-Talk Permit playback failed. Hardware acceptance of the PTTFix build remains
-**Not Run**. No radio was flashed, reset or erased by the build tools. The rebuilt baseline is not byte-identical to the
+Talk Permit playback failed. The user subsequently confirmed PTTFix local Talk Permit playback succeeds.
+Detailed RF isolation, CPS roundtrip and fault-path acceptance remain **Not Run**. No radio was flashed, reset or erased by the build tools. The rebuilt baseline is not byte-identical to the
 published release and still requires its own hardware acceptance.
 
 One-command native build and ZIP packaging in this workspace:

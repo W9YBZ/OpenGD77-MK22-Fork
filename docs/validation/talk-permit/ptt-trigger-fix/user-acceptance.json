@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-09",
+  "zip_sha256": "3bedbd64832118c63284aa26ba8bb283c5c4c538dd641e0a664d2d40c99775ec",
+  "local_talk_permit": "PASS_USER_REPORTED",
+  "key_beeps": "PASS_USER_REPORTED",
+  "feedback": "好的 成功了，提交到github然后进行下一项",
+  "rf_isolation": "NOT_RUN",
+  "cps_roundtrip": "NOT_RUN",
+  "settings_persistence": "NOT_RUN",
+  "fault_paths": "NOT_RUN"
+}
