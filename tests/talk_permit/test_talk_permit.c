@@ -37,7 +37,7 @@ status_t radioWriteReg2byte(uint8_t reg,uint8_t hi,uint8_t lo)
 }
 static uiEvent_t reset(void)
 {
- assert(!depth);talkPermitActive=talkPermitDraining=transmitError=false;
+ assert(!depth);talkPermitActive=talkPermitDraining=talkPermitPending=transmitError=false;
  isSatelliteScreen=optionOff=noBeep=voiceBusy=voxEnabled=failRead=failWrite=rejectMelody=false;
  isI2cInUse=0;voiceReg=0x40ac;txReg=0x7046;radioMode=RADIO_MODE_ANALOG;
  trxTransmissionEnabled=txPAEnabled=true;melody_play=NULL;played=writes=rxOff=0;
@@ -47,7 +47,23 @@ static uiEvent_t reset(void)
 }
 int main(void)
 {
- uiEvent_t ev=reset();talkPermitStart(&ev);
+ // Reproduce the real menu sequence: synthetic first-run has no PTT.
+ uiEvent_t ev=reset();ev.buttons=0;talkPermitStart(&ev);
+ assert(!talkPermitActive && !played && !writes);
+ talkPermitPending=true;ev.buttons=BUTTON_PTT;ev.hasEvent=true;
+ talkPermitTick(&ev);
+ assert(talkPermitActive && played==1 && !talkPermitPending);
+ ev.time++;ev.hasEvent=false;talkPermitTick(&ev);assert(played==1);
+ ev.keys.key=KEY_1;ev.hasEvent=true;talkPermitTick(&ev);
+ assert(!talkPermitActive && voiceReg==0x40ac);
+ ev=reset();talkPermitPending=true;ev.hasEvent=true;talkPermitTick(&ev);
+ ev.buttons|=BUTTON_SK2;talkPermitTick(&ev);
+ assert(!talkPermitActive && voiceReg==0x40ac);
+ ev=reset();talkPermitPending=true;ev.buttons=0;talkPermitTick(&ev);
+ assert(!talkPermitPending && !played && !writes);
+ ev.buttons=BUTTON_PTT;talkPermitTick(&ev);assert(!played);
+ ev=reset();talkPermitPending=true;talkPermitExit(NULL);talkPermitTick(&ev);assert(!played);
+ ev=reset();talkPermitStart(&ev);
  assert(talkPermitActive && played==1 && voiceReg==0x00ac && talkPermitVoice==0x40ac);
  ev.time=240;melody_play=NULL;talkPermitTick(&ev);assert(talkPermitActive && voiceReg==0x00ac);
  ev.time=249;talkPermitTick(&ev);assert(talkPermitActive);
@@ -81,5 +97,5 @@ int main(void)
  // Monotonic time may wrap during an active melody.
  ev=reset();ev.time=0xfffffff0;talkPermitStart(&ev);ev.time+=250;talkPermitTick(&ev);assert(!talkPermitActive);
  assert(!depth);
- puts("PASS: actual Talk Permit MIC gate/restore/drain/deadline, release/TOT/exit, exclusions, I2C failure and PA shutdown");
+ puts("PASS: synthetic menu entry / real PTT event / one-shot / key preemption; actual Talk Permit MIC gate/restore/drain/deadline, release/TOT/exit, exclusions, I2C failure and PA shutdown");
 }

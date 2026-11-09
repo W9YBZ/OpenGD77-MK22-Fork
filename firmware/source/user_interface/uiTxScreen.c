@@ -61,7 +61,7 @@ static bool isSatelliteScreen;
 #if defined(PLATFORM_GD77)
 /* Only the TX MIC selector is borrowed. The official sound backend owns all
  * local PCM/amp/mux work. Never select an AT1846 RF tone for Talk Permit. */
-static bool talkPermitActive, talkPermitDraining;
+static bool talkPermitActive, talkPermitDraining, talkPermitPending;
 static uint16_t talkPermitVoice;
 static uint32_t talkPermitStarted, talkPermitDrained;
 
@@ -91,6 +91,7 @@ static bool talkPermitStop(void)
 static void talkPermitExit(void *data)
 {
     (void)data;
+    talkPermitPending = false;
     if (!talkPermitStop())
     {
         // A failed MIC restore must not leave an unattended transmitter keyed.
@@ -125,8 +126,18 @@ static void talkPermitStart(uiEvent_t *ev)
 
 static void talkPermitTick(uiEvent_t *ev)
 {
+    // Menu initialization uses a synthetic event with buttons=0. Consume the
+    // one-shot request only here, where main supplies the physical PTT state.
+    if (talkPermitPending)
+    {
+        talkPermitPending = false;
+        talkPermitStart(ev);
+    }
     if (!talkPermitActive) return;
-    if (!(ev->buttons & BUTTON_PTT) || !trxTransmissionEnabled || !txPAEnabled ||
+    // The PTT-down event that starts playback is not a tone/key preemption.
+    // Release, timeout and exit also restore the MIC through this same path.
+    if ((ev->hasEvent && (ev->keys.key != 0 || BUTTONCHECK_DOWN(ev, BUTTON_SK2))) ||
+        !(ev->buttons & BUTTON_PTT) || !trxTransmissionEnabled || !txPAEnabled ||
         transmitError || (currentChannelData->tot && !timeInSeconds) ||
         (uint32_t)(ev->time - talkPermitStarted) >= 250U)
     {
@@ -242,7 +253,8 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 
 				trxSetTX();
 #if defined(PLATFORM_GD77)
-                if (!transmitError) talkPermitStart(ev);
+                // Arm after TX setup; the menu's first-run event has no buttons.
+                talkPermitPending = !transmitError;
 #endif
 
 #if !defined(PLATFORM_GD77S)
@@ -510,11 +522,11 @@ static void updateScreen(void)
 static void handleEvent(uiEvent_t *ev)
 {
 #if defined(PLATFORM_GD77)
-    // Existing 1750/DTMF actions must not nest over our MIC selector snapshot.
-    if (talkPermitActive && ev->hasEvent)
+    // talkPermitTick restores the MIC before any 1750/DTMF key action.
+    if (transmitError && talkPermitActive)
     {
-        talkPermitExit(NULL);
-        if (transmitError) {ev->buttons &= ~BUTTON_PTT; pttWasReleased = true;}
+        ev->buttons &= ~BUTTON_PTT;
+        pttWasReleased = true;
     }
 #endif
 	// Xmiting ends (normal or timeouted)
